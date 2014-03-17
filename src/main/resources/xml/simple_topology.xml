@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodes xmlns="http://mcs.unibnf.ch/sparklisa/sensor-topology"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://mcs.unibnf.ch/sparklisa/sensor-topology sensor_topology.xsd ">
+	
+	<node nodeId="1">
+		<neighbours>
+			<nodeId>2</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="2">
+		<neighbours>
+			<nodeId>1</nodeId>
+			<nodeId>6</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="3">
+		<neighbours>
+			<nodeId>4</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="4">
+		<neighbours>
+			<nodeId>3</nodeId>
+			<nodeId>8</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="5">
+		<neighbours>
+			<nodeId>6</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="6">
+		<neighbours>
+			<nodeId>2</nodeId>
+			<nodeId>5</nodeId>
+			<nodeId>7</nodeId>
+			<nodeId>10</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="7">
+		<neighbours>
+			<nodeId>6</nodeId>
+			<nodeId>8</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="8">
+		<neighbours>
+			<nodeId>4</nodeId>
+			<nodeId>7</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="9">
+		<neighbours>
+			<nodeId>13</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="10">
+		<neighbours>
+			<nodeId>6</nodeId>
+			<nodeId>11</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="11">
+		<neighbours>
+			<nodeId>10</nodeId>
+			<nodeId>12</nodeId>
+			<nodeId>15</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="12">
+		<neighbours>
+			<nodeId>11</nodeId>
+			<nodeId>16</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="13">
+		<neighbours>
+			<nodeId>9</nodeId>
+			<nodeId>14</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="14">
+		<neighbours>
+			<nodeId>13</nodeId>
+			<nodeId>15</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="15">
+		<neighbours>
+			<nodeId>11</nodeId>
+			<nodeId>14</nodeId>
+		</neighbours>
+	</node>
+	<node nodeId="16">
+		<neighbours>
+			<nodeId>12</nodeId>
+		</neighbours>
+	</node>
+</nodes>
