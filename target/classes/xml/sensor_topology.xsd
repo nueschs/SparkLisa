@@ -1,58 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mcs.unibnf.ch/sparklisa/sensor-topology"
-	xmlns:tns="http://mcs.unibnf.ch/sparklisa/sensor-topology"
-	elementFormDefault="qualified">
+  xmlns:tns="http://mcs.unibnf.ch/sparklisa/sensor-topology"
+  elementFormDefault="qualified">
 
-	<element name="topology">
-		<complexType>
-			<sequence>
-				<element name="nodes">
-					<complexType>
-						<sequence>
-							<element name="node" minOccurs="0" maxOccurs="unbounded">
-								<complexType>
-									<sequence>
-										<element name="neighbours">
-											<complexType>
-												<sequence>
-													<element name="nodeId" type="string" minOccurs="0"
-														maxOccurs="4" />
-												</sequence>
-											</complexType>
-											<unique name="neighbourUnique">
-												<selector xpath="nodeId" />
-												<field xpath="." />
-											</unique>
-										</element>
-									</sequence>
-									<attribute name="nodeId" type="string" use="required" />
-								</complexType>
-							</element>
-						</sequence>
-					</complexType>
-				</element>
+  <complexType name="nodeType">
+    <sequence>
+      <element name="neighbours">
+        <complexType>
+          <sequence>
+            <element name="neighbour" type="IDREF" minOccurs="0"
+              maxOccurs="4" />
+          </sequence>
+        </complexType>
+        <unique name="neighbourUnique">
+          <selector xpath="neighbour" />
+          <field xpath="." />
+        </unique>
+      </element>
+    </sequence>
+    <attribute name="nodeId" type="ID" use="required" />
+  </complexType>
 
-				<element name="basestations">
-					<complexType>
-						<sequence>
-							<element name="basestation" minOccurs="0" maxOccurs="unbounded">
-								<complexType>
-									<sequence>
-										<element name="managedNodes" minOccurs="1" maxOccurs="1">
-											<complexType>
-												<sequence>
-													<element name="nodeId" minOccurs="0" maxOccurs="unbounded" />
-												</sequence>
-											</complexType>
-										</element>
-									</sequence>
-									<attribute name="stationId" type="string" use="required" />
-								</complexType>
-							</element>
-						</sequence>
-					</complexType>
-				</element>
-			</sequence>
-		</complexType>
-	</element>
+  <complexType name="basestationType">
+    <sequence>
+      <element name="managedNodes" minOccurs="1" maxOccurs="1">
+        <complexType>
+          <sequence>
+            <element name="node" type="IDREF" minOccurs="0"
+              maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+    </sequence>
+    <attribute name="stationId" type="ID" use="required" />
+  </complexType>
+
+
+  <element name="topology">
+    <complexType>
+      <sequence>
+        <element name="nodes">
+          <complexType>
+            <sequence>
+              <element name="node" type="tns:nodeType"
+                minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+          </complexType>
+        </element>
+
+        <element name="basestations">
+          <complexType>
+            <sequence>
+              <element name="basestation" type="tns:basestationType"
+                minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+          </complexType>
+        </element>
+      </sequence>
+    </complexType>
+  </element>
 </schema>

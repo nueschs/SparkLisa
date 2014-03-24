@@ -3,133 +3,133 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://mcs.unibnf.ch/sparklisa/sensor-topology sensor_topology.xsd ">
 	<nodes>	
-		<node nodeId="1">
+		<node nodeId="node1">
 			<neighbours>
-				<nodeId>2</nodeId>
+				<neighbour>node2</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="2">
+		<node nodeId="node2">
 			<neighbours>
-				<nodeId>1</nodeId>
-				<nodeId>6</nodeId>
+				<neighbour>node1</neighbour>
+				<neighbour>node6</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="3">
+		<node nodeId="node3">
 			<neighbours>
-				<nodeId>4</nodeId>
+				<neighbour>node4</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="4">
+		<node nodeId="node4">
 			<neighbours>
-				<nodeId>3</nodeId>
-				<nodeId>8</nodeId>
+				<neighbour>node3</neighbour>
+				<neighbour>node8</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="5">
+		<node nodeId="node5">
 			<neighbours>
-				<nodeId>6</nodeId>
+				<neighbour>node6</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="6">
+		<node nodeId="node6">
 			<neighbours>
-				<nodeId>2</nodeId>
-				<nodeId>5</nodeId>
-				<nodeId>7</nodeId>
-				<nodeId>10</nodeId>
+				<neighbour>node2</neighbour>
+				<neighbour>node5</neighbour>
+				<neighbour>node7</neighbour>
+				<neighbour>node10</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="7">
+		<node nodeId="node7">
 			<neighbours>
-				<nodeId>6</nodeId>
-				<nodeId>8</nodeId>
+				<neighbour>node6</neighbour>
+				<neighbour>node8</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="8">
+		<node nodeId="node8">
 			<neighbours>
-				<nodeId>4</nodeId>
-				<nodeId>7</nodeId>
+				<neighbour>node4</neighbour>
+				<neighbour>node7</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="9">
+		<node nodeId="node9">
 			<neighbours>
-				<nodeId>13</nodeId>
+				<neighbour>node13</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="10">
+		<node nodeId="node10">
 			<neighbours>
-				<nodeId>6</nodeId>
-				<nodeId>11</nodeId>
+				<neighbour>node6</neighbour>
+				<neighbour>node11</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="11">
+		<node nodeId="node11">
 			<neighbours>
-				<nodeId>10</nodeId>
-				<nodeId>12</nodeId>
-				<nodeId>15</nodeId>
+				<neighbour>node10</neighbour>
+				<neighbour>node12</neighbour>
+				<neighbour>node15</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="12">
+		<node nodeId="node12">
 			<neighbours>
-				<nodeId>11</nodeId>
-				<nodeId>16</nodeId>
+				<neighbour>node11</neighbour>
+				<neighbour>node16</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="13">
+		<node nodeId="node13">
 			<neighbours>
-				<nodeId>9</nodeId>
-				<nodeId>14</nodeId>
+				<neighbour>node9</neighbour>
+				<neighbour>node14</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="14">
+		<node nodeId="node14">
 			<neighbours>
-				<nodeId>13</nodeId>
-				<nodeId>15</nodeId>
+				<neighbour>node13</neighbour>
+				<neighbour>node15</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="15">
+		<node nodeId="node15">
 			<neighbours>
-				<nodeId>11</nodeId>
-				<nodeId>14</nodeId>
+				<neighbour>node11</neighbour>
+				<neighbour>node14</neighbour>
 			</neighbours>
 		</node>
-		<node nodeId="16">
+		<node nodeId="node16">
 			<neighbours>
-				<nodeId>12</nodeId>
+				<neighbour>node12</neighbour>
 			</neighbours>
 		</node>
 	</nodes>
 	
 	<basestations>
-		<basestation stationId="1">
+		<basestation stationId="station1">
 			<managedNodes>
-				<nodeId>1</nodeId>
-				<nodeId>2</nodeId>
-				<nodeId>5</nodeId>
-				<nodeId>6</nodeId>
+				<node>node1</node>
+				<node>node2</node>
+				<node>node5</node>
+				<node>node6</node>
 			</managedNodes>
 		</basestation>
-		<basestation stationId="2">
+		<basestation stationId="station2">
 			<managedNodes>
-				<nodeId>3</nodeId>
-				<nodeId>4</nodeId>
-				<nodeId>7</nodeId>
-				<nodeId>8</nodeId>
+				<node>node3</node>
+				<node>node4</node>
+				<node>node7</node>
+				<node>node8</node>
 			</managedNodes>
 		</basestation>
-		<basestation stationId="3">
+		<basestation stationId="station3">
 			<managedNodes>
-				<nodeId>9</nodeId>
-				<nodeId>10</nodeId>
-				<nodeId>13</nodeId>
-				<nodeId>14</nodeId>
+				<node>node9</node>
+				<node>node10</node>
+				<node>node13</node>
+				<node>node14</node>
 			</managedNodes>
 		</basestation>
-		<basestation stationId="4">
+		<basestation stationId="station4">
 			<managedNodes>
-				<nodeId>11</nodeId>
-				<nodeId>12</nodeId>
-				<nodeId>15</nodeId>
-				<nodeId>16</nodeId>
+				<node>node11</node>
+				<node>node12</node>
+				<node>node15</node>
+				<node>node16</node>
 			</managedNodes>
 		</basestation>
 	</basestations>	
