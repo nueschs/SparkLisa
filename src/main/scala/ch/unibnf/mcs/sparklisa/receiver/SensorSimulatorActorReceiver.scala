@@ -7,16 +7,26 @@ import akka.actor.IOManager
 import akka.actor.IO
 import scala.util.Random
 
-class SensorSimulatorReceiver extends Actor with Receiver {
+class SensorSimulatorActorReceiver extends Actor with Receiver {
 
   private final val random = new Random();
 
+  override def preStart = init()
+
+  case class SensonSimulator
+
   def receive = {
-    case true => pushBlock(createValue())
+    case _: SensonSimulator => pushBlock(createValue())
+  }
+
+  private def init() = {
+    Thread.sleep(500L);
+    self ! SensonSimulator()
   }
 
   private def createValue(): Double = {
-    Thread.sleep(500L);
+    Thread.sleep(50L);
+    self ! SensonSimulator()
     return random.nextGaussian();
   }
 

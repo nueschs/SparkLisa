@@ -13,16 +13,6 @@
   </repositories>
 
   <dependencies>
-    <!-- <dependency> -->
-    <!-- <groupId>xerces</groupId> -->
-    <!-- <artifactId>xercesImpl</artifactId> -->
-    <!-- <version>2.11.0</version> -->
-    <!-- </dependency> -->
-<!--     <dependency> -->
-<!--       <groupId>org.codehaus.plexus</groupId> -->
-<!--       <artifactId>plexus-utils</artifactId> -->
-<!--       <version>3.0.17</version> -->
-<!--     </dependency> -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
@@ -43,25 +33,21 @@
       <artifactId>spark-streaming_2.10</artifactId>
       <version>${spark.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
   </dependencies>
 
 
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <!-- If we e.g. execute on JDK 1.7, we should compile for Java 7 
-          to get the same (or higher) JAXB API version as used during the xjc execution. -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -79,12 +65,53 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <!-- If we e.g. execute on JDK 1.7, we should compile for Java 7 
+          to get the same (or higher) JAXB API version as used during the xjc execution. -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.scala-tools</groupId>
+          <artifactId>maven-scala-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>compile</id>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <phase>compile</phase>
+            </execution>
+            <execution>
+              <id>test-compile</id>
+              <goals>
+                <goal>testCompile</goal>
+              </goals>
+              <phase>test-compile</phase>
+            </execution>
+            <execution>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <properties>
     <spark.version>0.9.0-incubating</spark.version>
     <jaxb2.version>2.2.5</jaxb2.version>
     <plexus.utils.version>3.0.17</plexus.utils.version>
+    <slf4j.version>1.7.6</slf4j.version>
   </properties>
 
 </project>
