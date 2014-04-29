@@ -10,8 +10,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import ch.unibnf.mcs.sparklisa.sensor_topology.NodeType;
-import ch.unibnf.mcs.sparklisa.sensor_topology.Topology;
+import ch.unibnf.mcs.sparklisa.topology.NodeType;
+import ch.unibnf.mcs.sparklisa.topology.Topology;
 
 /**
  * 
@@ -28,9 +28,9 @@ public class XmlParser {
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		Topology t = (Topology) unmarshaller.unmarshal(is);
 
-		NodeType node1 = t.getNodes().getNode().get(0);
+		NodeType node1 = t.getNode().get(0);
 
-		System.out.println(node1.getNeighbours().getNeighbour().get(0).getValue());
+		System.out.println(node1.getNeighbour().get(0));
 	}
 
 }

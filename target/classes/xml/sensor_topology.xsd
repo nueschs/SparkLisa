@@ -1,62 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mcs.unibnf.ch/sparklisa/sensor-topology"
-  xmlns:tns="http://mcs.unibnf.ch/sparklisa/sensor-topology"
-  elementFormDefault="qualified">
+    xmlns:tns="http://mcs.unibnf.ch/sparklisa/sensor-topology"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" elementFormDefault="qualified" jaxb:version="2.1">
 
-  <complexType name="nodeType">
-    <sequence>
-      <element name="neighbours">
-        <complexType>
-          <sequence>
+    <complexType name="nodeType">
+        <sequence>
             <element name="neighbour" type="IDREF" minOccurs="0"
-              maxOccurs="4" />
-          </sequence>
-        </complexType>
-        <unique name="neighbourUnique">
-          <selector xpath="neighbour" />
-          <field xpath="." />
-        </unique>
-      </element>
-    </sequence>
-    <attribute name="nodeId" type="ID" use="required" />
-  </complexType>
-
-  <complexType name="basestationType">
-    <sequence>
-      <element name="managedNodes" minOccurs="1" maxOccurs="1">
-        <complexType>
-          <sequence>
-            <element name="node" type="IDREF" minOccurs="0"
-              maxOccurs="unbounded" />
-          </sequence>
-        </complexType>
-      </element>
-    </sequence>
-    <attribute name="stationId" type="ID" use="required" />
-  </complexType>
-
-
-  <element name="topology">
-    <complexType>
-      <sequence>
-        <element name="nodes">
-          <complexType>
-            <sequence>
-              <element name="node" type="tns:nodeType"
-                minOccurs="0" maxOccurs="unbounded" />
-            </sequence>
-          </complexType>
-        </element>
-
-        <element name="basestations">
-          <complexType>
-            <sequence>
-              <element name="basestation" type="tns:basestationType"
-                minOccurs="0" maxOccurs="unbounded" />
-            </sequence>
-          </complexType>
-        </element>
-      </sequence>
+                maxOccurs="4">
+                <annotation>
+                    <appinfo>
+                        <jaxb:property>
+                            <jaxb:baseType
+                                name="NodeType" />
+                        </jaxb:property>
+                    </appinfo>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="nodeId" type="ID" use="required" />
     </complexType>
-  </element>
+
+    <complexType name="basestationType">
+        <sequence>
+            <element name="node" type="IDREF" minOccurs="0"
+                maxOccurs="unbounded">
+                <annotation>
+                    <appinfo>
+                        <jaxb:property>
+                            <jaxb:baseType
+                                name="NodeType" />
+                        </jaxb:property>
+                    </appinfo>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="stationId" type="ID" use="required" />
+    </complexType>
+
+
+    <element name="topology">
+        <complexType>
+            <sequence>
+                <element name="node" type="tns:nodeType"
+                    minOccurs="0" maxOccurs="unbounded">
+                    <unique name="neighbourUnique">
+                        <selector xpath="neighbour" />
+                        <field xpath="." />
+                    </unique>
+                </element>
+
+                <element name="basestation" type="tns:basestationType"
+                    minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+        </complexType>
+    </element>
 </schema>
