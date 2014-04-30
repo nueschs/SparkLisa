@@ -7,7 +7,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.streaming.Duration;
@@ -19,7 +23,6 @@ import scala.Tuple2;
 import akka.actor.Props;
 import akka.japi.Creator;
 import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver;
-import ch.unibnf.mcs.sparklisa.spark.SimpleSparkApp.SimpleCreator;
 import ch.unibnf.mcs.sparklisa.topology.NodeType;
 import ch.unibnf.mcs.sparklisa.topology.Topology;
 
@@ -78,31 +81,43 @@ public class SimpleSparkApp {
 
 		JavaDStream<Tuple2<NodeType, Double>> allValues = node1Values.union(node2Values).union(node3Values).union(node4Values);
 
-		JavaPairDStream<String, Long> runningCount = createRunningCount(allValues);
+		JavaPairDStream<String, Double> runningCount = createRunningCount(allValues);
 		JavaPairDStream<String, Double> runningSum = createRunningSum(allValues);
 
-		runningCount.print();
-		runningSum.print();
+		JavaPairDStream<String, Double> sumAndCount = runningCount.union(runningSum);
+
+		JavaPairDStream<String, Double> meanStream = sumAndCount
+				.transform(new Function<JavaPairRDD<String, Double>, JavaPairRDD<String, Double>>() {
+					@Override
+					public JavaPairRDD<String, Double> call(JavaPairRDD<String, Double> arg0) throws Exception {
+						System.out.println(ToStringBuilder.reflectionToString(arg0, ToStringStyle.MULTI_LINE_STYLE));
+						return null;
+					}
+				});
+
+		sumAndCount.print();
+		meanStream.print();
 
 		jssc.start();
 		jssc.awaitTermination();
 	}
 
-	private static JavaPairDStream<String, Long> createRunningCount(JavaDStream<Tuple2<NodeType, Double>> allValues) {
+	private static JavaPairDStream<String, Double> createRunningCount(JavaDStream<Tuple2<NodeType, Double>> allValues) {
 		JavaDStream<Long> count = allValues.count();
 
-		JavaPairDStream<String, Long> countMapped = count.map(new PairFunction<Long, String, Long>() {
-			public Tuple2<String, Long> call(Long l) {
-				return new Tuple2<String, Long>(COUNT_KEY, l);
+		JavaPairDStream<String, Double> countMapped = count.map(new PairFunction<Long, String, Double>() {
+			@Override
+			public Tuple2<String, Double> call(Long l) {
+				return new Tuple2<String, Double>(COUNT_KEY, l.doubleValue());
 			}
 		});
 
-		Function2<List<Long>, Optional<Long>, Optional<Long>> reduceFunc = new Function2<List<Long>, Optional<Long>, Optional<Long>>() {
+		Function2<List<Double>, Optional<Double>, Optional<Double>> reduceFunc = new Function2<List<Double>, Optional<Double>, Optional<Double>>() {
 			@Override
-			public Optional<Long> call(List<Long> values, Optional<Long> state) {
-				Long newSum = state.or(0L);
-				for (Long l : values) {
-					newSum += l;
+			public Optional<Double> call(List<Double> values, Optional<Double> state) {
+				Double newSum = state.or(0.0);
+				for (Double d : values) {
+					newSum += d;
 				}
 				return Optional.of(newSum);
 			}
@@ -112,12 +127,14 @@ public class SimpleSparkApp {
 
 	private static JavaPairDStream<String, Double> createRunningSum(JavaDStream<Tuple2<NodeType, Double>> allValues) {
 		JavaPairDStream<String, Double> mapped = allValues.map(new PairFunction<Tuple2<NodeType, Double>, String, Double>() {
+			@Override
 			public Tuple2<String, Double> call(Tuple2<NodeType, Double> value) {
 				return new Tuple2<String, Double>(SUM_KEY, value._2);
 			}
 		});
 
 		JavaPairDStream<String, Double> sum = mapped.reduceByKey(new Function2<Double, Double, Double>() {
+			@Override
 			public Double call(Double d1, Double d2) {
 				return d1 + d2;
 			}

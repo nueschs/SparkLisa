@@ -28,8 +28,9 @@ class SensorSimulatorActorReceiver(node: NodeType) extends Actor with Receiver {
   }
 
   def pushNodeBlocks() = {
-    Thread.sleep(500L);
-    pushBlock((sensorNode, random.nextGaussian()))
+    Thread.sleep(50L);
+    //    pushBlock((sensorNode, random.nextGaussian()))
+    pushBlock((sensorNode, 1.0))
     self ! SensorSimulator()
   }
 
