@@ -47,7 +47,7 @@ public class SimpleSparkApp {
     public static void main(String[] args) throws JAXBException {
 
         SparkConf conf = createConf();
-        JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(5000L));
+        JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(10000L));
 //        jssc.checkpoint("/home/snoooze/scala_ws/SparkLisa/target/checkpoint");
 
         Topology topology = readXml();
@@ -144,7 +144,10 @@ public class SimpleSparkApp {
         JavaPairDStream<NodeType, Double> node3LisaValues = createLisaValues(node3Values, runningMean, stdDev);
         JavaPairDStream<NodeType, Double> node4LisaValues = createLisaValues(node4Values, runningMean, stdDev);
 
-        JavaPairDStream<NodeType, Double> node1Lisa = createNodeLisa(node1LisaValues, node2LisaValues, node4LisaValues);
+        JavaPairDStream<NodeType, Double> allNodesLisaValues = node1LisaValues.union(node2LisaValues).union(node3LisaValues).union(node4LisaValues);
+
+
+        allNodesLisaValues.print();
 
 
 
@@ -153,13 +156,18 @@ public class SimpleSparkApp {
         jssc.awaitTermination();
     }
 
-    private static JavaPairDStream<NodeType,Double> createNodeLisa(JavaPairDStream<NodeType, Double> node1LisaValues, JavaPairDStream<NodeType, Double>... neighbourVals ) {
-        int k = neighbourVals.length;
-
-
-
-        return null;
-    }
+//    private static JavaPairDStream<NodeType,Double> createNodeLisa(JavaPairDStream<NodeType, Double> node1LisaValues, JavaPairDStream<NodeType, Double>... neighbourVals ) {
+//        int k = neighbourVals.length;
+//
+//        JavaDStream<Double>
+//        for (int i = 0; i < k; i++){
+//
+//        }
+//
+//
+//
+//        return null;
+//    }
 
     private static JavaPairDStream<NodeType,Double> createLisaValues(JavaDStream<Tuple2<NodeType, Double>> nodeValues, JavaDStream<Double> runningMean, JavaDStream<Double> stdDev) {
         JavaPairDStream<NodeType, Double> meanDiff  = nodeValues.transformWith(runningMean, new Function3<JavaRDD<Tuple2<NodeType, Double>>, JavaRDD<Double>, Time, JavaPairRDD<NodeType, Double>>() {

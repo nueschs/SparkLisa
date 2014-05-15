@@ -19,8 +19,6 @@ class SensorSimulatorActorReceiver(node: NodeType) extends Actor with Receiver {
 
   private final val random = new Random()
 
-  var count: Int = 0
-
   override def preStart = init()
 
   case class SensorSimulator()
@@ -31,13 +29,10 @@ class SensorSimulatorActorReceiver(node: NodeType) extends Actor with Receiver {
   }
 
   def pushNodeBlocks() = {
-    if (count < 100) {
       Thread.sleep(50L);
       pushBlock((sensorNode, random.nextGaussian()))
       //    pushBlock((sensorNode, 1.0))
-      count += 1;
       self ! SensorSimulator()
-    }
   }
 
   private def init() = {

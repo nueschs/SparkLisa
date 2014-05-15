@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="caf32e8b-446a-4b86-926b-764ed7118e64" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.cache" afterPath="$PROJECT_DIR$/.cache" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" afterPath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SparkLisa.iml" afterPath="$PROJECT_DIR$/SparkLisa.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="SparkLisa.iws" />
@@ -39,20 +33,11 @@
       <file leaf-file-name="SimpleSparkApp.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.65422076" vertical-offset="1919" max-vertical-offset="3690">
-              <caret line="157" column="0" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.59090906" vertical-offset="1490" max-vertical-offset="3294">
+              <caret line="149" column="35" selection-start-line="149" selection-start-column="35" selection-end-line="149" selection-end-column="35" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1604#1631#0" expanded="true" />
-                <element signature="e#7287#8062#0" expanded="true" />
-                <element signature="e#7622#8036#0" expanded="true" />
-                <element signature="e#8017#8018#0" expanded="true" />
-                <element signature="e#8051#8052#0" expanded="true" />
-                <element signature="e#8112#8909#0" expanded="true" />
-                <element signature="e#8433#8883#0" expanded="true" />
-                <element signature="e#8864#8865#0" expanded="true" />
-                <element signature="e#8898#8899#0" expanded="true" />
-                <element signature="e#10238#10265#0" expanded="true" />
+                <element signature="e#4659#4888#0" expanded="true" />
+                <element signature="e#4869#4870#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -61,8 +46,8 @@
       <file leaf-file-name="SensorSimulatorActorReceiver.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="756">
-              <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="666">
+              <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -122,8 +107,8 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" />
         <option value="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" />
+        <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" />
       </list>
     </option>
   </component>
@@ -135,9 +120,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="-4" />
+    <option name="y" value="24" />
     <option name="width" value="1920" />
-    <option name="height" value="1084" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -735,6 +720,21 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
+    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <extension name="scalaCoverage" />
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <method />
+    </configuration>
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -753,21 +753,6 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
-      <method />
-    </configuration>
-    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <extension name="scalaCoverage" />
-      <module name="" />
-      <setting name="path" value="" />
-      <setting name="package" value="" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="" />
-      <setting name="workingDirectory" value="$PROJECT_DIR$" />
-      <setting name="searchForTest" value="Across module dependencies" />
-      <setting name="testName" value="" />
-      <setting name="testKind" value="Class" />
-      <setting name="showProgressMessages" value="true" />
       <method />
     </configuration>
     <configuration default="false" name="clean install" type="MavenRunConfiguration" factoryName="Maven">
@@ -823,15 +808,21 @@
       <workItem from="1398883321876" duration="5283000" />
       <workItem from="1399100997115" duration="62000" />
       <workItem from="1399801338167" duration="15390000" />
-      <workItem from="1399873921424" duration="13399000" />
+      <workItem from="1399873921424" duration="14841000" />
+      <workItem from="1400154706384" duration="2037000" />
     </task>
+    <task id="LOCAL-00001" summary="Lisa values in place - only need to merge streams correctly">
+      <created>1399910804433</created>
+      <updated>1399910804433</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34134000" />
+    <option name="totallyTimeSpent" value="37613000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-4" width="1920" height="1084" extended-state="6" />
+    <frame x="0" y="24" width="1920" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -878,6 +869,8 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
+    <MESSAGE value="Lisa values in place - only need to merge streams correctly" />
+    <option name="LAST_COMMIT_MESSAGE" value="Lisa values in place - only need to merge streams correctly" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -891,20 +884,62 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
       <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2322" max-vertical-offset="3888">
+          <caret line="158" column="27" selection-start-line="158" selection-start-column="27" selection-end-line="158" selection-end-column="27" />
+          <folding>
+            <element signature="e#4659#4888#0" expanded="true" />
+            <element signature="e#4869#4870#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="666" max-vertical-offset="954">
+          <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-streaming_2.10/1.0.0-SNAPSHOT/spark-streaming_2.10-1.0.0-SNAPSHOT-sources.jar!/org/apache/spark/streaming/receiver/Receiver.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="5130">
+          <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="486" max-vertical-offset="1098">
+          <caret line="27" column="3" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/xml/simple_topology.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1764">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2263" max-vertical-offset="3186">
+          <caret line="164" column="29" selection-start-line="164" selection-start-column="29" selection-end-line="164" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
+      <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2340" max-vertical-offset="3492">
           <caret line="130" column="41" selection-start-line="130" selection-start-column="41" selection-end-line="130" selection-end-column="41" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#7287#8062#0" expanded="true" />
-            <element signature="e#7622#8036#0" expanded="true" />
-            <element signature="e#8017#8018#0" expanded="true" />
-            <element signature="e#8051#8052#0" expanded="true" />
-            <element signature="e#8112#8909#0" expanded="true" />
-            <element signature="e#8433#8883#0" expanded="true" />
-            <element signature="e#8864#8865#0" expanded="true" />
-            <element signature="e#8898#8899#0" expanded="true" />
-            <element signature="e#10238#10265#0" expanded="true" />
+            <element signature="e#4659#4888#0" expanded="true" />
+            <element signature="e#4869#4870#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -954,17 +989,8 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1548" max-vertical-offset="3600">
           <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="87" selection-end-column="28" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#7287#8062#0" expanded="true" />
-            <element signature="e#7622#8036#0" expanded="true" />
-            <element signature="e#8017#8018#0" expanded="true" />
-            <element signature="e#8051#8052#0" expanded="true" />
-            <element signature="e#8112#8909#0" expanded="true" />
-            <element signature="e#8433#8883#0" expanded="true" />
-            <element signature="e#8864#8865#0" expanded="true" />
-            <element signature="e#8898#8899#0" expanded="true" />
-            <element signature="e#10238#10265#0" expanded="true" />
+            <element signature="e#4659#4888#0" expanded="true" />
+            <element signature="e#4869#4870#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -990,17 +1016,8 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1375" max-vertical-offset="3744">
           <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="87" selection-end-column="28" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#7287#8062#0" expanded="true" />
-            <element signature="e#7622#8036#0" expanded="true" />
-            <element signature="e#8017#8018#0" expanded="true" />
-            <element signature="e#8051#8052#0" expanded="true" />
-            <element signature="e#8112#8909#0" expanded="true" />
-            <element signature="e#8433#8883#0" expanded="true" />
-            <element signature="e#8864#8865#0" expanded="true" />
-            <element signature="e#8898#8899#0" expanded="true" />
-            <element signature="e#10238#10265#0" expanded="true" />
+            <element signature="e#4659#4888#0" expanded="true" />
+            <element signature="e#4869#4870#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1071,28 +1088,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="756">
-          <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="666">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.65422076" vertical-offset="1919" max-vertical-offset="3690">
-          <caret line="157" column="0" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.59090906" vertical-offset="1490" max-vertical-offset="3294">
+          <caret line="149" column="35" selection-start-line="149" selection-start-column="35" selection-end-line="149" selection-end-column="35" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#7287#8062#0" expanded="true" />
-            <element signature="e#7622#8036#0" expanded="true" />
-            <element signature="e#8017#8018#0" expanded="true" />
-            <element signature="e#8051#8052#0" expanded="true" />
-            <element signature="e#8112#8909#0" expanded="true" />
-            <element signature="e#8433#8883#0" expanded="true" />
-            <element signature="e#8864#8865#0" expanded="true" />
-            <element signature="e#8898#8899#0" expanded="true" />
-            <element signature="e#10238#10265#0" expanded="true" />
+            <element signature="e#4659#4888#0" expanded="true" />
+            <element signature="e#4869#4870#0" expanded="true" />
           </folding>
         </state>
       </provider>
