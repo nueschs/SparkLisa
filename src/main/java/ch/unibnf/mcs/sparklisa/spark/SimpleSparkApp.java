@@ -156,18 +156,7 @@ public class SimpleSparkApp {
         jssc.awaitTermination();
     }
 
-//    private static JavaPairDStream<NodeType,Double> createNodeLisa(JavaPairDStream<NodeType, Double> node1LisaValues, JavaPairDStream<NodeType, Double>... neighbourVals ) {
-//        int k = neighbourVals.length;
-//
-//        JavaDStream<Double>
-//        for (int i = 0; i < k; i++){
-//
-//        }
-//
-//
-//
-//        return null;
-//    }
+
 
     private static JavaPairDStream<NodeType,Double> createLisaValues(JavaDStream<Tuple2<NodeType, Double>> nodeValues, JavaDStream<Double> runningMean, JavaDStream<Double> stdDev) {
         JavaPairDStream<NodeType, Double> meanDiff  = nodeValues.transformWith(runningMean, new Function3<JavaRDD<Tuple2<NodeType, Double>>, JavaRDD<Double>, Time, JavaPairRDD<NodeType, Double>>() {
