@@ -5,47 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="caf32e8b-446a-4b86-926b-764ed7118e64" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914796000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914796500.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914797000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914797500.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914798000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914798500.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914799000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914799500.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914800000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914800500.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402999845000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402999860000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000145000.bk.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000145000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000430000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000475000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000490000.bk.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000490000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000520000.bk.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000520000.crc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1402999845000" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1402999860000" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000145000.bk" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000145000" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000430000" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000475000" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000490000.bk" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000490000" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000520000.bk" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000520000" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/node_values_4.ods" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/MyTest.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/TopologyHelper.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/node_values_4.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.cache" afterPath="$PROJECT_DIR$/.cache" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" afterPath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SparkLisa.iml" afterPath="$PROJECT_DIR$/SparkLisa.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914796000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914796500.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914797000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914797500.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914798000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914798500.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914799000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914799500.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914800000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914800500.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402999845000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402999860000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000145000.bk.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000145000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000430000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000475000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000490000.bk.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000490000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000520000.bk.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000520000.crc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1402999845000" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1402999860000" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000145000" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000145000.bk" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000430000" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000475000" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000490000" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000490000.bk" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000520000" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000520000.bk" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="SparkLisa.iws" />
@@ -99,11 +88,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SensorSimulatorActorReceiver.scala" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="SensorSimulatorActorReceiver.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.19536424" vertical-offset="386" max-vertical-offset="1044">
-              <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="386" max-vertical-offset="1044">
+              <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".classpath" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.classpath">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.119205296" vertical-offset="0" max-vertical-offset="604">
+              <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -124,16 +133,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1800">
               <caret line="83" column="26" selection-start-line="83" selection-start-column="26" selection-end-line="83" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="binding.xjb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/xml/binding.xjb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="198">
-              <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -243,6 +242,7 @@
         <option value="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/MarshallerTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/TopologyHelper.java" />
         <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -302,166 +302,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="target" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="target" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="generated-sources" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xjc" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="target" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="generated-sources" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xjc" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="topology" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="target" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="generated-sources" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SparkLisa" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sparklisa" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1203,7 +1043,7 @@
       <workItem from="1402897419797" duration="39000" />
       <workItem from="1402897474222" duration="25214000" />
       <workItem from="1402930345963" duration="5953000" />
-      <workItem from="1402982565852" duration="18886000" />
+      <workItem from="1402982565852" duration="19043000" />
     </task>
     <task id="LOCAL-00001" summary="Lisa values in place - only need to merge streams correctly">
       <created>1399910804433</created>
@@ -1213,11 +1053,19 @@
       <created>1400162788039</created>
       <updated>1400162788039</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added Scala Simple App">
+      <created>1403016255139</created>
+      <updated>1403016255139</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Ignore .checkpoint">
+      <created>1403016320641</created>
+      <updated>1403016320641</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="116465000" />
+    <option name="totallyTimeSpent" value="116622000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-4" width="1920" height="1084" extended-state="6" />
@@ -1298,7 +1146,9 @@
     </option>
     <MESSAGE value="Lisa values in place - only need to merge streams correctly" />
     <MESSAGE value="All lisa values stream" />
-    <option name="LAST_COMMIT_MESSAGE" value="All lisa values stream" />
+    <MESSAGE value="Added Scala Simple App" />
+    <MESSAGE value="Ignore .checkpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ignore .checkpoint" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1330,52 +1180,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3744">
-          <caret line="144" column="57" selection-start-line="144" selection-start-column="57" selection-end-line="144" selection-end-column="57" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1696#1723#0" expanded="true" />
-            <element signature="e#3631#4363#0" expanded="true" />
-            <element signature="e#3959#4337#0" expanded="true" />
-            <element signature="e#4318#4319#0" expanded="true" />
-            <element signature="e#4352#4353#0" expanded="true" />
-            <element signature="e#4451#5354#0" expanded="true" />
-            <element signature="e#4749#4978#0" expanded="true" />
-            <element signature="e#4959#4960#0" expanded="true" />
-            <element signature="e#5013#5328#0" expanded="true" />
-            <element signature="e#5309#5310#0" expanded="true" />
-            <element signature="e#5343#5344#0" expanded="true" />
-            <element signature="e#5433#6223#0" expanded="true" />
-            <element signature="e#5692#5923#0" expanded="true" />
-            <element signature="e#5904#5905#0" expanded="true" />
-            <element signature="e#5960#6197#0" expanded="true" />
-            <element signature="e#6178#6179#0" expanded="true" />
-            <element signature="e#6212#6213#0" expanded="true" />
-            <element signature="e#7173#7954#0" expanded="true" />
-            <element signature="e#7514#7928#0" expanded="true" />
-            <element signature="e#7909#7910#0" expanded="true" />
-            <element signature="e#7943#7944#0" expanded="true" />
-            <element signature="e#8010#8813#0" expanded="true" />
-            <element signature="e#8337#8787#0" expanded="true" />
-            <element signature="e#8768#8769#0" expanded="true" />
-            <element signature="e#8802#8803#0" expanded="true" />
-            <element signature="e#8999#9246#0" expanded="true" />
-            <element signature="e#9235#9236#0" expanded="true" />
-            <element signature="e#9321#9495#0" expanded="true" />
-            <element signature="e#9484#9485#0" expanded="true" />
-            <element signature="e#9528#9739#0" expanded="true" />
-            <element signature="e#9728#9729#0" expanded="true" />
-            <element signature="e#10148#10175#0" expanded="true" />
-            <element signature="e#10341#10342#0" expanded="true" />
-            <element signature="e#10381#10382#0" expanded="true" />
-            <element signature="e#10472#10473#0" expanded="true" />
-            <element signature="e#10546#10547#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="378" max-vertical-offset="864">
@@ -1980,8 +1784,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19536424" vertical-offset="386" max-vertical-offset="1044">
-          <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="386" max-vertical-offset="1044">
+          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.classpath">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.119205296" vertical-offset="0" max-vertical-offset="604">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>
