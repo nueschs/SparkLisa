@@ -1,27 +1,21 @@
 package ch.unibnf.mcs.sparklisa.receiver
 
-import akka.util.ByteString
 import akka.actor.Actor
-import org.apache.spark.streaming.receivers.Receiver
-import akka.actor.IOManager
-import akka.actor.IO
 import scala.util.Random
-import java.io.InputStream
-import ch.unibnf.mcs.sparklisa.xml.XmlParser
-import scala.io.Source._
 import javax.xml.bind.JAXBContext
 import scala.collection.JavaConversions._
 import ch.unibnf.mcs.sparklisa.topology.Topology
 import ch.unibnf.mcs.sparklisa.topology.NodeType
+import org.apache.spark.streaming.receiver.ActorHelper
 
-class TopologySimulatorActorReceiver extends Actor with Receiver {
+class TopologySimulatorActorReceiver extends Actor with ActorHelper {
 
   private final var topology: Topology = readXml()
   private final val random = new Random()
 
   override def preStart = init()
 
-  case class SensonSimulator
+  case class SensonSimulator()
 
   def receive = {
     case _: SensonSimulator => pushNodeBlocks()
@@ -33,7 +27,7 @@ class TopologySimulatorActorReceiver extends Actor with Receiver {
     for (station <- topology.getBasestation()) {
       for (xmlNode <- station.getNode()) {
         var node: NodeType = xmlNode
-        pushBlock((node, random.nextGaussian()))
+        store((node, random.nextGaussian()))
       }
     }
 

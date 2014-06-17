@@ -1,28 +1,20 @@
 package ch.unibnf.mcs.sparklisa.receiver
 
-import akka.util.ByteString
 import akka.actor.Actor
-import org.apache.spark.streaming.receivers.Receiver
-import akka.actor.IOManager
-import akka.actor.IO
 import scala.util.Random
-import java.io.InputStream
-import ch.unibnf.mcs.sparklisa.xml.XmlParser
-import scala.io.Source._
-import javax.xml.bind.JAXBContext
-import scala.collection.JavaConversions._
 import ch.unibnf.mcs.sparklisa.topology.NodeType
 import scala.io.Source
+import org.apache.spark.streaming.receiver.ActorHelper
 
-class SensorSimulatorActorReceiver(node: NodeType) extends Actor with Receiver {
+class SensorSimulatorActorReceiver(node: NodeType) extends Actor with ActorHelper {
 
   private final val sensorNode: NodeType = node
 
   private final val random = new Random()
 
-  private final val FILE_NAME = "/node_values_4.txt"
+  val FILE_NAME = "/node_values_4.txt"
 
-  private var values : Array[Double] = Array[Double]();
+  var values : Array[Double] = Array[Double]();
 
   private var count : Int = 0
 
@@ -36,14 +28,13 @@ class SensorSimulatorActorReceiver(node: NodeType) extends Actor with Receiver {
   }
 
   def pushNodeBlocks() = {
-      Thread.sleep(50L);
       if (count < values.length){
-        pushBlock((sensorNode, values(count)))
+        store[(NodeType, Double)]((sensorNode, values(count)))
         self ! SensorSimulator()
         this.count += 1
       }
-//      pushBlock((sensorNode, random.nextGaussian()))
-      //    pushBlock((sensorNode, 1.0))
+//      store[(NodeType, Double)]((sensorNode, random.nextGaussian()))
+      self ! SensorSimulator()
   }
 
   private def init() = {

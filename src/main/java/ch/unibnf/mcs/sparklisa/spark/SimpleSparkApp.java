@@ -1,29 +1,29 @@
 package ch.unibnf.mcs.sparklisa.spark;
 
-import java.io.InputStream;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
+import akka.actor.Props;
+import akka.japi.Creator;
+import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver;
+import ch.unibnf.mcs.sparklisa.topology.NodeType;
+import ch.unibnf.mcs.sparklisa.topology.Topology;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaRDDLike;
-import org.apache.spark.api.java.function.*;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.Function3;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
-
 import scala.Tuple2;
-import akka.actor.Props;
-import akka.japi.Creator;
-import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver;
-import ch.unibnf.mcs.sparklisa.topology.NodeType;
-import ch.unibnf.mcs.sparklisa.topology.Topology;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
 
 public class SimpleSparkApp {
 
@@ -36,9 +36,8 @@ public class SimpleSparkApp {
         // spark://saight02:7077
         SparkConf conf = new SparkConf();
         conf.setAppName("Simple Streaming App").setMaster("local")
-                .setSparkHome("/home/snoooze/spark/spark-0.9.0-incubating-bin-hadoop2")
+                .setSparkHome("/home/snoooze/spark/spark-1.0.0-bin-hadoop2")
                 .setJars(new String[]{"target/SparkLisa-0.0.1-SNAPSHOT.jar"});
-        // conf.s
 
         return conf;
     }
@@ -47,8 +46,8 @@ public class SimpleSparkApp {
     public static void main(String[] args) throws JAXBException {
 
         SparkConf conf = createConf();
-        JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(10000L));
-//        jssc.checkpoint("/home/snoooze/scala_ws/SparkLisa/target/checkpoint");
+        JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000L));
+        jssc.checkpoint("/home/snoooze/scala_ws/SparkLisa/target/checkpoint");
 
         Topology topology = readXml();
 
@@ -81,8 +80,8 @@ public class SimpleSparkApp {
         JavaDStream<Tuple2<NodeType, Double>> allValues = node1Values.union(node2Values).union(node3Values).union(node4Values);
 
         JavaDStream<Long> runningCount = allValues.count();
-        JavaDStream<Double> runningSum = createRunningSum(allValues);
 
+        JavaDStream<Double> runningSum = createRunningSum(allValues);
 
         JavaDStream<Double> runningMean = runningCount.transformWith(runningSum, new Function3<JavaRDD<Long>, JavaRDD<Double>, Time, JavaRDD<Double>>() {
             @Override
@@ -98,6 +97,7 @@ public class SimpleSparkApp {
                 });
             }
         });
+
 
 
         final JavaDStream<Double> meanDiff = allValues.transformWith(runningMean, new Function3<JavaRDD<Tuple2<NodeType, Double>>, JavaRDD<Double>, Time, JavaRDD<Double>>() {
@@ -120,6 +120,7 @@ public class SimpleSparkApp {
             }
         });
 
+
         JavaDStream<Double> stdDev = meanDiff.transformWith(runningCount, new Function3<JavaRDD<Double>, JavaRDD<Long>, Time, JavaRDD<Double>>() {
             @Override
             public JavaRDD<Double> call(JavaRDD<Double> diff, JavaRDD<Long> count, Time time) throws Exception {
@@ -139,16 +140,13 @@ public class SimpleSparkApp {
             }
         });
 
+
         JavaPairDStream<NodeType, Double> node1LisaValues = createLisaValues(node1Values, runningMean, stdDev);
         JavaPairDStream<NodeType, Double> node2LisaValues = createLisaValues(node2Values, runningMean, stdDev);
         JavaPairDStream<NodeType, Double> node3LisaValues = createLisaValues(node3Values, runningMean, stdDev);
         JavaPairDStream<NodeType, Double> node4LisaValues = createLisaValues(node4Values, runningMean, stdDev);
 
         JavaPairDStream<NodeType, Double> allNodesLisaValues = node1LisaValues.union(node2LisaValues).union(node3LisaValues).union(node4LisaValues);
-
-
-        allNodesLisaValues.print();
-
 
 
 
@@ -159,10 +157,10 @@ public class SimpleSparkApp {
 
 
     private static JavaPairDStream<NodeType,Double> createLisaValues(JavaDStream<Tuple2<NodeType, Double>> nodeValues, JavaDStream<Double> runningMean, JavaDStream<Double> stdDev) {
-        JavaPairDStream<NodeType, Double> meanDiff  = nodeValues.transformWith(runningMean, new Function3<JavaRDD<Tuple2<NodeType, Double>>, JavaRDD<Double>, Time, JavaPairRDD<NodeType, Double>>() {
+        JavaPairDStream<NodeType, Double> meanDiff  = nodeValues.transformWithToPair(runningMean, new Function3<JavaRDD<Tuple2<NodeType, Double>>, JavaRDD<Double>, Time, JavaPairRDD<NodeType, Double>>() {
             @Override
             public JavaPairRDD<NodeType, Double> call(final JavaRDD<Tuple2<NodeType, Double>> nodeVal, JavaRDD<Double> mean, Time time) throws Exception {
-                return nodeVal.cartesian(mean).map(new PairFunction<Tuple2<Tuple2<NodeType, Double>, Double>, NodeType, Double>() {
+                return nodeVal.cartesian(mean).mapToPair(new PairFunction<Tuple2<Tuple2<NodeType, Double>, Double>, NodeType, Double>() {
                     @Override
                     public Tuple2<NodeType, Double> call(Tuple2<Tuple2<NodeType, Double>, Double> cart) throws Exception {
                         Double meanDiff = cart._1()._2() - cart._2();
@@ -172,10 +170,10 @@ public class SimpleSparkApp {
             }
         });
 
-        return meanDiff.transformWith(stdDev, new Function3<JavaPairRDD<NodeType, Double>, JavaRDD<Double>, Time, JavaPairRDD<NodeType, Double>>() {
+        return meanDiff.transformWithToPair(stdDev, new Function3<JavaPairRDD<NodeType, Double>, JavaRDD<Double>, Time, JavaPairRDD<NodeType, Double>>() {
             @Override
             public JavaPairRDD<NodeType, Double> call(JavaPairRDD<NodeType, Double> nodeDiff, JavaRDD<Double> dev, Time time) throws Exception {
-                return nodeDiff.cartesian(dev).map(new PairFunction<Tuple2<Tuple2<NodeType, Double>, Double>, NodeType, Double>() {
+                return nodeDiff.cartesian(dev).mapToPair(new PairFunction<Tuple2<Tuple2<NodeType, Double>, Double>, NodeType, Double>() {
                     @Override
                     public Tuple2<NodeType, Double> call(Tuple2<Tuple2<NodeType, Double>, Double> val) throws Exception {
                         NodeType node = val._1()._1();
@@ -189,7 +187,7 @@ public class SimpleSparkApp {
 
 
     private static JavaDStream<Double> createRunningSum(JavaDStream<Tuple2<NodeType, Double>> allValues){
-        JavaPairDStream<String, Double> mapped = allValues.map(new PairFunction<Tuple2<NodeType, Double>, String, Double>() {
+        JavaPairDStream<String, Double> mapped = allValues.mapToPair(new PairFunction<Tuple2<NodeType, Double>, String, Double>() {
             @Override
             public Tuple2<String, Double> call(Tuple2<NodeType, Double> value) {
                 return new Tuple2<>(SUM_KEY, value._2());

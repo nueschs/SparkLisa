@@ -5,10 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="caf32e8b-446a-4b86-926b-764ed7118e64" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914796000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914796500.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914797000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914797500.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914798000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914798500.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914799000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914799500.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914800000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402914800500.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402999845000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1402999860000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000145000.bk.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000145000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000430000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000475000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000490000.bk.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000490000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000520000.bk.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/.checkpoint-1403000520000.crc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1402999845000" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1402999860000" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000145000.bk" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000145000" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000430000" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000475000" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000490000.bk" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000490000" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000520000.bk" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.checkpoint/checkpoint-1403000520000" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/node_values_4.ods" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/MyTest.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/TopologyHelper.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/node_values_4.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.cache" afterPath="$PROJECT_DIR$/.cache" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" afterPath="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SparkLisa.iml" afterPath="$PROJECT_DIR$/SparkLisa.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala" afterPath="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="SparkLisa.iws" />
@@ -26,83 +63,148 @@
   <component name="DaemonCodeAnalyzer">
     <disable_hints />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="simple_topology.xml" pinned="false" current="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/src/main/resources/xml/simple_topology.xml">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state vertical-scroll-proportion="0.1" vertical-offset="844" max-vertical-offset="1764">
+                    <caret line="52" column="32" selection-start-line="52" selection-start-column="32" selection-end-line="52" selection-end-column="32" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="SparkLisa" />
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SimpleSparkApp.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
+      <file leaf-file-name="ScalaSimpleSparkApp.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.70050764" vertical-offset="270" max-vertical-offset="3924">
-              <caret line="61" column="33" selection-start-line="61" selection-start-column="33" selection-end-line="61" selection-end-column="33" />
-              <folding>
-                <element signature="e#1604#1631#0" expanded="true" />
-                <element signature="e#3542#4274#0" expanded="true" />
-                <element signature="e#3870#4248#0" expanded="true" />
-                <element signature="e#4229#4230#0" expanded="true" />
-                <element signature="e#4263#4264#0" expanded="true" />
-                <element signature="e#4361#5264#0" expanded="true" />
-                <element signature="e#4659#4888#0" expanded="true" />
-                <element signature="e#4869#4870#0" expanded="true" />
-                <element signature="e#4923#5238#0" expanded="true" />
-                <element signature="e#5219#5220#0" expanded="true" />
-                <element signature="e#5253#5254#0" expanded="true" />
-                <element signature="e#5342#6132#0" expanded="true" />
-                <element signature="e#5601#5832#0" expanded="true" />
-                <element signature="e#5813#5814#0" expanded="true" />
-                <element signature="e#5869#6106#0" expanded="true" />
-                <element signature="e#6087#6088#0" expanded="true" />
-                <element signature="e#6121#6122#0" expanded="true" />
-                <element signature="e#7114#7889#0" expanded="true" />
-                <element signature="e#7449#7863#0" expanded="true" />
-                <element signature="e#7844#7845#0" expanded="true" />
-                <element signature="e#7878#7879#0" expanded="true" />
-                <element signature="e#7939#8736#0" expanded="true" />
-                <element signature="e#8260#8710#0" expanded="true" />
-                <element signature="e#8691#8692#0" expanded="true" />
-                <element signature="e#8725#8726#0" expanded="true" />
-                <element signature="e#8916#9163#0" expanded="true" />
-                <element signature="e#9152#9153#0" expanded="true" />
-                <element signature="e#9238#9412#0" expanded="true" />
-                <element signature="e#9401#9402#0" expanded="true" />
-                <element signature="e#9445#9656#0" expanded="true" />
-                <element signature="e#9645#9646#0" expanded="true" />
-                <element signature="e#10065#10092#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.0" vertical-offset="62" max-vertical-offset="2142">
+              <caret line="28" column="60" selection-start-line="28" selection-start-column="60" selection-end-line="28" selection-end-column="60" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SensorSimulatorActorReceiver.scala" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="SensorSimulatorActorReceiver.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="339" max-vertical-offset="1278">
-              <caret line="42" column="23" selection-start-line="42" selection-start-column="23" selection-end-line="42" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.19536424" vertical-offset="386" max-vertical-offset="1044">
+              <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sensor_topology.xsd" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/xml/sensor_topology.xsd">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="188" max-vertical-offset="1116">
+              <caret line="24" column="59" selection-start-line="24" selection-start-column="59" selection-end-line="24" selection-end-column="59" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BasestationType.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/target/generated-sources/xjc/ch/unibnf/mcs/sparklisa/topology/BasestationType.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1800">
+              <caret line="83" column="26" selection-start-line="83" selection-start-column="26" selection-end-line="83" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="binding.xjb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/xml/binding.xjb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="198">
+              <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Topology.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/target/generated-sources/xjc/ch/unibnf/mcs/sparklisa/topology/Topology.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="432" max-vertical-offset="1908">
+              <caret line="49" column="21" selection-start-line="49" selection-start-column="21" selection-end-line="49" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TopologyHelper.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/TopologyHelper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2700">
+              <caret line="21" column="27" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
               <folding>
-                <element signature="e#42#69#0" expanded="true" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyTest.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/MyTest.scala">
+      <file leaf-file-name="SimpleSparkApp.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
-              <caret line="8" column="31" selection-start-line="8" selection-start-column="31" selection-end-line="8" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Receiver.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-streaming_2.10/1.0.0-SNAPSHOT/spark-streaming_2.10-1.0.0-SNAPSHOT-sources.jar!/org/apache/spark/streaming/receiver/Receiver.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1350" max-vertical-offset="4752">
-              <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
-              <folding />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3081" max-vertical-offset="4374">
+              <caret line="210" column="0" selection-start-line="210" selection-start-column="0" selection-end-line="210" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1696#1723#0" expanded="true" />
+                <element signature="e#3631#4363#0" expanded="true" />
+                <element signature="e#3959#4337#0" expanded="true" />
+                <element signature="e#4318#4319#0" expanded="true" />
+                <element signature="e#4352#4353#0" expanded="true" />
+                <element signature="e#4451#5354#0" expanded="true" />
+                <element signature="e#4749#4978#0" expanded="true" />
+                <element signature="e#4959#4960#0" expanded="true" />
+                <element signature="e#5013#5328#0" expanded="true" />
+                <element signature="e#5309#5310#0" expanded="true" />
+                <element signature="e#5343#5344#0" expanded="true" />
+                <element signature="e#5433#6223#0" expanded="true" />
+                <element signature="e#5692#5923#0" expanded="true" />
+                <element signature="e#5904#5905#0" expanded="true" />
+                <element signature="e#5960#6197#0" expanded="true" />
+                <element signature="e#6178#6179#0" expanded="true" />
+                <element signature="e#6212#6213#0" expanded="true" />
+                <element signature="e#7173#7954#0" expanded="true" />
+                <element signature="e#7514#7928#0" expanded="true" />
+                <element signature="e#7909#7910#0" expanded="true" />
+                <element signature="e#7943#7944#0" expanded="true" />
+                <element signature="e#8010#8813#0" expanded="true" />
+                <element signature="e#8337#8787#0" expanded="true" />
+                <element signature="e#8768#8769#0" expanded="true" />
+                <element signature="e#8802#8803#0" expanded="true" />
+                <element signature="e#8999#9246#0" expanded="true" />
+                <element signature="e#9235#9236#0" expanded="true" />
+                <element signature="e#9321#9495#0" expanded="true" />
+                <element signature="e#9484#9485#0" expanded="true" />
+                <element signature="e#9528#9739#0" expanded="true" />
+                <element signature="e#9728#9729#0" expanded="true" />
+                <element signature="e#10148#10175#0" expanded="true" />
+                <element signature="e#10341#10342#0" expanded="true" />
+                <element signature="e#10381#10382#0" expanded="true" />
+                <element signature="e#10472#10473#0" expanded="true" />
+                <element signature="e#10546#10547#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -110,28 +212,8 @@
       <file leaf-file-name="TopologySimulatorActorReceiver.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="62" max-vertical-offset="882">
-              <caret line="27" column="3" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="simple_topology.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/xml/simple_topology.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="890" max-vertical-offset="1764">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2263" max-vertical-offset="3186">
-              <caret line="164" column="29" selection-start-line="164" selection-start-column="29" selection-end-line="164" selection-end-column="29" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="882">
+              <caret line="28" column="26" selection-start-line="28" selection-start-column="26" selection-end-line="28" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -150,11 +232,17 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" />
         <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/Test.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/MyTest.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/VerySimpleTest.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/resources/xml/binding.xjb" />
+        <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala" />
+        <option value="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/MarshallerTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/TopologyHelper.java" />
+        <option value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala" />
       </list>
     </option>
   </component>
@@ -166,9 +254,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="24" />
+    <option name="y" value="-4" />
     <option name="width" value="1920" />
-    <option name="height" value="1056" />
+    <option name="height" value="1084" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -198,6 +286,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -230,9 +319,154 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="target" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="generated-sources" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xjc" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="target" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="generated-sources" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xjc" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="topology" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="target" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="generated-sources" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkLisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sparklisa" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -255,44 +489,34 @@
     <property name="extract.method.default.visibility" value="private" />
     <property name="FullScreen" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/MyTest.scala" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Facets" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="LayoutCode.rearrangeEntriesScala" value="false" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="221" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="249" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="256" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder2" value="2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="1151" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder3" value="3" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="229" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="250" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="258" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1153" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
+    <property name="LayoutCode.rearrangeEntriesJava" value="false" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings />
     </option>
   </component>
-  <component name="RunManager" selected="Application.SimpleSparkApp">
-    <configuration default="false" name="SimpleSparkApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="ch.unibnf.mcs.sparklisa.spark.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="ch.unibnf.mcs.sparklisa.spark.SimpleSparkApp" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="SparkLisa" />
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Application.ScalaSimpleSparkApp">
     <configuration default="false" name="Scala Console" type="ScalaScriptConsoleRunConfiguration" factoryName="Scala Console" temporary="true">
       <module name="SparkLisa" />
       <setting name="vmparams4" value="-Djline.terminal=NONE" />
@@ -327,6 +551,78 @@
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="ScalaSimpleSparkApp" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="ch.unibnf.mcs.sparklisa.app.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="ch.unibnf.mcs.sparklisa.app.ScalaSimpleSparkApp" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="SparkLisa" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="VerySimpleTest" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="ch.unibnf.mcs.sparklisa.app.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="ch.unibnf.mcs.sparklisa.app.VerySimpleTest" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="SparkLisa" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TopologyHelper" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="ch.unibnf.mcs.sparklisa.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="ch.unibnf.mcs.sparklisa.TopologyHelper" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="SparkLisa" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -723,6 +1019,21 @@
       <option name="trusted" value="true" />
       <method />
     </configuration>
+    <configuration default="true" type="uTestRunConfiguration" factoryName="utest">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <extension name="scalaCoverage" />
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <method />
+    </configuration>
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -815,19 +1126,52 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <list size="6">
-      <item index="0" class="java.lang.String" itemvalue="Application.SimpleSparkApp" />
-      <item index="1" class="java.lang.String" itemvalue="Maven.clean install" />
-      <item index="2" class="java.lang.String" itemvalue="Scala Console.Scala Console" />
-      <item index="3" class="java.lang.String" itemvalue="Scala Script.scala_test" />
-      <item index="4" class="java.lang.String" itemvalue="ScalaTest.Unnamed" />
+    <configuration default="false" name="SimpleSparkApp" type="Application" factoryName="Application" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="ch.unibnf.mcs.sparklisa.spark.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="ch.unibnf.mcs.sparklisa.spark.SimpleSparkApp" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="SparkLisa" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <list size="9">
+      <item index="0" class="java.lang.String" itemvalue="Maven.clean install" />
+      <item index="1" class="java.lang.String" itemvalue="Scala Script.scala_test" />
+      <item index="2" class="java.lang.String" itemvalue="ScalaTest.Unnamed" />
+      <item index="3" class="java.lang.String" itemvalue="Application.SimpleSparkApp" />
+      <item index="4" class="java.lang.String" itemvalue="Scala Console.Scala Console" />
       <item index="5" class="java.lang.String" itemvalue="Application.MyTest" />
+      <item index="6" class="java.lang.String" itemvalue="Application.ScalaSimpleSparkApp" />
+      <item index="7" class="java.lang.String" itemvalue="Application.VerySimpleTest" />
+      <item index="8" class="java.lang.String" itemvalue="Application.TopologyHelper" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Application.SimpleSparkApp" />
-        <item index="1" class="java.lang.String" itemvalue="Application.MyTest" />
-        <item index="2" class="java.lang.String" itemvalue="Scala Console.Scala Console" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Application.ScalaSimpleSparkApp" />
+        <item index="1" class="java.lang.String" itemvalue="Application.TopologyHelper" />
+        <item index="2" class="java.lang.String" itemvalue="Application.VerySimpleTest" />
+        <item index="3" class="java.lang.String" itemvalue="Application.MyTest" />
+        <item index="4" class="java.lang.String" itemvalue="Scala Console.Scala Console" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -852,6 +1196,14 @@
       <workItem from="1400321369827" duration="109000" />
       <workItem from="1400478607431" duration="587000" />
       <workItem from="1400488795697" duration="11972000" />
+      <workItem from="1400522322531" duration="1965000" />
+      <workItem from="1400563041512" duration="517000" />
+      <workItem from="1400582123663" duration="2479000" />
+      <workItem from="1402744011198" duration="9292000" />
+      <workItem from="1402897419797" duration="39000" />
+      <workItem from="1402897474222" duration="25214000" />
+      <workItem from="1402930345963" duration="5953000" />
+      <workItem from="1402982565852" duration="18886000" />
     </task>
     <task id="LOCAL-00001" summary="Lisa values in place - only need to merge streams correctly">
       <created>1399910804433</created>
@@ -865,11 +1217,11 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52120000" />
+    <option name="totallyTimeSpent" value="116465000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="24" width="1920" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="-4" width="1920" height="1084" extended-state="6" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -883,22 +1235,51 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960325" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33062056" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32960325" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39979655" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32960325" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39979655" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33062056" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39979655" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -921,7 +1302,27 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java</url>
+          <line>47</line>
+          <properties />
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala</url>
+          <line>97</line>
+          <properties />
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala</url>
+          <line>88</line>
+          <properties />
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="17" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -932,123 +1333,45 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3744">
-          <caret line="161" column="84" selection-start-line="161" selection-start-column="84" selection-end-line="161" selection-end-column="84" />
-          <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="378" max-vertical-offset="864">
-          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-streaming_2.10/1.0.0-SNAPSHOT/spark-streaming_2.10-1.0.0-SNAPSHOT-sources.jar!/org/apache/spark/streaming/receiver/Receiver.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="5130">
-          <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="486" max-vertical-offset="1098">
-          <caret line="27" column="3" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/xml/simple_topology.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1764">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2263" max-vertical-offset="3186">
-          <caret line="164" column="29" selection-start-line="164" selection-start-column="29" selection-end-line="164" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3744">
           <caret line="144" column="57" selection-start-line="144" selection-start-column="57" selection-end-line="144" selection-end-column="57" />
           <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1696#1723#0" expanded="true" />
+            <element signature="e#3631#4363#0" expanded="true" />
+            <element signature="e#3959#4337#0" expanded="true" />
+            <element signature="e#4318#4319#0" expanded="true" />
+            <element signature="e#4352#4353#0" expanded="true" />
+            <element signature="e#4451#5354#0" expanded="true" />
+            <element signature="e#4749#4978#0" expanded="true" />
+            <element signature="e#4959#4960#0" expanded="true" />
+            <element signature="e#5013#5328#0" expanded="true" />
+            <element signature="e#5309#5310#0" expanded="true" />
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5433#6223#0" expanded="true" />
+            <element signature="e#5692#5923#0" expanded="true" />
+            <element signature="e#5904#5905#0" expanded="true" />
+            <element signature="e#5960#6197#0" expanded="true" />
+            <element signature="e#6178#6179#0" expanded="true" />
+            <element signature="e#6212#6213#0" expanded="true" />
+            <element signature="e#7173#7954#0" expanded="true" />
+            <element signature="e#7514#7928#0" expanded="true" />
+            <element signature="e#7909#7910#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+            <element signature="e#8010#8813#0" expanded="true" />
+            <element signature="e#8337#8787#0" expanded="true" />
+            <element signature="e#8768#8769#0" expanded="true" />
+            <element signature="e#8802#8803#0" expanded="true" />
+            <element signature="e#8999#9246#0" expanded="true" />
+            <element signature="e#9235#9236#0" expanded="true" />
+            <element signature="e#9321#9495#0" expanded="true" />
+            <element signature="e#9484#9485#0" expanded="true" />
+            <element signature="e#9528#9739#0" expanded="true" />
+            <element signature="e#9728#9729#0" expanded="true" />
+            <element signature="e#10148#10175#0" expanded="true" />
+            <element signature="e#10341#10342#0" expanded="true" />
+            <element signature="e#10381#10382#0" expanded="true" />
+            <element signature="e#10472#10473#0" expanded="true" />
+            <element signature="e#10546#10547#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1057,9 +1380,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="378" max-vertical-offset="864">
           <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1067,7 +1388,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="5130">
           <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1100,38 +1420,43 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="2106" max-vertical-offset="3780">
           <caret line="144" column="57" selection-start-line="144" selection-start-column="57" selection-end-line="144" selection-end-column="57" />
           <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1696#1723#0" expanded="true" />
+            <element signature="e#3631#4363#0" expanded="true" />
+            <element signature="e#3959#4337#0" expanded="true" />
+            <element signature="e#4318#4319#0" expanded="true" />
+            <element signature="e#4352#4353#0" expanded="true" />
+            <element signature="e#4451#5354#0" expanded="true" />
+            <element signature="e#4749#4978#0" expanded="true" />
+            <element signature="e#4959#4960#0" expanded="true" />
+            <element signature="e#5013#5328#0" expanded="true" />
+            <element signature="e#5309#5310#0" expanded="true" />
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5433#6223#0" expanded="true" />
+            <element signature="e#5692#5923#0" expanded="true" />
+            <element signature="e#5904#5905#0" expanded="true" />
+            <element signature="e#5960#6197#0" expanded="true" />
+            <element signature="e#6178#6179#0" expanded="true" />
+            <element signature="e#6212#6213#0" expanded="true" />
+            <element signature="e#7173#7954#0" expanded="true" />
+            <element signature="e#7514#7928#0" expanded="true" />
+            <element signature="e#7909#7910#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+            <element signature="e#8010#8813#0" expanded="true" />
+            <element signature="e#8337#8787#0" expanded="true" />
+            <element signature="e#8768#8769#0" expanded="true" />
+            <element signature="e#8802#8803#0" expanded="true" />
+            <element signature="e#8999#9246#0" expanded="true" />
+            <element signature="e#9235#9236#0" expanded="true" />
+            <element signature="e#9321#9495#0" expanded="true" />
+            <element signature="e#9484#9485#0" expanded="true" />
+            <element signature="e#9528#9739#0" expanded="true" />
+            <element signature="e#9728#9729#0" expanded="true" />
+            <element signature="e#10148#10175#0" expanded="true" />
+            <element signature="e#10341#10342#0" expanded="true" />
+            <element signature="e#10381#10382#0" expanded="true" />
+            <element signature="e#10472#10473#0" expanded="true" />
+            <element signature="e#10546#10547#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1140,9 +1465,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="378" max-vertical-offset="864">
           <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1150,7 +1473,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="5130">
           <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1183,38 +1505,43 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="2322" max-vertical-offset="3888">
           <caret line="158" column="27" selection-start-line="158" selection-start-column="27" selection-end-line="158" selection-end-column="27" />
           <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1696#1723#0" expanded="true" />
+            <element signature="e#3631#4363#0" expanded="true" />
+            <element signature="e#3959#4337#0" expanded="true" />
+            <element signature="e#4318#4319#0" expanded="true" />
+            <element signature="e#4352#4353#0" expanded="true" />
+            <element signature="e#4451#5354#0" expanded="true" />
+            <element signature="e#4749#4978#0" expanded="true" />
+            <element signature="e#4959#4960#0" expanded="true" />
+            <element signature="e#5013#5328#0" expanded="true" />
+            <element signature="e#5309#5310#0" expanded="true" />
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5433#6223#0" expanded="true" />
+            <element signature="e#5692#5923#0" expanded="true" />
+            <element signature="e#5904#5905#0" expanded="true" />
+            <element signature="e#5960#6197#0" expanded="true" />
+            <element signature="e#6178#6179#0" expanded="true" />
+            <element signature="e#6212#6213#0" expanded="true" />
+            <element signature="e#7173#7954#0" expanded="true" />
+            <element signature="e#7514#7928#0" expanded="true" />
+            <element signature="e#7909#7910#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+            <element signature="e#8010#8813#0" expanded="true" />
+            <element signature="e#8337#8787#0" expanded="true" />
+            <element signature="e#8768#8769#0" expanded="true" />
+            <element signature="e#8802#8803#0" expanded="true" />
+            <element signature="e#8999#9246#0" expanded="true" />
+            <element signature="e#9235#9236#0" expanded="true" />
+            <element signature="e#9321#9495#0" expanded="true" />
+            <element signature="e#9484#9485#0" expanded="true" />
+            <element signature="e#9528#9739#0" expanded="true" />
+            <element signature="e#9728#9729#0" expanded="true" />
+            <element signature="e#10148#10175#0" expanded="true" />
+            <element signature="e#10341#10342#0" expanded="true" />
+            <element signature="e#10381#10382#0" expanded="true" />
+            <element signature="e#10472#10473#0" expanded="true" />
+            <element signature="e#10546#10547#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1223,9 +1550,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="666" max-vertical-offset="954">
           <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1233,7 +1558,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="5130">
           <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1266,38 +1590,43 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="2340" max-vertical-offset="3492">
           <caret line="130" column="41" selection-start-line="130" selection-start-column="41" selection-end-line="130" selection-end-column="41" />
           <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1696#1723#0" expanded="true" />
+            <element signature="e#3631#4363#0" expanded="true" />
+            <element signature="e#3959#4337#0" expanded="true" />
+            <element signature="e#4318#4319#0" expanded="true" />
+            <element signature="e#4352#4353#0" expanded="true" />
+            <element signature="e#4451#5354#0" expanded="true" />
+            <element signature="e#4749#4978#0" expanded="true" />
+            <element signature="e#4959#4960#0" expanded="true" />
+            <element signature="e#5013#5328#0" expanded="true" />
+            <element signature="e#5309#5310#0" expanded="true" />
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5433#6223#0" expanded="true" />
+            <element signature="e#5692#5923#0" expanded="true" />
+            <element signature="e#5904#5905#0" expanded="true" />
+            <element signature="e#5960#6197#0" expanded="true" />
+            <element signature="e#6178#6179#0" expanded="true" />
+            <element signature="e#6212#6213#0" expanded="true" />
+            <element signature="e#7173#7954#0" expanded="true" />
+            <element signature="e#7514#7928#0" expanded="true" />
+            <element signature="e#7909#7910#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+            <element signature="e#8010#8813#0" expanded="true" />
+            <element signature="e#8337#8787#0" expanded="true" />
+            <element signature="e#8768#8769#0" expanded="true" />
+            <element signature="e#8802#8803#0" expanded="true" />
+            <element signature="e#8999#9246#0" expanded="true" />
+            <element signature="e#9235#9236#0" expanded="true" />
+            <element signature="e#9321#9495#0" expanded="true" />
+            <element signature="e#9484#9485#0" expanded="true" />
+            <element signature="e#9528#9739#0" expanded="true" />
+            <element signature="e#9728#9729#0" expanded="true" />
+            <element signature="e#10148#10175#0" expanded="true" />
+            <element signature="e#10341#10342#0" expanded="true" />
+            <element signature="e#10381#10382#0" expanded="true" />
+            <element signature="e#10472#10473#0" expanded="true" />
+            <element signature="e#10546#10547#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1306,9 +1635,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="217" max-vertical-offset="846">
           <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1316,7 +1643,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="5130">
           <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1349,38 +1675,43 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1548" max-vertical-offset="3600">
           <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="87" selection-end-column="28" />
           <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1696#1723#0" expanded="true" />
+            <element signature="e#3631#4363#0" expanded="true" />
+            <element signature="e#3959#4337#0" expanded="true" />
+            <element signature="e#4318#4319#0" expanded="true" />
+            <element signature="e#4352#4353#0" expanded="true" />
+            <element signature="e#4451#5354#0" expanded="true" />
+            <element signature="e#4749#4978#0" expanded="true" />
+            <element signature="e#4959#4960#0" expanded="true" />
+            <element signature="e#5013#5328#0" expanded="true" />
+            <element signature="e#5309#5310#0" expanded="true" />
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5433#6223#0" expanded="true" />
+            <element signature="e#5692#5923#0" expanded="true" />
+            <element signature="e#5904#5905#0" expanded="true" />
+            <element signature="e#5960#6197#0" expanded="true" />
+            <element signature="e#6178#6179#0" expanded="true" />
+            <element signature="e#6212#6213#0" expanded="true" />
+            <element signature="e#7173#7954#0" expanded="true" />
+            <element signature="e#7514#7928#0" expanded="true" />
+            <element signature="e#7909#7910#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+            <element signature="e#8010#8813#0" expanded="true" />
+            <element signature="e#8337#8787#0" expanded="true" />
+            <element signature="e#8768#8769#0" expanded="true" />
+            <element signature="e#8802#8803#0" expanded="true" />
+            <element signature="e#8999#9246#0" expanded="true" />
+            <element signature="e#9235#9236#0" expanded="true" />
+            <element signature="e#9321#9495#0" expanded="true" />
+            <element signature="e#9484#9485#0" expanded="true" />
+            <element signature="e#9528#9739#0" expanded="true" />
+            <element signature="e#9728#9729#0" expanded="true" />
+            <element signature="e#10148#10175#0" expanded="true" />
+            <element signature="e#10341#10342#0" expanded="true" />
+            <element signature="e#10381#10382#0" expanded="true" />
+            <element signature="e#10472#10473#0" expanded="true" />
+            <element signature="e#10546#10547#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1406,38 +1737,43 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1375" max-vertical-offset="3744">
           <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="87" selection-end-column="28" />
           <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1696#1723#0" expanded="true" />
+            <element signature="e#3631#4363#0" expanded="true" />
+            <element signature="e#3959#4337#0" expanded="true" />
+            <element signature="e#4318#4319#0" expanded="true" />
+            <element signature="e#4352#4353#0" expanded="true" />
+            <element signature="e#4451#5354#0" expanded="true" />
+            <element signature="e#4749#4978#0" expanded="true" />
+            <element signature="e#4959#4960#0" expanded="true" />
+            <element signature="e#5013#5328#0" expanded="true" />
+            <element signature="e#5309#5310#0" expanded="true" />
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5433#6223#0" expanded="true" />
+            <element signature="e#5692#5923#0" expanded="true" />
+            <element signature="e#5904#5905#0" expanded="true" />
+            <element signature="e#5960#6197#0" expanded="true" />
+            <element signature="e#6178#6179#0" expanded="true" />
+            <element signature="e#6212#6213#0" expanded="true" />
+            <element signature="e#7173#7954#0" expanded="true" />
+            <element signature="e#7514#7928#0" expanded="true" />
+            <element signature="e#7909#7910#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+            <element signature="e#8010#8813#0" expanded="true" />
+            <element signature="e#8337#8787#0" expanded="true" />
+            <element signature="e#8768#8769#0" expanded="true" />
+            <element signature="e#8802#8803#0" expanded="true" />
+            <element signature="e#8999#9246#0" expanded="true" />
+            <element signature="e#9235#9236#0" expanded="true" />
+            <element signature="e#9321#9495#0" expanded="true" />
+            <element signature="e#9484#9485#0" expanded="true" />
+            <element signature="e#9528#9739#0" expanded="true" />
+            <element signature="e#9728#9729#0" expanded="true" />
+            <element signature="e#10148#10175#0" expanded="true" />
+            <element signature="e#10341#10342#0" expanded="true" />
+            <element signature="e#10381#10382#0" expanded="true" />
+            <element signature="e#10472#10473#0" expanded="true" />
+            <element signature="e#10546#10547#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1462,7 +1798,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-19.32" vertical-offset="255" max-vertical-offset="846">
           <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1470,23 +1805,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.09326425" vertical-offset="0" max-vertical-offset="579">
           <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2263" max-vertical-offset="3186">
-          <caret line="164" column="29" selection-start-line="164" selection-start-column="29" selection-end-line="164" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-streaming_2.10/1.0.0-SNAPSHOT/spark-streaming_2.10-1.0.0-SNAPSHOT-sources.jar!/org/apache/spark/streaming/receiver/Receiver.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="810" max-vertical-offset="4752">
-          <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1494,82 +1812,177 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1926">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-core_2.10/1.0.0/spark-core_2.10-1.0.0.jar!/org/apache/spark/SparkConf.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="648">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/MyTest.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
-          <caret line="8" column="31" selection-start-line="8" selection-start-column="31" selection-end-line="8" selection-end-column="31" />
+          <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-streaming_2.10/1.0.0-SNAPSHOT/spark-streaming_2.10-1.0.0-SNAPSHOT-sources.jar!/org/apache/spark/streaming/receiver/Receiver.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3456" max-vertical-offset="4752">
+          <caret line="96" column="88" selection-start-line="96" selection-start-column="88" selection-end-line="96" selection-end-column="88" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/spark-project/akka/akka-actor_2.10/2.2.3-shaded-protobuf/akka-actor_2.10-2.2.3-shaded-protobuf-sources.jar!/akka/actor/ActorCell.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="9812" max-vertical-offset="11322">
+          <caret line="569" column="0" selection-start-line="569" selection-start-column="0" selection-end-line="569" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-streaming_2.10/1.0.0/spark-streaming_2.10-1.0.0.jar!/org/apache/spark/streaming/Duration.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.019933555" vertical-offset="0" max-vertical-offset="903">
+          <caret line="1" column="19" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2271" max-vertical-offset="3186">
+          <caret line="163" column="28" selection-start-line="163" selection-start-column="28" selection-end-line="163" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/xml/simple_topology.xml">
+    <entry file="file://$PROJECT_DIR$/target/generated-sources/xjc/ch/unibnf/mcs/sparklisa/topology/NodeType.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1764">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1268" max-vertical-offset="2034">
+          <caret line="83" column="36" selection-start-line="83" selection-start-column="36" selection-end-line="83" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/xml/binding.xjb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="198">
+          <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/TopologySimulatorActorReceiver.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="882">
-          <caret line="27" column="3" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="882">
+          <caret line="28" column="26" selection-start-line="28" selection-start-column="26" selection-end-line="28" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/xml/sensor_topology.xsd">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="188" max-vertical-offset="1116">
+          <caret line="24" column="59" selection-start-line="24" selection-start-column="59" selection-end-line="24" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/xml/simple_topology.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1" vertical-offset="844" max-vertical-offset="1764">
+          <caret line="52" column="32" selection-start-line="52" selection-start-column="32" selection-end-line="52" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/generated-sources/xjc/ch/unibnf/mcs/sparklisa/topology/BasestationType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="872" max-vertical-offset="1800">
+          <caret line="83" column="26" selection-start-line="83" selection-start-column="26" selection-end-line="83" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/generated-sources/xjc/ch/unibnf/mcs/sparklisa/topology/Topology.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="432" max-vertical-offset="1908">
+          <caret line="49" column="21" selection-start-line="49" selection-start-column="21" selection-end-line="49" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3459" max-vertical-offset="4374">
+          <caret line="210" column="0" selection-start-line="210" selection-start-column="0" selection-end-line="210" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1696#1723#0" expanded="true" />
+            <element signature="e#3631#4363#0" expanded="true" />
+            <element signature="e#3959#4337#0" expanded="true" />
+            <element signature="e#4318#4319#0" expanded="true" />
+            <element signature="e#4352#4353#0" expanded="true" />
+            <element signature="e#4451#5354#0" expanded="true" />
+            <element signature="e#4749#4978#0" expanded="true" />
+            <element signature="e#4959#4960#0" expanded="true" />
+            <element signature="e#5013#5328#0" expanded="true" />
+            <element signature="e#5309#5310#0" expanded="true" />
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5433#6223#0" expanded="true" />
+            <element signature="e#5692#5923#0" expanded="true" />
+            <element signature="e#5904#5905#0" expanded="true" />
+            <element signature="e#5960#6197#0" expanded="true" />
+            <element signature="e#6178#6179#0" expanded="true" />
+            <element signature="e#6212#6213#0" expanded="true" />
+            <element signature="e#7173#7954#0" expanded="true" />
+            <element signature="e#7514#7928#0" expanded="true" />
+            <element signature="e#7909#7910#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+            <element signature="e#8010#8813#0" expanded="true" />
+            <element signature="e#8337#8787#0" expanded="true" />
+            <element signature="e#8768#8769#0" expanded="true" />
+            <element signature="e#8802#8803#0" expanded="true" />
+            <element signature="e#8999#9246#0" expanded="true" />
+            <element signature="e#9235#9236#0" expanded="true" />
+            <element signature="e#9321#9495#0" expanded="true" />
+            <element signature="e#9484#9485#0" expanded="true" />
+            <element signature="e#9528#9739#0" expanded="true" />
+            <element signature="e#9728#9729#0" expanded="true" />
+            <element signature="e#10148#10175#0" expanded="true" />
+            <element signature="e#10341#10342#0" expanded="true" />
+            <element signature="e#10381#10382#0" expanded="true" />
+            <element signature="e#10472#10473#0" expanded="true" />
+            <element signature="e#10546#10547#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/TopologyHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2700">
+          <caret line="21" column="27" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/app/ScalaSimpleSparkApp.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="62" max-vertical-offset="2142">
+          <caret line="28" column="60" selection-start-line="28" selection-start-column="60" selection-end-line="28" selection-end-column="60" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/ch/unibnf/mcs/sparklisa/receiver/SensorSimulatorActorReceiver.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="339" max-vertical-offset="1278">
-          <caret line="42" column="23" selection-start-line="42" selection-start-column="23" selection-end-line="42" selection-end-column="23" />
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/ch/unibnf/mcs/sparklisa/spark/SimpleSparkApp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.70050764" vertical-offset="270" max-vertical-offset="3924">
-          <caret line="61" column="33" selection-start-line="61" selection-start-column="33" selection-end-line="61" selection-end-column="33" />
-          <folding>
-            <element signature="e#1604#1631#0" expanded="true" />
-            <element signature="e#3542#4274#0" expanded="true" />
-            <element signature="e#3870#4248#0" expanded="true" />
-            <element signature="e#4229#4230#0" expanded="true" />
-            <element signature="e#4263#4264#0" expanded="true" />
-            <element signature="e#4361#5264#0" expanded="true" />
-            <element signature="e#4659#4888#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4923#5238#0" expanded="true" />
-            <element signature="e#5219#5220#0" expanded="true" />
-            <element signature="e#5253#5254#0" expanded="true" />
-            <element signature="e#5342#6132#0" expanded="true" />
-            <element signature="e#5601#5832#0" expanded="true" />
-            <element signature="e#5813#5814#0" expanded="true" />
-            <element signature="e#5869#6106#0" expanded="true" />
-            <element signature="e#6087#6088#0" expanded="true" />
-            <element signature="e#6121#6122#0" expanded="true" />
-            <element signature="e#7114#7889#0" expanded="true" />
-            <element signature="e#7449#7863#0" expanded="true" />
-            <element signature="e#7844#7845#0" expanded="true" />
-            <element signature="e#7878#7879#0" expanded="true" />
-            <element signature="e#7939#8736#0" expanded="true" />
-            <element signature="e#8260#8710#0" expanded="true" />
-            <element signature="e#8691#8692#0" expanded="true" />
-            <element signature="e#8725#8726#0" expanded="true" />
-            <element signature="e#8916#9163#0" expanded="true" />
-            <element signature="e#9152#9153#0" expanded="true" />
-            <element signature="e#9238#9412#0" expanded="true" />
-            <element signature="e#9401#9402#0" expanded="true" />
-            <element signature="e#9445#9656#0" expanded="true" />
-            <element signature="e#9645#9646#0" expanded="true" />
-            <element signature="e#10065#10092#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.19536424" vertical-offset="386" max-vertical-offset="1044">
+          <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1590,7 +2003,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>Scala</last-edited>
+          <last-edited>Scala (SparkLisa)|Scala</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
