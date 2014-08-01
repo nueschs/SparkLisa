@@ -1,8 +1,5 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import java.io.FileWriter
-import javax.xml.bind.JAXBContext
-
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver
@@ -12,7 +9,9 @@ import org.apache.spark.SparkConf
 import org.apache.spark.rdd.{RDD}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Duration, StreamingContext}
-import scala.collection.JavaConversions
+import org.redisson.Redisson
+
+import scala.collection.mutable
 
 /**
  * Created by snoooze on 16.06.14.
@@ -21,12 +20,15 @@ object ScalaSimpleSparkApp {
 
   val SumKey: String = "SUM_KEY"
 
+  val Master: String = "spark://saight02:7077"
+//  val Master: String = "local"
+
 //  var oldM : Double = null
 //  var oldS : Double = null
 
   def createSparkConf(): SparkConf = {
     val conf: SparkConf = new SparkConf()
-    conf.setAppName("Simple Streaming App").setMaster("local")
+    conf.setAppName("Simple Streaming App").setMaster(Master)
       .setSparkHome("/home/snoooze/spark/spark-1.0.0")
       .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
     return conf
@@ -44,7 +46,7 @@ object ScalaSimpleSparkApp {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, new Duration(15000L))
+    val ssc: StreamingContext = new StreamingContext(conf, new Duration(10000L))
     import StreamingContext._
     ssc.checkpoint(".checkpoint")
     val topology: Topology = readXml()
@@ -71,10 +73,14 @@ object ScalaSimpleSparkApp {
     val node4Values: DStream[(NodeType, Double)] = ssc.actorStream[(NodeType, Double)](Props(new SensorSimulatorActorReceiver(node4)), "Node4Receiver")
 
     val allValues: DStream[(NodeType, Double)] = node1Values.union(node2Values).union(node3Values).union(node4Values)
+
     val runningCount = allValues.count()
     val runningSum = allValues.map(value => (SumKey, value._2)).reduceByKey(_ + _).map(value => value._2)
 
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1+b._1, a._2 + b._2)).map(t => t._1/t._2)
+
+    storeNodePairDStream(allValues, "allValues")
+    storeDoubleDStream(runningMean, "runningMean")
 
     val meanDiff = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
       val mean = meanRDD.reduce(_ + _)
@@ -83,6 +89,8 @@ object ScalaSimpleSparkApp {
       })
     })
 
+    storeDoubleDStream(meanDiff, "meanDiff")
+
     val stdDev = meanDiff.transformWith(runningCount, (diffRDD, countRDD: RDD[Long]) => {
       val diffSum: Double = diffRDD.reduce(_ + _)
       countRDD.map(cnt => {
@@ -90,13 +98,41 @@ object ScalaSimpleSparkApp {
       })
     })
 
+    storeDoubleDStream(stdDev, "stdDev")
+
     val allLisaVals = createLisaValues(allValues, runningMean, stdDev)
-    allLisaVals.print()
-    var nodes = Set[NodeType]()
-    allLisaVals.filter(t => {
-      nodes = nodes + t._1
-      node1.getNeighbour.contains(t._1)
-    }).print()
+
+    storeNodePairDStream(allLisaVals, "allLisaVals")
+
+    val node1Neighbours = allLisaVals.filter(value => {
+      node1.getNeighbour.contains(value._1)
+    })
+
+    storeNodePairDStream(node1Neighbours, "node1Neighbours")
+
+
+
+//    val nodeCount = mutable.Map[String, Int]().withDefaultValue(0)
+//    allLisaVals.foreachRDD({ rdd =>
+//      rdd.foreach({ value =>
+//        nodeCount.update(value._1.getNodeId, nodeCount(value._1.getNodeId)+1)
+//        storeKeyValue("allLisaValues", value._1.getNodeId+"_"+nodeCount(value._1.getNodeId), value._2.toString)
+//      })
+//    })
+
+//    var sumCount : Int = 0
+//    runningSum.foreachRDD({rdd =>
+//      rdd.foreach({ value =>
+//        sumCount += 1
+//        storeKeyValue("runningSum", System.nanoTime().toString(), value.toString)
+//      })
+//    })
+
+//    var nodes = Set[NodeType]()
+//    allLisaVals.filter(t => {
+//      nodes = nodes + t._1
+//      node1.getNeighbour.contains(t._1)
+//    }).print()
 
 
     ssc.start()
@@ -104,6 +140,27 @@ object ScalaSimpleSparkApp {
 
   }
 
+  private def storeDoubleDStream(stream : DStream[Double], mapKey : String) = {
+    stream.foreachRDD(rdd => {
+      val timestamp = System.currentTimeMillis()
+      rdd.foreach(value => {
+        storeKeyValueMap(mapKey, timestamp.toString, value.toString)
+      })
+    })
+  }
+
+  private def storeNodePairDStream(stream : DStream[(NodeType, Double)], mapKey : String) = {
+    stream.foreachRDD(rdd => {
+      val timestamp = System.currentTimeMillis()
+      rdd.foreach(value => {
+        storeKeyValueMap(mapKey, value._1.getNodeId+"_"+timestamp, value._2.toString)
+      })
+    })
+  }
+
+  /*
+  * returns a DStream[(NodeType, Double)]
+   */
   private def createLisaValues(nodeValues : DStream[(NodeType, Double)], runningMean : DStream[Double], stdDev : DStream[Double]) : DStream[(NodeType, Double)] = {
       return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD : RDD[Double]) => {
          nodeRDD.cartesian(meanRDD).map(cart => (cart._1._1, cart._1._2 - cart._2))
@@ -112,14 +169,10 @@ object ScalaSimpleSparkApp {
       })
   }
 
-  private def printDStream(stream: DStream[_ <: Any]) = {
-    println("eval started")
-    stream.foreachRDD(rdd => {
-      val cnt = rdd.count()
-      val first = rdd.first()
-      println("RDD has " + cnt + " values")
-      println("First Element is " + first)
-    })
+  private def storeKeyValueMap(mapkey: String, key : String, value : String) = {
+    val redisson : Redisson = Redisson.create()
+    redisson.getMap(mapkey).put(key, value)
+    redisson.shutdown()
   }
 
 }

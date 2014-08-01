@@ -65,7 +65,7 @@ public class SimpleSparkApp {
         node2.getNeighbour().add(node3);
         node3.getNeighbour().add(node2);
         node3.getNeighbour().add(node4);
-        node4.getNeighbour().add(node3);
+        node4.getNeighbour().add(node3);git
 
         Props node1Props = Props.create(new SimpleCreator(node1));
         Props node2Props = Props.create(new SimpleCreator(node2));

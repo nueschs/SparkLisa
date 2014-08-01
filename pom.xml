@@ -12,6 +12,10 @@
             <url>http://repo.akka.io/releases</url>
         </repository>
         <repository>
+            <id>org.sedis</id>
+            <url>http://pk11-scratch.googlecode.com/svn/trunk</url>
+        </repository>
+        <repository>
             <id>scala</id>
             <name>Scala Tools</name>
             <url>http://scala-tools.org/repo-releases/</url>
@@ -73,6 +77,21 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sedis</groupId>
+            <artifactId>sedis_2.10.0</artifactId>
+            <version>${sedis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
         </dependency>
     </dependencies>
 
@@ -157,6 +176,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>org.redisson:redisson</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -167,6 +206,9 @@
         <plexus.utils.version>3.0.17</plexus.utils.version>
         <slf4j.version>1.7.6</slf4j.version>
         <scala.version>2.10.3</scala.version>
+        <jedis.version>2.5.1</jedis.version>
+        <sedis.version>1.2.0</sedis.version>
+        <redisson.version>1.1.0</redisson.version>
     </properties>
 
 </project>
