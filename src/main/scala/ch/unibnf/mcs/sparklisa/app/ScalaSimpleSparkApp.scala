@@ -114,7 +114,7 @@ object ScalaSimpleSparkApp {
       node1.getNeighbour.contains(value._1)
     })
 
-//    storeStringPairDStream(node1Neighbours, "node1Neighbours")
+    storeStringPairDStream(node1Neighbours, "node1Neighbours")
 
 
 
