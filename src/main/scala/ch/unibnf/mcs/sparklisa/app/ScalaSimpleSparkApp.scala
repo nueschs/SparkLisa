@@ -59,27 +59,33 @@ object ScalaSimpleSparkApp {
     val node4: NodeType = new NodeType()
     node4.setNodeId("node4")
 
-    node1.getNeighbour.add(node2)
-    node2.getNeighbour.add(node1)
-    node2.getNeighbour.add(node3)
-    node3.getNeighbour.add(node2)
-    node3.getNeighbour.add(node4)
-    node4.getNeighbour.add(node3)
+    val nodeMap : mutable.Map[String, NodeType] = mutable.Map()
+    nodeMap += (node1.getNodeId -> node1)
+    nodeMap += (node2.getNodeId -> node2)
+    nodeMap += (node3.getNodeId -> node3)
+    nodeMap += (node4.getNodeId -> node4)
+
+    node1.getNeighbour.add(node2.getNodeId)
+    node2.getNeighbour.add(node1.getNodeId)
+    node2.getNeighbour.add(node3.getNodeId)
+    node3.getNeighbour.add(node2.getNodeId)
+    node3.getNeighbour.add(node4.getNodeId)
+    node4.getNeighbour.add(node3.getNodeId)
 
 
-    val node1Values: DStream[(NodeType, Double)] = ssc.actorStream[(NodeType, Double)](Props(new SensorSimulatorActorReceiver(node1)), "Node1Receiver")
-    val node2Values: DStream[(NodeType, Double)] = ssc.actorStream[(NodeType, Double)](Props(new SensorSimulatorActorReceiver(node2)), "Node2Receiver")
-    val node3Values: DStream[(NodeType, Double)] = ssc.actorStream[(NodeType, Double)](Props(new SensorSimulatorActorReceiver(node3)), "Node3Receiver")
-    val node4Values: DStream[(NodeType, Double)] = ssc.actorStream[(NodeType, Double)](Props(new SensorSimulatorActorReceiver(node4)), "Node4Receiver")
+    val node1Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node1)), "Node1Receiver")
+    val node2Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node2)), "Node2Receiver")
+    val node3Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node3)), "Node3Receiver")
+    val node4Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node4)), "Node4Receiver")
 
-    val allValues: DStream[(NodeType, Double)] = node1Values.union(node2Values).union(node3Values).union(node4Values)
+    val allValues: DStream[(String, Double)] = node1Values.union(node2Values).union(node3Values).union(node4Values)
 
     val runningCount = allValues.count()
     val runningSum = allValues.map(value => (SumKey, value._2)).reduceByKey(_ + _).map(value => value._2)
 
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1+b._1, a._2 + b._2)).map(t => t._1/t._2)
 
-    storeNodePairDStream(allValues, "allValues")
+    storeStringPairDStream(allValues, "allValues")
     storeDoubleDStream(runningMean, "runningMean")
 
     val meanDiff = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
@@ -102,13 +108,13 @@ object ScalaSimpleSparkApp {
 
     val allLisaVals = createLisaValues(allValues, runningMean, stdDev)
 
-    storeNodePairDStream(allLisaVals, "allLisaVals")
+    storeStringPairDStream(allLisaVals, "allLisaVals")
 
     val node1Neighbours = allLisaVals.filter(value => {
       node1.getNeighbour.contains(value._1)
     })
 
-    storeNodePairDStream(node1Neighbours, "node1Neighbours")
+    storeStringPairDStream(node1Neighbours, "node1Neighbours")
 
 
 
@@ -158,10 +164,19 @@ object ScalaSimpleSparkApp {
     })
   }
 
+  private def storeStringPairDStream(stream : DStream[(String, Double)], mapKey : String) = {
+    stream.foreachRDD(rdd => {
+      val timestamp = System.currentTimeMillis()
+      rdd.foreach(value => {
+        storeKeyValueMap(mapKey, value._1+"_"+timestamp, value._2.toString)
+      })
+    })
+  }
+
   /*
   * returns a DStream[(NodeType, Double)]
    */
-  private def createLisaValues(nodeValues : DStream[(NodeType, Double)], runningMean : DStream[Double], stdDev : DStream[Double]) : DStream[(NodeType, Double)] = {
+  private def createLisaValues(nodeValues : DStream[(String, Double)], runningMean : DStream[Double], stdDev : DStream[Double]) : DStream[(String, Double)] = {
       return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD : RDD[Double]) => {
          nodeRDD.cartesian(meanRDD).map(cart => (cart._1._1, cart._1._2 - cart._2))
       }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD : RDD[Double]) => {

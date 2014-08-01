@@ -2,6 +2,6 @@
   xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" version="2.1">
   <jaxb:globalBindings localScoping="toplevel" >
     <jaxb:serializable />
-    <!--<jaxb:javaType name="java.lang.String" xmlType="xsd:IDREF" parseMethod="javax.xml.bind.DatatypeConverter.parseString" printMethod="javax.xml.bind.DatatypeConverter.printString" />-->
+    <jaxb:javaType name="java.lang.String" xmlType="xsd:IDREF" parseMethod="javax.xml.bind.DatatypeConverter.parseString" printMethod="javax.xml.bind.DatatypeConverter.printString" />
   </jaxb:globalBindings>
 </jaxb:bindings>

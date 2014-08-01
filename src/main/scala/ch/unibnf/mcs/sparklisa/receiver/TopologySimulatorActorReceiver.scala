@@ -26,8 +26,7 @@ class TopologySimulatorActorReceiver extends Actor with ActorHelper {
 
     for (station <- topology.getBasestation()) {
       for (xmlNode <- station.getNode()) {
-        var node: NodeType = xmlNode
-        store((node, random.nextGaussian()))
+        store((xmlNode, random.nextGaussian()))
       }
     }
 

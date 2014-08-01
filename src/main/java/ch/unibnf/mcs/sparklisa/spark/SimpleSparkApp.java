@@ -60,12 +60,12 @@ public class SimpleSparkApp {
         NodeType node4 = new NodeType();
         node4.setNodeId("node4");
 
-        node1.getNeighbour().add(node2);
-        node2.getNeighbour().add(node1);
-        node2.getNeighbour().add(node3);
-        node3.getNeighbour().add(node2);
-        node3.getNeighbour().add(node4);
-        node4.getNeighbour().add(node3);git
+        node1.getNeighbour().add(node2.getNodeId());
+        node2.getNeighbour().add(node1.getNodeId());
+        node2.getNeighbour().add(node3.getNodeId());
+        node3.getNeighbour().add(node2.getNodeId());
+        node3.getNeighbour().add(node4.getNodeId());
+        node4.getNeighbour().add(node3.getNodeId());
 
         Props node1Props = Props.create(new SimpleCreator(node1));
         Props node2Props = Props.create(new SimpleCreator(node2));
