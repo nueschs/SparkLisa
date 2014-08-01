@@ -108,13 +108,13 @@ object ScalaSimpleSparkApp {
 
     val allLisaVals = createLisaValues(allValues, runningMean, stdDev)
 
-    storeStringPairDStream(allLisaVals, "allLisaVals")
+//    storeStringPairDStream(allLisaVals, "allLisaVals")
 
     val node1Neighbours = allLisaVals.filter(value => {
       node1.getNeighbour.contains(value._1)
     })
 
-    storeStringPairDStream(node1Neighbours, "node1Neighbours")
+//    storeStringPairDStream(node1Neighbours, "node1Neighbours")
 
 
 

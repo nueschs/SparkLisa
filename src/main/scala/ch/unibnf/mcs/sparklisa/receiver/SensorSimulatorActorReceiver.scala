@@ -29,7 +29,7 @@ class SensorSimulatorActorReceiver(node: NodeType) extends Actor with ActorHelpe
 
   def pushNodeBlocks() = {
       if (count < values.length){
-        store[(NodeType, Double)]((sensorNode, values(count)))
+        store[(String, Double)]((sensorNode.getNodeId, values(count)))
         self ! SensorSimulator()
         this.count += 1
         Thread.sleep(5000L)
