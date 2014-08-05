@@ -17,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
  * Created by snoooze on 16.06.14.
  */
-object ScalaSimpleSparkApp {
+object ScalaSimpleSparkAppEval {
 
   val SumKey: String = "SUM_KEY"
 
@@ -79,6 +79,8 @@ object ScalaSimpleSparkApp {
     val allValues: DStream[(String, Double)] = node1Values.union(node2Values).union(node3Values).union(node4Values)
 
     val runningCount = allValues.count()
+
+
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1+b._1, a._2 + b._2)).map(t => t._1/t._2)
 
 
@@ -122,8 +124,8 @@ object ScalaSimpleSparkApp {
   private def mapToNeighbourKeys(value : (String, Double), nodeMap : mutable.Map[String, NodeType]) : mutable.Traversable[(String, Double)] = {
     var mapped : mutable.MutableList[(String, Double)] = mutable.MutableList()
     import scala.collection.JavaConversions._
-    for(n <- nodeMap.get(value._1).get.getNeighbour()) {
-      mapped += ((n, value._2))
+    for(n <- nodeMap.get(value._1.split("_")(0)).get.getNeighbour()) {
+      mapped += ((n+"_"+value._1.split("_")(1), value._2))
     }
     return mapped
   }
