@@ -35,7 +35,6 @@ class SensorSimulatorActorReceiverEval(node: NodeType) extends Actor with ActorH
         this.count += 1
         Thread.sleep(1000L)
       }
-//      store[(NodeType, Double)]((sensorNode, random.nextGaussian()))
       self ! SensorSimulator()
   }
 

@@ -144,13 +144,13 @@
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.10</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-streaming_2.10</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -183,16 +183,29 @@
       <version>1.2.0</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>2.4.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>2.4.1</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
   <properties>
-    <jedis.version>2.5.1</jedis.version>
-    <plexus.utils.version>3.0.17</plexus.utils.version>
-    <jaxb2.version>2.2.5</jaxb2.version>
-    <scala.version>2.10.3</scala.version>
     <slf4j.version>1.7.6</slf4j.version>
-    <redisson.version>1.1.0</redisson.version>
     <sedis.version>1.2.0</sedis.version>
-    <spark.version>1.0.0</spark.version>
+    <jedis.version>2.5.1</jedis.version>
+    <jaxb2.version>2.2.5</jaxb2.version>
+    <redisson.version>1.1.0</redisson.version>
+    <hadoop.version>2.4.1</hadoop.version>
+    <scala.version>2.10.3</scala.version>
+    <plexus.utils.version>3.0.17</plexus.utils.version>
+    <spark.version>1.0.2</spark.version>
   </properties>
 </project>
 

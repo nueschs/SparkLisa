@@ -2,7 +2,7 @@ package ch.unibnf.mcs.sparklisa.app
 
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
-import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver
+import ch.unibnf.mcs.sparklisa.receiver.{SensorSimulatorActorReceiverEval, SensorSimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -27,7 +27,7 @@ object ScalaSimpleSparkApp {
   def createSparkConf(): SparkConf = {
     val conf: SparkConf = new SparkConf()
     conf.setAppName("Simple Streaming App").setMaster(Master)
-      .setSparkHome("/home/snoooze/spark/spark-1.0.0")
+      .setSparkHome("/home/snoooze/spark/spark-1.0.2")
       .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
     return conf
   }
@@ -44,9 +44,9 @@ object ScalaSimpleSparkApp {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(10))
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(2))
     import StreamingContext._
-    ssc.checkpoint(".checkpoint")
+//    ssc.checkpoint(".checkpoint")
     val topology: Topology = readXml()
     val node1: NodeType = new NodeType()
     node1.setNodeId("node1")
@@ -71,12 +71,16 @@ object ScalaSimpleSparkApp {
     node4.getNeighbour.add(node3.getNodeId)
 
 
-    val node1Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node1)), "Node1Receiver")
-    val node2Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node2)), "Node2Receiver")
-    val node3Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node3)), "Node3Receiver")
-    val node4Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node4)), "Node4Receiver")
+    var allValues: DStream[(String, Double)] = null
 
-    val allValues: DStream[(String, Double)] = node1Values.union(node2Values).union(node3Values).union(node4Values)
+    nodeMap.foreach(t2 => {
+      val stream = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(t2._2)), t2._1+"Receiver")
+      if (allValues == null) {
+        allValues = stream
+      } else {
+        allValues = allValues.union(stream)
+      }
+    })
 
     val runningCount = allValues.count()
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1+b._1, a._2 + b._2)).map(t => t._1/t._2)
@@ -103,16 +107,7 @@ object ScalaSimpleSparkApp {
 
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
 
-//    allValues.print()
-    finalLisaValues.print()
-
-    storeStringPairDStream(allValues, "allValues")
-    storeLongDStream(allLisaVals.count(), "allLisaCnt")
-    storeLongDStream(neighboursNormalizedSums.count(), "sums")
-
-    storeStringPairDStream(allLisaVals, "allLisaVals")
-    storeStringPairDStream(neighboursNormalizedSums, "neighboursNormalizedSums")
-
+    finalLisaValues.saveAsTextFiles("hdfs://localhost:9999/sparkLisa/finalLisaValues")
 
     ssc.start()
     ssc.awaitTermination()

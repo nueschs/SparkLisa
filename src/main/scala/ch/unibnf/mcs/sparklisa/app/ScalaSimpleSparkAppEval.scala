@@ -29,7 +29,7 @@ object ScalaSimpleSparkAppEval {
   def createSparkConf(): SparkConf = {
     val conf: SparkConf = new SparkConf()
     conf.setAppName("Simple Streaming App").setMaster(Master)
-      .setSparkHome("/home/snoooze/spark/spark-1.0.0")
+      .setSparkHome("/home/snoooze/spark/spark-1.0.2")
       .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
     return conf
   }
@@ -72,13 +72,16 @@ object ScalaSimpleSparkAppEval {
     node3.getNeighbour.add(node4.getNodeId)
     node4.getNeighbour.add(node3.getNodeId)
 
+    var allValues: DStream[(String, Double)] = null
 
-    val node1Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node1)), "Node1Receiver")
-    val node2Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node2)), "Node2Receiver")
-    val node3Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node3)), "Node3Receiver")
-    val node4Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node4)), "Node4Receiver")
-
-    val allValues: DStream[(String, Double)] = node1Values.union(node2Values).union(node3Values).union(node4Values)
+    nodeMap.foreach(t2 => {
+      val stream = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(t2._2)), t2._1+"Receiver")
+      if (allValues == null) {
+        allValues = stream
+      } else {
+        allValues = allValues.union(stream)
+      }
+    })
 
     // Create count for each "iteration" - i.e number of values emitted by receiver with the same receiver count
     val runningCount: DStream[(String, Long)] = allValues.map(value => (value._1.split("_")(1), 1L)).reduceByKey(_+_)

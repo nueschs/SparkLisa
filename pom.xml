@@ -93,6 +93,16 @@
             <artifactId>redisson</artifactId>
             <version>${redisson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
     </dependencies>
 
 
@@ -200,7 +210,7 @@
     </build>
 
     <properties>
-        <spark.version>1.0.0</spark.version>
+        <spark.version>1.0.2</spark.version>
         <!--<spark.version>1.0.0-SNAPSHOT</spark.version>-->
         <jaxb2.version>2.2.5</jaxb2.version>
         <plexus.utils.version>3.0.17</plexus.utils.version>
@@ -209,6 +219,7 @@
         <jedis.version>2.5.1</jedis.version>
         <sedis.version>1.2.0</sedis.version>
         <redisson.version>1.1.0</redisson.version>
+        <hadoop.version>2.4.1</hadoop.version>
     </properties>
 
 </project>
