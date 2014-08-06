@@ -5,6 +5,7 @@ import ch.unibnf.mcs.sparklisa.receiver.TestReceiver
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, Milliseconds, Duration, StreamingContext}
+import org.apache.spark.streaming.StreamingContext._
 
 import scala.util.Random
 
@@ -29,11 +30,8 @@ object TestApp {
 
     val values = ssc.actorStream[Double](Props(new TestReceiver()), "receiver")
     val mappedValues : DStream[(String, Double)] = values.map(d => ("test_"+new Random().nextInt(3).toString, d))
-    val flatMapped = mappedValues.flatMap(a => {
-      List(("1", a._2), ("2", a._2), ("3", a._2))
-    })
+    val doubleMappedValues: DStream[(String, (String, Double))] = mappedValues.map(d => ("test_"+new Random().nextInt(3).toString, d))
 
-    flatMapped.print()
 
     ssc.start()
     ssc.awaitTermination()

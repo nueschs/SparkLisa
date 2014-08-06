@@ -2,7 +2,7 @@ package ch.unibnf.mcs.sparklisa.app
 
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
-import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver
+import ch.unibnf.mcs.sparklisa.receiver.{SensorSimulatorActorReceiverEval, SensorSimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -10,6 +10,8 @@ import org.apache.spark.rdd.{RDD}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, Duration, StreamingContext}
 import org.redisson.Redisson
+import org.apache.spark.SparkContext._
+import org.apache.spark.streaming.StreamingContext._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -44,7 +46,7 @@ object ScalaSimpleSparkAppEval {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(10))
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(2))
     import StreamingContext._
     ssc.checkpoint(".checkpoint")
     val topology: Topology = readXml()
@@ -71,50 +73,45 @@ object ScalaSimpleSparkAppEval {
     node4.getNeighbour.add(node3.getNodeId)
 
 
-    val node1Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node1)), "Node1Receiver")
-    val node2Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node2)), "Node2Receiver")
-    val node3Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node3)), "Node3Receiver")
-    val node4Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(node4)), "Node4Receiver")
+    val node1Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node1)), "Node1Receiver")
+    val node2Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node2)), "Node2Receiver")
+    val node3Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node3)), "Node3Receiver")
+    val node4Values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiverEval(node4)), "Node4Receiver")
 
     val allValues: DStream[(String, Double)] = node1Values.union(node2Values).union(node3Values).union(node4Values)
 
-    val runningCount = allValues.count()
+    // Create count for each "iteration" - i.e number of values emitted by receiver with the same receiver count
+    val runningCount: DStream[(String, Long)] = allValues.map(value => (value._1.split("_")(1), 1L)).reduceByKey(_+_)
 
+    // first, map count as key to tuple (value, 1.0), then reduceByKey these tuples by adding up values and counts, and finally calculate the mean by division
+    val runningMean: DStream[(String, Double)] = allValues.map(t => (t._1.split("_")(1), (t._2, 1.0))).reduceByKey((a,b) => (a._1+b._1, a._2 + b._2)).map(t => (t._1, t._2._1/t._2._2))
 
-    val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1+b._1, a._2 + b._2)).map(t => t._1/t._2)
-
-
-    val meanDiff = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
-      val mean = meanRDD.reduce(_ + _)
-      valueRDD.map(value => {
-        math.pow(value._2 - mean, 2.0)
-      })
+    // for each key (i.e. count), calculate mean, then create the squared difference for each value of this key
+    val meanDiff: DStream[(String, Double)] = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[(String, Double)]) => {
+      valueRDD.map(value => (value._1.split("_")(1), value._2)).join(meanRDD).map(value => (value._1, math.pow(value._2._1-value._2._2, 2.0)))
     })
 
-    val stdDev = meanDiff.transformWith(runningCount, (diffRDD, countRDD: RDD[Long]) => {
-      val diffSum: Double = diffRDD.reduce(_ + _)
-      countRDD.map(cnt => {
-        math.sqrt(diffSum / cnt.toDouble)
-      })
+    // create the sum of all differences, divide by count, and take the square root of the result to obtain standard deviation
+    val stdDev: DStream[(String, Double)] = meanDiff.transformWith(runningCount, (diffRDD, countRDD: RDD[(String, Long)]) => {
+      val diffSum: RDD[(String, Double)] = diffRDD.reduceByKey(_+_)
+      countRDD.join(diffSum).map(value => (value._1, math.sqrt(value._2._2 / value._2._1.toDouble)))
     })
 
     val allLisaVals = createLisaValues(allValues, runningMean, stdDev)
 
     val allNeighbourVals : DStream[(String, Double)] = allLisaVals.flatMap(value => mapToNeighbourKeys(value, nodeMap))
-    val neighboursNormalizedSums = allNeighbourVals.map(value => (value._1, (1.0, value._2))).reduceByKey((a,b) => (a._1+b._1, a._2+b._2)).map(value => (value._1, value._2._2/value._2._1))
+    val neighboursNormalizedSums: DStream[(String, Double)] = allNeighbourVals.map(value => (value._1, (1.0, value._2))).reduceByKey((a,b) => (a._1+b._1, a._2+b._2)).map(value => (value._1, value._2._2/value._2._1))
 
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
 
-//    allValues.print()
-    finalLisaValues.print()
-
     storeStringPairDStream(allValues, "allValues")
-    storeLongDStream(allLisaVals.count(), "allLisaCnt")
-    storeLongDStream(neighboursNormalizedSums.count(), "sums")
-
-    storeStringPairDStream(allLisaVals, "allLisaVals")
+    storeStringLongPairDStream(runningCount, "runningCount")
+    storeStringPairDStream(runningMean, "runningMean")
+    storeStringPairDStream(meanDiff, "meanDiff")
+    storeStringPairDStream(stdDev, "stdDev")
+    storeStringPairDStream(allNeighbourVals, "allNeighbourVals")
     storeStringPairDStream(neighboursNormalizedSums, "neighboursNormalizedSums")
-
+    storeStringPairDStream(finalLisaValues, "finalLisaValues")
 
     ssc.start()
     ssc.awaitTermination()
@@ -166,15 +163,26 @@ object ScalaSimpleSparkAppEval {
     })
   }
 
-  /*
-  * returns a DStream[(NodeType, Double)]
-   */
-  private def createLisaValues(nodeValues : DStream[(String, Double)], runningMean : DStream[Double], stdDev : DStream[Double]) : DStream[(String, Double)] = {
-      return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD : RDD[Double]) => {
-         nodeRDD.cartesian(meanRDD).map(cart => (cart._1._1, cart._1._2 - cart._2))
-      }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD : RDD[Double]) => {
-        nodeDiffRDD.cartesian(stdDevRDD).map(cart => (cart._1._1, cart._1._2/cart._2))
+  private def storeStringLongPairDStream(stream : DStream[(String, Long)], mapKey : String) = {
+    stream.foreachRDD(rdd => {
+      val timestamp = System.currentTimeMillis()
+      rdd.foreach(value => {
+        storeKeyValueMap(mapKey, value._1+"_"+timestamp, value._2.toString)
       })
+    })
+  }
+
+  /* First we map all values to their count key to be able to join the according DStream
+  * to both mean and standard deviation in a second step.
+  * Finally, we map the calculated "local LISA value" back to the original value key
+  *
+  * The joined DStream contains tuples structured as follows: (countKey, (((valueKey, value), mean), stddev))
+  */
+
+  private def createLisaValues(nodeValues : DStream[(String, Double)], runningMean : DStream[(String, Double)], stdDev : DStream[(String, Double)]) : DStream[(String, Double)] = {
+    val valuesWithCountKey: DStream[(String, (String, Double))] = nodeValues.map(value => (value._1.split("_")(1), value))
+    val allJoined: DStream[(String, (((String, Double), Double), Double))] = valuesWithCountKey.join(runningMean).join(stdDev)
+    return allJoined.map(v => (v._2._1._1._1, (v._2._1._1._2-v._2._1._2)/v._2._2))
   }
 
   private def storeKeyValueMap(mapkey: String, key : String, value : String) = {
