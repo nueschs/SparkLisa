@@ -10,6 +10,7 @@ import org.apache.spark.rdd.{RDD}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, Duration, StreamingContext}
 import org.redisson.Redisson
+import scala.collection.JavaConverters._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -32,44 +33,17 @@ object ScalaSimpleSparkApp {
     return conf
   }
 
-  private def readXml(): Topology = {
-//    val is = getClass().getClassLoader().getResourceAsStream("xml/simple_topology.xml")
-//    val context = JAXBContext.newInstance(classOf[Topology])
-//    val unmarshaller = context.createUnmarshaller()
-//    val t: Topology = unmarshaller.unmarshal(is).asInstanceOf[Topology]
-    return TopologyHelper.createSimpleTopology();
-  }
-
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(2))
     import StreamingContext._
-//    ssc.checkpoint(".checkpoint")
-    val topology: Topology = readXml()
-    val node1: NodeType = new NodeType()
-    node1.setNodeId("node1")
-    val node2: NodeType = new NodeType()
-    node2.setNodeId("node2")
-    val node3: NodeType = new NodeType()
-    node3.setNodeId("node3")
-    val node4: NodeType = new NodeType()
-    node4.setNodeId("node4")
+    ssc.checkpoint(".checkpoint")
 
-    val nodeMap : mutable.Map[String, NodeType] = mutable.Map()
-    nodeMap += (node1.getNodeId -> node1)
-    nodeMap += (node2.getNodeId -> node2)
-    nodeMap += (node3.getNodeId -> node3)
-    nodeMap += (node4.getNodeId -> node4)
 
-    node1.getNeighbour.add(node2.getNodeId)
-    node2.getNeighbour.add(node1.getNodeId)
-    node2.getNeighbour.add(node3.getNodeId)
-    node3.getNeighbour.add(node2.getNodeId)
-    node3.getNeighbour.add(node4.getNodeId)
-    node4.getNeighbour.add(node3.getNodeId)
-
+    val topology: Topology = TopologyHelper.createSimpleTopology()
+    val nodeMap : mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
 
     var allValues: DStream[(String, Double)] = null
 
@@ -123,41 +97,6 @@ object ScalaSimpleSparkApp {
     return mapped
   }
 
-  private def storeDoubleDStream(stream : DStream[Double], mapKey : String) = {
-    stream.foreachRDD(rdd => {
-      val timestamp = System.currentTimeMillis()
-      rdd.foreach(value => {
-        storeKeyValueMap(mapKey, timestamp.toString, value.toString)
-      })
-    })
-  }
-
-  private def storeLongDStream(stream : DStream[Long], mapKey : String) = {
-    stream.foreachRDD(rdd => {
-      val timestamp = System.currentTimeMillis()
-      rdd.foreach(value => {
-        storeKeyValueMap(mapKey, timestamp.toString, value.toString)
-      })
-    })
-  }
-
-  private def storeNodePairDStream(stream : DStream[(NodeType, Double)], mapKey : String) = {
-    stream.foreachRDD(rdd => {
-      val timestamp = System.currentTimeMillis()
-      rdd.foreach(value => {
-        storeKeyValueMap(mapKey, value._1.getNodeId+"_"+timestamp, value._2.toString)
-      })
-    })
-  }
-
-  private def storeStringPairDStream(stream : DStream[(String, Double)], mapKey : String) = {
-    stream.foreachRDD(rdd => {
-      val timestamp = System.currentTimeMillis()
-      rdd.foreach(value => {
-        storeKeyValueMap(mapKey, value._1+"_"+timestamp, value._2.toString)
-      })
-    })
-  }
 
   /*
   * returns a DStream[(NodeType, Double)]
@@ -169,11 +108,4 @@ object ScalaSimpleSparkApp {
         nodeDiffRDD.cartesian(stdDevRDD).map(cart => (cart._1._1, cart._1._2/cart._2))
       })
   }
-
-  private def storeKeyValueMap(mapkey: String, key : String, value : String) = {
-    val redisson : Redisson = Redisson.create()
-    redisson.getMap(mapkey).put(key, value)
-    redisson.shutdown()
-  }
-
 }
