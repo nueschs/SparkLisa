@@ -15,9 +15,9 @@ class SensorSimulatorActorReceiverEval(node: NodeType) extends Actor with ActorH
 
   val FILE_NAME = "/node_values_4.txt"
 
-  var values : Array[Double] = Array[Double]();
+  var values: Array[Double] = Array[Double]();
 
-  private var count : Int = 0
+  private var count: Int = 0
 
   override def preStart = init()
 
@@ -29,30 +29,27 @@ class SensorSimulatorActorReceiverEval(node: NodeType) extends Actor with ActorH
   }
 
   def pushNodeBlocks() = {
-      if (count < values.length){
-        store[(String, Double)]((sensorNode.getNodeId+"_"+count.toString, values(count)))
-        self ! SensorSimulator()
-        this.count += 1
-        Thread.sleep(1000L)
-      }
-      self ! SensorSimulator()
+    store[(String, Double)]((sensorNode.getNodeId + "_" + count.toString, random.nextGaussian()))
+    this.count += 1
+    Thread.sleep(2000L)
+    self ! SensorSimulator()
   }
 
   private def init() = {
     Thread.sleep(500L);
-    val pos : Int = Integer.parseInt(sensorNode.getNodeId.replace("node", "")) - 1
-    val text = Source.fromInputStream(getClass().getResourceAsStream(FILE_NAME)).mkString
-    readValues(text, pos)
+//    val pos: Int = Integer.parseInt(sensorNode.getNodeId.replace("node", "")) - 1
+//    val text = Source.fromInputStream(getClass().getResourceAsStream(FILE_NAME)).mkString
+//    readValues(text, pos)
     self ! SensorSimulator()
   }
 
-  private def readValues(text : String, pos: Int){
-    val textArr = text.split("\n")
-    val doubleStrings = textArr.map { l =>
-      l.split(";")(pos)
-    }
-    val doubleValues = doubleStrings.map { s => s.toDouble}
-    values = doubleValues
-  }
+//  private def readValues(text: String, pos: Int) {
+//    val textArr = text.split("\n")
+//    val doubleStrings = textArr.map { l =>
+//      l.split(";")(pos)
+//    }
+//    val doubleValues = doubleStrings.map { s => s.toDouble}
+//    values = doubleValues
+//  }
 
 }

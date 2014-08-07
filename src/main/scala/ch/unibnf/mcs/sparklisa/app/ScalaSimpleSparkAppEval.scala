@@ -12,6 +12,7 @@ import org.apache.spark.streaming.{Seconds, Duration, StreamingContext}
 import org.redisson.Redisson
 import org.apache.spark.SparkContext._
 import org.apache.spark.streaming.StreamingContext._
+import scala.collection.JavaConverters._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -46,31 +47,12 @@ object ScalaSimpleSparkAppEval {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(2))
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(4))
     import StreamingContext._
     ssc.checkpoint(".checkpoint")
-    val topology: Topology = readXml()
-    val node1: NodeType = new NodeType()
-    node1.setNodeId("node1")
-    val node2: NodeType = new NodeType()
-    node2.setNodeId("node2")
-    val node3: NodeType = new NodeType()
-    node3.setNodeId("node3")
-    val node4: NodeType = new NodeType()
-    node4.setNodeId("node4")
 
-    val nodeMap : mutable.Map[String, NodeType] = mutable.Map()
-    nodeMap += (node1.getNodeId -> node1)
-    nodeMap += (node2.getNodeId -> node2)
-    nodeMap += (node3.getNodeId -> node3)
-    nodeMap += (node4.getNodeId -> node4)
-
-    node1.getNeighbour.add(node2.getNodeId)
-    node2.getNeighbour.add(node1.getNodeId)
-    node2.getNeighbour.add(node3.getNodeId)
-    node3.getNeighbour.add(node2.getNodeId)
-    node3.getNeighbour.add(node4.getNodeId)
-    node4.getNeighbour.add(node3.getNodeId)
+    val topology: Topology = TopologyHelper.createSimpleTopology()
+    val nodeMap = TopologyHelper.createNodeMap(topology).asScala
 
     var allValues: DStream[(String, Double)] = null
 
@@ -108,12 +90,12 @@ object ScalaSimpleSparkAppEval {
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
 
     storeStringPairDStream(allValues, "allValues")
-    storeStringLongPairDStream(runningCount, "runningCount")
-    storeStringPairDStream(runningMean, "runningMean")
-    storeStringPairDStream(meanDiff, "meanDiff")
-    storeStringPairDStream(stdDev, "stdDev")
-    storeStringPairDStream(allNeighbourVals, "allNeighbourVals")
-    storeStringPairDStream(neighboursNormalizedSums, "neighboursNormalizedSums")
+//    storeStringLongPairDStream(runningCount, "runningCount")
+//    storeStringPairDStream(runningMean, "runningMean")
+//    storeStringPairDStream(meanDiff, "meanDiff")
+//    storeStringPairDStream(stdDev, "stdDev")
+//    storeStringPairDStream(allNeighbourVals, "allNeighbourVals")
+//    storeStringPairDStream(neighboursNormalizedSums, "neighboursNormalizedSums")
     storeStringPairDStream(finalLisaValues, "finalLisaValues")
 
     ssc.start()

@@ -4,10 +4,23 @@ numpy.seterr(all='print')
 
 nodeMap = {
     'node1': ['node2'],
-    'node2': ['node1', 'node3'],
-    'node3': ['node2', 'node4'],
-    'node4': ['node3']
+    'node2': ['node1', 'node6'],
+    'node3': ['node4'],
+    'node4': ['node3', 'node8'],
+    'node5': ['node6'],
+    'node6': ['node2', 'node5', 'node7', 'node10'],
+    'node7': ['node6', 'node8'],
+    'node8': ['node4', 'node7'],
+    'node9': ['node13'],
+    'node10': ['node6', 'node11'],
+    'node11': ['node10', 'node12', 'node15'],
+    'node12': ['node11', 'node16'],
+    'node13': ['node9', 'node14'],
+    'node14': ['node13', 'node15'],
+    'node15': ['node11', 'node14'],
+    'node16': ['node12'],
 }
+
 
 # with open('../resources/node_values_4.txt', 'rb') as f:
 #     data = f.readlines()

@@ -4,6 +4,7 @@ import ch.unibnf.mcs.sparklisa.topology.BasestationType;
 import ch.unibnf.mcs.sparklisa.topology.NodeType;
 import ch.unibnf.mcs.sparklisa.topology.ObjectFactory;
 import ch.unibnf.mcs.sparklisa.topology.Topology;
+import com.google.common.collect.Maps;
 import org.w3c.dom.Document;
 
 import javax.xml.bind.JAXBContext;
@@ -15,11 +16,37 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * Created by snoooze on 17.06.14.
  */
 public class TopologyHelper {
+
+    public static void main(String[] args){
+        StringBuilder str = new StringBuilder();
+        str.append("nodeMap = {\n");
+
+        for (NodeType node : createSimpleTopology().getNode()){
+            str.append("'"+node.getNodeId()+"': [");
+            for (String neighbour : node.getNeighbour()) {
+                str.append("'"+neighbour+"', ");
+            }
+            str.append("],\n");
+        }
+
+        str.append("}");
+        System.out.print(str.toString());
+    }
+
+
+    public static Map<String, NodeType> createNodeMap(Topology t){
+        Map<String, NodeType> res = Maps.newHashMap();
+        for (NodeType node : t.getNode()){
+            res.put(node.getNodeId(), node);
+        }
+        return res;
+    }
 
     public static Topology createSimpleTopology(){
         ObjectFactory of = new ObjectFactory();
