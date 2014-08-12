@@ -81,7 +81,8 @@ object ScalaSimpleSparkApp {
 
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
 
-    finalLisaValues.saveAsTextFiles("hdfs://localhost:9999/sparkLisa/finalLisaValues")
+//    finalLisaValues.saveAsTextFiles("hdfs://localhost:9999/sparkLisa/finalLisaValues")
+    finalLisaValues.print()
 
     ssc.start()
     ssc.awaitTermination()
