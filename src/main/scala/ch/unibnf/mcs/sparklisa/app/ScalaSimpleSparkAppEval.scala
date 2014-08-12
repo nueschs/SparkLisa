@@ -90,12 +90,6 @@ object ScalaSimpleSparkAppEval {
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
 
     storeStringPairDStream(allValues, "allValues")
-//    storeStringLongPairDStream(runningCount, "runningCount")
-//    storeStringPairDStream(runningMean, "runningMean")
-//    storeStringPairDStream(meanDiff, "meanDiff")
-//    storeStringPairDStream(stdDev, "stdDev")
-//    storeStringPairDStream(allNeighbourVals, "allNeighbourVals")
-//    storeStringPairDStream(neighboursNormalizedSums, "neighboursNormalizedSums")
     storeStringPairDStream(finalLisaValues, "finalLisaValues")
 
     ssc.start()

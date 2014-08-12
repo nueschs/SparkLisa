@@ -60,17 +60,17 @@ object ScalaSimpleSparkApp {
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1+b._1, a._2 + b._2)).map(t => t._1/t._2)
 
 
-    val meanDiff = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
+    val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
       val mean = meanRDD.reduce(_ + _)
       valueRDD.map(value => {
         math.pow(value._2 - mean, 2.0)
       })
     })
 
-    val stdDev = meanDiff.transformWith(runningCount, (diffRDD, countRDD: RDD[Long]) => {
-      val diffSum: Double = diffRDD.reduce(_ + _)
+    val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
+      val variance: Double = varianceRDD.reduce(_ + _)
       countRDD.map(cnt => {
-        math.sqrt(diffSum / cnt.toDouble)
+        math.sqrt(variance / cnt.toDouble)
       })
     })
 

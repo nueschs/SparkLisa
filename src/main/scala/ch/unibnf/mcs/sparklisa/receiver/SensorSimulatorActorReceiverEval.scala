@@ -29,9 +29,11 @@ class SensorSimulatorActorReceiverEval(node: NodeType) extends Actor with ActorH
   }
 
   def pushNodeBlocks() = {
-    store[(String, Double)]((sensorNode.getNodeId + "_" + count.toString, random.nextGaussian()))
-    this.count += 1
-    Thread.sleep(2000L)
+    while(count < 100) {
+      store[(String, Double)]((sensorNode.getNodeId + "_" + count.toString, random.nextGaussian()))
+      this.count += 1
+      Thread.sleep(2000L)
+    }
     self ! SensorSimulator()
   }
 
