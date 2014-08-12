@@ -12,7 +12,8 @@ class SensorSimulatorActorReceiver(node: NodeType) extends Actor with ActorHelpe
 
   private final val random = new Random()
 
-  val FILE_NAME = "/node_values_4.txt"
+//  val FILE_NAME = "/node_values_4.txt"
+  val FILE_NAME = "/node_values_16_100_0.txt"
 
   var values : Array[Double] = Array[Double]();
 

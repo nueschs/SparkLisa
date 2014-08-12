@@ -54,16 +54,6 @@
             <version>${jaxb2.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.10</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming_2.10</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
@@ -79,16 +69,6 @@
             <version>${scala.version}</version>
         </dependency>
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>${jedis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sedis</groupId>
-            <artifactId>sedis_2.10.0</artifactId>
-            <version>${sedis.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
             <version>${redisson.version}</version>
@@ -97,14 +77,87 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
             <version>${hadoop.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
             <version>${hadoop.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
+            <version>${spark.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_2.10</artifactId>
+            <version>${spark.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>local</id>-->
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
+            <!--<build>-->
+                <!--<plugins>-->
+                    <!--<plugin>-->
+                        <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                        <!--<version>2.4.1</version>-->
+                        <!--<configuration>-->
+                            <!--<descriptorRefs>-->
+                                <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+                            <!--</descriptorRefs>-->
+                        <!--</configuration>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
+                                <!--<phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
+                                <!--<goals>-->
+                                    <!--<goal>single</goal>-->
+                                <!--</goals>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
+                <!--</plugins>-->
+            <!--</build>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>cluster</id>-->
+            <!--<build>-->
+                <!--<plugins>-->
+                    <!--<plugin>-->
+                        <!--<groupId>org.apache.maven.plugins</groupId>-->
+                        <!--<artifactId>maven-shade-plugin</artifactId>-->
+                        <!--<version>2.3</version>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<phase>package</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>shade</goal>-->
+                                <!--</goals>-->
+                                <!--<configuration>-->
+                                    <!--<minimizeJar>true</minimizeJar>-->
+                                    <!--<artifactSet>-->
+                                        <!--<excludes>-->
+                                            <!--<exclude>org.apache.hadoop:*</exclude>-->
+                                            <!--<exclude>org.apache.spark:*</exclude>-->
+                                        <!--</excludes>-->
+                                    <!--</artifactSet>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
+                <!--</plugins>-->
+            <!--</build>-->
+        <!--</profile>-->
+    <!--</profiles>-->
 
     <build>
         <plugins>
@@ -187,22 +240,24 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
                         <phase>package</phase>
+                        <!-- bind to the packaging phase -->
                         <goals>
-                            <goal>shade</goal>
+                            <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.redisson:redisson</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -210,7 +265,7 @@
     </build>
 
     <properties>
-        <spark.version>1.0.2</spark.version>
+        <spark.version>1.0.0</spark.version>
         <!--<spark.version>1.0.0-SNAPSHOT</spark.version>-->
         <jaxb2.version>2.2.5</jaxb2.version>
         <plexus.utils.version>3.0.17</plexus.utils.version>
