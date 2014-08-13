@@ -138,7 +138,7 @@
                 </repository>
             </repositories>
             <properties>
-                <hadoop.version>2.3.0-cdh5.0.2</hadoop.version>
+                <hadoop.version>2.3.0-cdh5.1.0</hadoop.version>
             </properties>
         </profile>
     </profiles>

@@ -28,9 +28,9 @@ object ScalaSimpleSparkApp {
   def createSparkConf(): SparkConf = {
     val conf: SparkConf = new SparkConf()
     conf.setAppName("Simple Streaming App")
-//      .setMaster(Master)
-//      .setSparkHome("/home/snoooze/spark/spark-1.0.0")
-//      .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
+      .setMaster(Master)
+      .setSparkHome("/home/snoooze/spark/spark-1.0.0")
+      .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
     return conf
   }
 
@@ -38,7 +38,7 @@ object ScalaSimpleSparkApp {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(2))
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(4))
     import StreamingContext._
     ssc.checkpoint(".checkpoint")
 

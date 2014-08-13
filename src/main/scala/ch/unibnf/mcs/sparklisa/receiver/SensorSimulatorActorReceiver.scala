@@ -33,14 +33,14 @@ class SensorSimulatorActorReceiver(node: NodeType) extends Actor with ActorHelpe
         store[(String, Double)]((sensorNode.getNodeId, values(count)))
         self ! SensorSimulator()
         this.count += 1
-        Thread.sleep(1000L)
+        Thread.sleep(500L)
       }
 //      store[(NodeType, Double)]((sensorNode, random.nextGaussian()))
       self ! SensorSimulator()
   }
 
   private def init() = {
-    Thread.sleep(500L);
+//    Thread.sleep(500L);
     val pos : Int = Integer.parseInt(sensorNode.getNodeId.replace("node", "")) - 1
     val text = Source.fromInputStream(getClass().getResourceAsStream(FILE_NAME)).mkString
     readValues(text, pos)
