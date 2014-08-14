@@ -4,12 +4,14 @@ import java.util.Properties
 
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
+import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
 import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.{RDD}
 import org.apache.spark.streaming.dstream.DStream
+import org.apache.spark.streaming.scheduler.StreamingListenerBatchCompleted
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scala.collection.JavaConverters._
 import scala.io.Source.fromURL
@@ -18,7 +20,7 @@ import scala.io.Source.fromURL
 import scala.collection.mutable
 
 /**
- * Created by snoooze on 16.06.14.
+ * Created by Stefan Nüesch on 16.06.14.
  */
 object ScalaSimpleSparkApp {
 
@@ -61,6 +63,7 @@ object ScalaSimpleSparkApp {
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(4))
     import StreamingContext._
     ssc.checkpoint(".checkpoint")
+    ssc.addStreamingListener(new LisaStreamingListener())
 
 
     val topology: Topology = TopologyHelper.createSimpleTopology()
