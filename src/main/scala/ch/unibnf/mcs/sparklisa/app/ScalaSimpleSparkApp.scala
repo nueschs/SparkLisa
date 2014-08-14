@@ -107,6 +107,7 @@ object ScalaSimpleSparkApp {
 
     allValues.saveAsTextFiles(HdfsPath + "/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + "/finalLisaValues")
+    allLisaVals.persist()
 
     ssc.start()
     ssc.awaitTermination()
