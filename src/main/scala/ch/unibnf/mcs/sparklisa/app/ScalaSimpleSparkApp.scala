@@ -53,7 +53,7 @@ object ScalaSimpleSparkApp {
   }
 
   def main(args: Array[String]) {
-    Logger.getRootLogger.setLevel(Level.WARN)
+    Logger.getRootLogger.setLevel(Level.INFO)
 
     initConfig()
 
@@ -102,6 +102,7 @@ object ScalaSimpleSparkApp {
 
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
 
+    allValues.saveAsTextFiles(HdfsPath + "/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + "/finalLisaValues")
 
     ssc.start()
