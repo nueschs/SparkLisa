@@ -56,12 +56,12 @@ object ScalaSimpleSparkApp {
 
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
-
     initConfig()
-
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(4))
-    import StreamingContext._
+    import org.apache.spark.SparkContext._
+    ssc.sparkContext.makeRDD(1 to 10000, 10000).map(x => (x,1)).reduceByKey(_ + _, 1000).collect()
+
     ssc.checkpoint(".checkpoint")
     ssc.addStreamingListener(new LisaStreamingListener())
 
