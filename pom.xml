@@ -127,6 +127,7 @@
             </activation>
             <properties>
                 <hadoop.version>2.4.1</hadoop.version>
+                <build.env>local</build.env>
             </properties>
         </profile>
         <profile>
@@ -139,6 +140,7 @@
             </repositories>
             <properties>
                 <hadoop.version>2.3.0-cdh5.1.0</hadoop.version>
+                <build.env>cluster</build.env>
             </properties>
         </profile>
     </profiles>
@@ -245,6 +247,13 @@
                 </executions>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
     <properties>
