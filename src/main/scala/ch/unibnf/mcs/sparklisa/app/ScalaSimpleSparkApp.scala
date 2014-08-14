@@ -80,32 +80,34 @@ object ScalaSimpleSparkApp {
       }
     })
 
-    val runningCount = allValues.count()
-    val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
+    allValues.print()
 
-
-    val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
-      val mean = meanRDD.reduce(_ + _)
-      valueRDD.map(value => {
-        math.pow(value._2 - mean, 2.0)
-      })
-    })
-
-    val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
-      val variance: Double = varianceRDD.reduce(_ + _)
-      countRDD.map(cnt => {
-        math.sqrt(variance / cnt.toDouble)
-      })
-    })
-
-    val allLisaVals = createLisaValues(allValues, runningMean, stdDev)
-
-    val allNeighbourVals: DStream[(String, Double)] = allLisaVals.flatMap(value => mapToNeighbourKeys(value, nodeMap))
-    val neighboursNormalizedSums = allNeighbourVals.map(value => (value._1, (1.0, value._2))).reduceByKey((a, b) => (a._1 + b._1, a._2 + b._2)).map(value => (value._1, value._2._2 / value._2._1))
-
-    val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
-
-    finalLisaValues.print()
+//    val runningCount = allValues.count()
+//    val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
+//
+//
+//    val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
+//      val mean = meanRDD.reduce(_ + _)
+//      valueRDD.map(value => {
+//        math.pow(value._2 - mean, 2.0)
+//      })
+//    })
+//
+//    val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
+//      val variance: Double = varianceRDD.reduce(_ + _)
+//      countRDD.map(cnt => {
+//        math.sqrt(variance / cnt.toDouble)
+//      })
+//    })
+//
+//    val allLisaVals = createLisaValues(allValues, runningMean, stdDev)
+//
+//    val allNeighbourVals: DStream[(String, Double)] = allLisaVals.flatMap(value => mapToNeighbourKeys(value, nodeMap))
+//    val neighboursNormalizedSums = allNeighbourVals.map(value => (value._1, (1.0, value._2))).reduceByKey((a, b) => (a._1 + b._1, a._2 + b._2)).map(value => (value._1, value._2._2 / value._2._1))
+//
+//    val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
+//
+//    finalLisaValues.print()
 
 //    allValues.saveAsTextFiles(HdfsPath + "/allValues")
 //    finalLisaValues.saveAsTextFiles(HdfsPath + "/finalLisaValues")
