@@ -2,19 +2,15 @@ package ch.unibnf.mcs.sparklisa.app
 
 import java.util.Properties
 
-import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.SensorSimulatorActorReceiver
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.{RDD}
 import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.scheduler.StreamingListenerBatchCompleted
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scala.collection.JavaConverters._
-import scala.io.Source.fromURL
 
 
 import scala.collection.mutable
@@ -22,7 +18,7 @@ import scala.collection.mutable
 /**
  * Created by Stefan Nüesch on 16.06.14.
  */
-object ScalaSimpleSparkApp {
+object FileInputLisaStreamingJob {
 
   val SumKey: String = "SUM_KEY"
 
@@ -38,7 +34,7 @@ object ScalaSimpleSparkApp {
 
   def createSparkConf(): SparkConf = {
     val conf: SparkConf = new SparkConf()
-    conf.setAppName("Simple Streaming App")
+    conf.setAppName("File Input LISA Streaming Job")
     if ("local" == Env) {
       conf.setMaster(Master)
         .setSparkHome("/home/snoooze/spark/spark-1.0.0")
@@ -56,8 +52,8 @@ object ScalaSimpleSparkApp {
 
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
-    import org.apache.spark.streaming.StreamingContext._
     initConfig()
+    import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(4))
 
@@ -68,19 +64,15 @@ object ScalaSimpleSparkApp {
     val topology: Topology = TopologyHelper.createSimpleTopology()
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
 
-    var allValues: DStream[(String, Double)] = null
-
-    nodeMap.foreach(t2 => {
-      val stream = ssc.actorStream[(String, Double)](Props(new SensorSimulatorActorReceiver(t2._2)), t2._1 + "Receiver")
-      if (allValues == null) {
-        allValues = stream
-      } else {
-        allValues = allValues.union(stream)
-      }
+    val allValues: DStream[(String, Double)] = ssc.textFileStream(HdfsPath+"/values").map(line => {
+      val line_arr: Array[String] = line.split(";")
+      (line_arr(0), line_arr(1).toDouble)
     })
+
 
     val runningCount = allValues.count()
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
+
 
 
     val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
@@ -90,6 +82,7 @@ object ScalaSimpleSparkApp {
       })
     })
 
+
     val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
       val variance: Double = varianceRDD.reduce(_ + _)
       countRDD.map(cnt => {
@@ -97,11 +90,10 @@ object ScalaSimpleSparkApp {
       })
     })
 
+//
     val allLisaVals = createLisaValues(allValues, runningMean, stdDev)
-
     val allNeighbourVals: DStream[(String, Double)] = allLisaVals.flatMap(value => mapToNeighbourKeys(value, nodeMap))
     val neighboursNormalizedSums = allNeighbourVals.groupByKey().map(value => (value._1,value._2.sum/value._2.size.toDouble))
-
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
 
     allValues.saveAsTextFiles(HdfsPath + "/allValues")
@@ -115,7 +107,7 @@ object ScalaSimpleSparkApp {
   private def mapToNeighbourKeys(value: (String, Double), nodeMap: mutable.Map[String, NodeType]): mutable.Traversable[(String, Double)] = {
     var mapped: mutable.MutableList[(String, Double)] = mutable.MutableList()
     import scala.collection.JavaConversions._
-    for (n <- nodeMap.get(value._1).get.getNeighbour()) {
+    for (n <- nodeMap.get(value._1).getOrElse(new NodeType()).getNeighbour()) {
       mapped += ((n, value._2))
     }
     return mapped

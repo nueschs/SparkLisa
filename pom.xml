@@ -87,6 +87,10 @@
                     <groupId>javax.servlet</groupId>
                     <artifactId>servlet-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -116,6 +120,11 @@
             <artifactId>spark-streaming_2.10</artifactId>
             <version>${spark.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
     </dependencies>
 
@@ -240,6 +249,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.redisson:redisson</include>
+                                    <include>com.google.guava:guava</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -266,6 +276,7 @@
         <jedis.version>2.5.1</jedis.version>
         <sedis.version>1.2.0</sedis.version>
         <redisson.version>1.1.0</redisson.version>
+        <guava.version>15.0</guava.version>
     </properties>
 
 </project>
