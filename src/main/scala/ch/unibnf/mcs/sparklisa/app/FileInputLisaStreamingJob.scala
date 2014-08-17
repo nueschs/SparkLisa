@@ -28,7 +28,7 @@ object FileInputLisaStreamingJob {
   val config: Properties = new Properties()
   var Env: String = null
   var HdfsPath: String = null
-  var Window: Int = null
+  var Window: Int = _
 
 
 
