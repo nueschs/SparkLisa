@@ -28,6 +28,7 @@ object FileInputLisaStreamingJob {
   val config: Properties = new Properties()
   var Env: String = null
   var HdfsPath: String = null
+  var Window: Int = null
 
 
 
@@ -48,6 +49,7 @@ object FileInputLisaStreamingJob {
     config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
     Env = config.getProperty("build.env")
     HdfsPath = config.getProperty("hdfs.path." + Env)
+    Window = config.getProperty("window.seconds").toInt
   }
 
   def main(args: Array[String]) {
