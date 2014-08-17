@@ -28,7 +28,7 @@ object FileInputLisaStreamingJob {
   val config: Properties = new Properties()
   var Env: String = null
   var HdfsPath: String = null
-  var Window: Int = _
+  var Window = None : Option[Long]
 
 
 
@@ -49,7 +49,7 @@ object FileInputLisaStreamingJob {
     config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
     Env = config.getProperty("build.env")
     HdfsPath = config.getProperty("hdfs.path." + Env)
-    Window = config.getProperty("window.seconds").toInt
+    Window = Some(config.getProperty("window.seconds").toLong)
   }
 
   def main(args: Array[String]) {
@@ -57,7 +57,7 @@ object FileInputLisaStreamingJob {
     initConfig()
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(Window))
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(Window.getOrElse(4L)))
 
     ssc.checkpoint(".checkpoint")
     ssc.addStreamingListener(new LisaStreamingListener())
