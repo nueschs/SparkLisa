@@ -22,8 +22,8 @@ object FileInputLisaStreamingJob {
 
   val SumKey: String = "SUM_KEY"
 
-  val Master: String = "spark://saight02:7077"
-  //  val Master: String = "local[2]"
+//  val Master: String = "spark://saight02:7077"
+    val Master: String = "local[2]"
 
   val config: Properties = new Properties()
   var Env: String = null

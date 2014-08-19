@@ -63,7 +63,7 @@ def one_file_per_basestation(num_nodes_, num_values_, num_base_stations_):
 
     nodes_per_base = int(num_nodes_) / int(num_base_stations_)
     for i in range(0, num_base_stations_):
-        station_dir = base_file_name+str(i)+'/'
+        station_dir = base_file_name+str(i+1)+'/'
         if not os.path.isdir(station_dir):
             os.makedirs(station_dir)
         file_ = open(station_dir + num_nodes_ + '_' + num_values_ + '.txt', 'wb')
