@@ -5,7 +5,7 @@ import os
 from random import gauss
 
 
-def create_single_file(num_nodes_, num_values_):
+def create_single_file(num_nodes_, num_values_, _):
     file_name = '../resources/node_values_' + num_nodes_ + '_' + num_values_ + '_%.txt'
 
     count = 0
@@ -24,7 +24,7 @@ def create_single_file(num_nodes_, num_values_):
     file_.close()
 
 
-def create_file_per_node(num_nodes_, num_values_):
+def create_file_per_node(num_nodes_, num_values_, _):
     base_file_name = '../resources/node_values/' + num_nodes_ + '/' + num_values_ + '/'
     if not os.path.isdir(base_file_name):
         os.makedirs(base_file_name)
@@ -35,7 +35,7 @@ def create_file_per_node(num_nodes_, num_values_):
         file_.close()
 
 
-def one_line_node_id_value(num_nodes_, num_values_):
+def one_line_node_id_value(num_nodes_, num_values_, _):
     base_file_name = '../resources/node_values/'
     if not os.path.isdir(base_file_name):
         os.makedirs(base_file_name)
@@ -68,18 +68,18 @@ def one_file_per_basestation(num_nodes_, num_values_, num_base_stations_):
             os.makedirs(station_dir)
         file_ = open(station_dir + num_nodes_ + '_' + num_values_ + '.txt', 'wb')
         for j in range(i * nodes_per_base, (i + 1) * nodes_per_base):
-            node_id = 'node' + str(j)
+            node_id = 'node' + str(j+1)
             for k in range(0, int(num_values_)):
                 file_.write(node_id + ';' + str(gauss(0.0, 1.0)) + '\n')
 
 
 def run_mode(mode_, num_nodes_, num_values_, num_base_stations_):
     return {
-        1: create_single_file(num_nodes_, num_values_),
-        2: create_file_per_node(num_nodes_, num_values_),
-        3: one_line_node_id_value(num_nodes_, num_values_),
-        4: one_file_per_basestation(num_nodes_, num_values_, num_base_stations_)
-    }.get(mode_, None)
+        '1': create_single_file,
+        '2': create_file_per_node,
+        '3': one_line_node_id_value,
+        '4': one_file_per_basestation
+    }.get(mode_, None)(num_nodes_, num_values_, num_base_stations_)
 
 
 mode, num_nodes, num_values = sys.argv[1], sys.argv[2], sys.argv[3]
