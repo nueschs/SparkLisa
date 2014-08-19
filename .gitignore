@@ -4,4 +4,5 @@ target/
 .checkpoint
 dependency-reduced-pom.xml
 **/node_values/
-**/node_values_*.txt
+**/node_values_*.*
+**/eval_*.*
