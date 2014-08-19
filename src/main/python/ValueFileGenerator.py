@@ -51,6 +51,13 @@ def one_line_node_id_value(num_nodes_, num_values_):
             line = 'node'+str(i)+';'+str(gauss(0.0, 1.0))+'\n'
             file_.write(line)
 
+def one_file_per_basestation(num_nodes_, num_values_, num_basestations_):
+    base_file_name = '../resources/node_values/per_base_'+str(num_basestations_)+'/'
+    if not os.path.isdir(base_file_name):
+        os.makedirs(base_file_name)
+
+    
+
 
 def run_mode(mode_, num_nodes_, num_values_):
     return {

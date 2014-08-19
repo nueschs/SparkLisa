@@ -3,3 +3,4 @@ target/
 *.iml
 .checkpoint
 dependency-reduced-pom.xml
+**/node_values/

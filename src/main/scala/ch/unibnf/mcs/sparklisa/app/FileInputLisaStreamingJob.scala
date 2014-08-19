@@ -60,12 +60,13 @@ object FileInputLisaStreamingJob {
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(Window.getOrElse(4L)))
 
     ssc.checkpoint(".checkpoint")
+    conf.
     ssc.addStreamingListener(new LisaStreamingListener())
 
 
     val topology: Topology = TopologyHelper.createSimpleTopology()
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
-
+    ssc.textFileStream(HdfsPath+"/values").context.
     val allValues: DStream[(String, Double)] = ssc.textFileStream(HdfsPath+"/values").map(line => {
       val line_arr: Array[String] = line.split(";")
       (line_arr(0), line_arr(1).toDouble)
