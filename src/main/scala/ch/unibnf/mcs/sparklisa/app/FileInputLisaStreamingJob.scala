@@ -80,6 +80,10 @@ object FileInputLisaStreamingJob {
     allValues.saveAsTextFiles(HdfsPath + "/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + "/finalLisaValues")
 
+    import org.apache.spark.SparkContext._
+    ssc.sparkContext.makeRDD(1 to 10000, 10000).map(x => (x,
+      1)).reduceByKey(_ + _, 1000).collect()
+
     ssc.start()
     ssc.awaitTermination()
 
