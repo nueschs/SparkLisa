@@ -5,29 +5,25 @@ import ch.unibnf.mcs.sparklisa.topology.NodeType;
 import ch.unibnf.mcs.sparklisa.topology.ObjectFactory;
 import ch.unibnf.mcs.sparklisa.topology.Topology;
 import com.google.common.collect.Maps;
-import org.w3c.dom.Document;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
+import java.lang.Math;
 
 /**
  * Created by snoooze on 17.06.14.
  */
 public class TopologyHelper {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
         StringBuilder str = new StringBuilder();
         str.append("nodeMap = {\n");
+        Topology top = topologyFromBareFile("/home/snoooze/scala_ws/SparkLisa/src/main/resources/topology/topology_bare_16_2.5.txt", 4);
 
-        for (NodeType node : createSimpleTopology().getNode()){
+        for (NodeType node : top.getNode()){
             str.append("'"+node.getNodeId()+"': [");
             for (String neighbour : node.getNeighbour()) {
                 str.append("'"+neighbour+"', ");
@@ -46,6 +42,48 @@ public class TopologyHelper {
             res.put(node.getNodeId(), node);
         }
         return res;
+    }
+
+    public static Topology topologyFromBareFile(String path, Integer numberOfBaseStations) throws IOException {
+        Topology topology = new Topology();
+        List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+        Integer numberOfNodes = lines.size();
+
+        if (numberOfNodes % numberOfBaseStations != 0){
+            throw new IllegalArgumentException("Number of Nodes must be a multiple of number of BaseStations");
+        }
+
+        /*
+        * For each line in the file, a node is created.
+        * Thereafter, all edges (value==1 in the file) for nodes with lower ids are created.
+        * Thus, only links to already existing nodes are created
+         */
+        for (int i = 0; i < numberOfNodes; i++){
+            NodeType node = new NodeType();
+            node.setNodeId("node"+(i+1));
+            topology.getNode().add(node);
+            String[] values = lines.get(i).split(",");
+
+            for(int j = 0; j < values.length; j++){
+                if (j < i && Integer.parseInt(values[j]) == 1){
+                    topology.getNode().get(j).getNeighbour().add(node.getNodeId());
+                    node.getNeighbour().add(topology.getNode().get(j).getNodeId());
+                }
+            }
+        }
+
+        for (int i = 0; i < numberOfBaseStations; i++){
+            BasestationType station = new BasestationType();
+            station.setStationId("station"+(i+1));
+            topology.getBasestation().add(station);
+        }
+
+        for (int i = 0; i < numberOfNodes; i++){
+            topology.getBasestation().get(i % numberOfBaseStations).getNode().add(topology.getNode().get(i).getNodeId());
+        }
+
+
+        return topology;
     }
 
     public static Topology createSimpleTopology(){
