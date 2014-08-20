@@ -22,8 +22,8 @@ object FileInputLisaStreamingJob {
 
   val SumKey: String = "SUM_KEY"
 
-//  val Master: String = "spark://saight02:7077"
-    val Master: String = "local[2]"
+  val Master: String = "spark://saight02:7077"
+//    val Master: String = "local[2]"
 
   val config: Properties = new Properties()
   var Env: String = null
@@ -48,7 +48,8 @@ object FileInputLisaStreamingJob {
 
     ssc.checkpoint(".checkpoint")
 
-    val topology: Topology = TopologyHelper.createSimpleTopology()
+    val topology: Topology = TopologyHelper.topologyFromBareFile(args(0), args(1).toInt)
+
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
     val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, ReceiverStrategy.withName(Strategy.getOrElse("SINGLE")))
 
