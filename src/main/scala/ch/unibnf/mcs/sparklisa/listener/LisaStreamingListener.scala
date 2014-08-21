@@ -10,11 +10,11 @@ class LisaStreamingListener extends StreamingListener{
   val Log: Logger = LoggerFactory.getLogger(getClass)
 
   override def onBatchCompleted(batchCompleted: StreamingListenerBatchCompleted) = {
-    Log.info(batchCompleted.batchInfo.toString)
+    Log.info("batch_completed: "+batchStarted.batchInfo.toString)
   }
 
   override def onBatchStarted(batchStarted: StreamingListenerBatchStarted) = {
-    Log.info(batchStarted.batchInfo.toString)
+    Log.info("batch_started: "+batchCompleted.batchInfo.toString)
   }
 
   override def onReceiverError(receiverError: StreamingListenerReceiverError) = {
