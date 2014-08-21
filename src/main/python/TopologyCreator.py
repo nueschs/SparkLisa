@@ -25,7 +25,6 @@ def create_random_topology(num_nodes_, avg_degree_):
     matrix = create_sparse_matrix_right_half(num_nodes_, side_length, p)
     matrix = mirror_matrix(matrix, num_nodes_, side_length)
     write_matrix_bare(matrix, num_nodes_, avg_degree_)
-    print(sum(sum(x) for x in matrix))
 
 
 def create_sparse_matrix_right_half(num_nodes_, side_length, p):

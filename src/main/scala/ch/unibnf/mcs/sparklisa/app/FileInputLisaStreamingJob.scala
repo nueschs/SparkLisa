@@ -45,6 +45,7 @@ object FileInputLisaStreamingJob {
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(Window.getOrElse(4L)))
+    ssc.addStreamingListener(new LisaStreamingListener())
 
     ssc.checkpoint(".checkpoint")
 
