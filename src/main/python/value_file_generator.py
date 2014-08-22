@@ -66,7 +66,14 @@ def one_file_per_basestation(num_nodes_, num_values_, num_base_stations_):
         station_dir = base_file_name+str(i+1)+'/'
         if not os.path.isdir(station_dir):
             os.makedirs(station_dir)
-        file_ = open(station_dir + num_nodes_ + '_' + num_values_ + '.txt', 'wb')
+
+        file_name = station_dir + num_nodes_ + '_' + num_values_ + '_%.txt'
+        count = 0
+        while os.path.isfile(file_name.replace('%', str(count))):
+            count += 1
+        file_name = file_name.replace('%', str(count))
+
+        file_ = open(file_name, 'wb')
         for j in range(i * nodes_per_base, (i + 1) * nodes_per_base):
             node_id = 'node' + str(j+1)
             for k in range(0, int(num_values_)):
@@ -81,10 +88,10 @@ def run_mode(mode_, num_nodes_, num_values_, num_base_stations_):
         '4': one_file_per_basestation
     }.get(mode_, None)(num_nodes_, num_values_, num_base_stations_)
 
-
-mode, num_nodes, num_values = sys.argv[1], sys.argv[2], sys.argv[3]
-num_base_stations = int(sys.argv[4]) if mode == '4' else None
-run_mode(mode, num_nodes, num_values, num_base_stations)
+#
+# mode, num_nodes, num_values = sys.argv[1], sys.argv[2], sys.argv[3]
+# num_base_stations = int(sys.argv[4]) if mode == '4' else None
+# run_mode(mode, num_nodes, num_values, num_base_stations)
 
 
 

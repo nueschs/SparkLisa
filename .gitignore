@@ -7,3 +7,4 @@ dependency-reduced-pom.xml
 **/node_values_*.*
 **/eval_*.*
 **/topology/
+**/logs

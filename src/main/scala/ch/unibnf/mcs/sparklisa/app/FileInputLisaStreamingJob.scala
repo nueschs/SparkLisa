@@ -23,7 +23,7 @@ object FileInputLisaStreamingJob {
   val SumKey: String = "SUM_KEY"
 
   val Master: String = "spark://saight02:7077"
-//    val Master: String = "local[2]"
+  //    val Master: String = "local[2]"
 
   val config: Properties = new Properties()
   var Env: String = null
@@ -31,7 +31,7 @@ object FileInputLisaStreamingJob {
   var Window = None: Option[Long]
   var Strategy = None: Option[String]
 
-  object ReceiverStrategy extends Enumeration{
+  object ReceiverStrategy extends Enumeration {
     type ReceiverStrategy = Value
     val PER_BASE = Value("PER_BASE")
     val SINGLE = Value("SINGLE")
@@ -100,11 +100,12 @@ object FileInputLisaStreamingJob {
   }
 
   private def createAllValues(ssc: StreamingContext, topology: Topology, strategy: ReceiverStrategy): DStream[(String, Double)] = {
+    val srcPath : String = HdfsPath + "/values/" + topology.getNode.size().toString + "_" + topology.getBasestation.size().toString + "/"
     strategy match {
       case PER_BASE => {
         var allValues: DStream[(String, Double)] = null
         topology.getBasestation.asScala.foreach(station => {
-          val stream = ssc.textFileStream(HdfsPath + "/values/" + station.getStationId.takeRight((1))).map(line => {
+          val stream = ssc.textFileStream(srcPath + station.getStationId.takeRight((1))).map(line => {
             val line_arr: Array[String] = line.split(";")
             (line_arr(0), line_arr(1).toDouble)
           })
@@ -117,7 +118,7 @@ object FileInputLisaStreamingJob {
         return allValues
       }
       case SINGLE => {
-        return ssc.textFileStream(HdfsPath + "/values").map(line => {
+        return ssc.textFileStream(srcPath).map(line => {
           val line_arr: Array[String] = line.split(";")
           (line_arr(0), line_arr(1).toDouble)
         })

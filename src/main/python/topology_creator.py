@@ -9,11 +9,10 @@ import os
 
 def usage():
     print
-    print('Usage: python TopologyCreator.py number_of_nodes [avg_degree]')
+    print('Usage: python topology_creator.py number_of_nodes [avg_degree]')
     print
     print('number_of_nodes has to be a square number\n(square of an integer)')
     print('avg_degree represent the average number\nof connections per node (default 2.5)')
-
 
 def create_random_topology(num_nodes_, avg_degree_):
     if not math.sqrt(num_nodes_).is_integer():
@@ -88,8 +87,8 @@ def write_matrix_bare(matrix, num_nodes_, avg_degree_):
 
     file_.close()
 
-
-num_nodes = int(sys.argv[1])
-avg_degree = float(sys.argv[2]) if len(sys.argv) > 2 else 2.5
-
-create_random_topology(num_nodes, avg_degree)
+#
+# num_nodes = int(sys.argv[1])
+# avg_degree = float(sys.argv[2]) if len(sys.argv) > 2 else 2.5
+#
+# create_random_topology(num_nodes, avg_degree)
