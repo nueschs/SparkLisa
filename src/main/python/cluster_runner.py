@@ -104,8 +104,8 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_):
             call(command)
         time.sleep(window_)
 
-def cleanup_hdfs(num_nodes, num_base_stations):
-    hdfs_client.delete(['/sparkLisa/values/{0}_{1}/'.format(num_nodes, num_base_stations)], recurse=True).next()
+# def cleanup_hdfs(num_nodes, num_base_stations):
+#     hdfs_client.delete(['/sparkLisa/values/{0}_{1}/'.format(num_nodes, num_base_stations)], recurse=True).next()
 
 def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
     values_base_path = '../resources/node_values/per_base_{0}/'.format(num_base_stations)
@@ -148,7 +148,7 @@ def main():
         log_file.close()
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
 
-    cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
+    # cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
     hdfs_client.close()
 
 main()
