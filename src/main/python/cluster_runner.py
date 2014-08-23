@@ -101,6 +101,7 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_):
             src_file = base_path + '{0}/{1}'.format(j+1, file_name)
             dst_file = hdfs_base_path +'{0}/'.format(j+1)
             command = ['hadoop', 'fs', '-copyFromLocal', src_file, dst_file]
+            print('>>> uploading file: '+src_file)
             call(command)
         time.sleep(window_)
 
