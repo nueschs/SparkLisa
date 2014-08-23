@@ -39,8 +39,8 @@ spark_command = [
     'client',
     '--num-executors',
     '',
-    'target/SparkLisa-0.0.1-SNAPSHOT.jar'
-    'src/main/resources/topology/topology_bare_{0}_2.5.txt'
+    '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar'
+    '../resources/topology/topology_bare_{0}_2.5.txt'
     ''
 ]
 log_file_path = '../resources/logs/'
