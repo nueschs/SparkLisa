@@ -6,7 +6,7 @@ from random import gauss
 
 
 def create_single_file(num_nodes_, num_values_, _):
-    file_name = '../resources/node_values_' + num_nodes_ + '_' + num_values_ + '_%.txt'
+    file_name = '../resources/node_values_{0}_{1}_%.txt'.format(num_nodes_, num_values_)
 
     count = 0
 
@@ -25,7 +25,7 @@ def create_single_file(num_nodes_, num_values_, _):
 
 
 def create_file_per_node(num_nodes_, num_values_, _):
-    base_file_name = '../resources/node_values/' + num_nodes_ + '/' + num_values_ + '/'
+    base_file_name = '../resources/node_values/{0}/{1}/'.format(num_nodes_, num_values_)
     if not os.path.isdir(base_file_name):
         os.makedirs(base_file_name)
     for i in range(0, int(num_nodes_)):
@@ -40,7 +40,7 @@ def one_line_node_id_value(num_nodes_, num_values_, _):
     if not os.path.isdir(base_file_name):
         os.makedirs(base_file_name)
 
-    file_name = base_file_name + num_nodes_ + '_' + num_values_ + '_%.txt'
+    file_name = base_file_name + '{0}_{1}_%.txt'.format(num_nodes_, num_values_)
     count = 0
     while os.path.isfile(file_name.replace('%', str(count))):
         count += 1
@@ -53,7 +53,7 @@ def one_line_node_id_value(num_nodes_, num_values_, _):
 
 
 def one_file_per_basestation(num_nodes_, num_values_, num_base_stations_):
-    base_file_name = '../resources/node_values/per_base_' + str(num_base_stations_) + '/'
+    base_file_name = '../resources/node_values/per_base_{0}/'.format(num_base_stations_)
     if not os.path.isdir(base_file_name):
         os.makedirs(base_file_name)
 
@@ -67,7 +67,7 @@ def one_file_per_basestation(num_nodes_, num_values_, num_base_stations_):
         if not os.path.isdir(station_dir):
             os.makedirs(station_dir)
 
-        file_name = station_dir + num_nodes_ + '_' + num_values_ + '_%.txt'
+        file_name = station_dir + '{0}_{1}_%.txt'.format(num_nodes_, num_values_)
         count = 0
         while os.path.isfile(file_name.replace('%', str(count))):
             count += 1
