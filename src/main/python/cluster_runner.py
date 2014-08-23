@@ -141,6 +141,7 @@ def main():
         log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
         log_file = open(log_file_name, 'wb')
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
+        time.sleep(5)
         call(spark_command, stdout=log_file)
         p.start()
         p.join()
