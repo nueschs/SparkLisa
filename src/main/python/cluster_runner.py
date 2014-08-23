@@ -143,10 +143,10 @@ def main():
         log_file = open(log_file_name, 'wb')
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
-        p.join()
         time.sleep(5)
         call(spark_command, stdout=log_file)
         time.sleep(duration+20)
+        p.join()
         log_file.close()
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
 
