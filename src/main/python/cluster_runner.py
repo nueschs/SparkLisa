@@ -99,7 +99,7 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_):
             hdfs_client.mkdir(['/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
             file_name = '{0}_{1}_{2}.txt'.format(num_nodes, num_values, j)
             src_file = base_path + '{0}/{1}'.format(j+1, file_name)
-            dst_file = hdfs_base_path +'${0}/'.format(j+1)
+            dst_file = hdfs_base_path +'{0}/'.format(j+1)
             command = ['hadoop', 'fs', '-copyFromLocal', src_file, dst_file]
             call(command)
         time.sleep(window_)
