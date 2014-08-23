@@ -130,25 +130,25 @@ def main():
 
     for number_of_nodes in numbers_of_nodes:
         create_values(number_of_nodes)
-        create_topology(number_of_nodes)
-        num_executors = number_of_base_stations if number_of_base_stations >= 16 else 16
-
-        spark_command[topology_file_pos] = spark_command[topology_file_pos].format(number_of_nodes)
-        spark_command[num_stations_pos] = str(number_of_base_stations)
-        spark_command[duration_pos] = str(float(duration))
-        spark_command[num_executor_pos] = str(num_executors)
-        spark_command[window_pos] = str(window)
-        log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
-        log_file = open(log_file_name, 'wb')
-        call(spark_command, stdout=log_file)
+        # create_topology(number_of_nodes)
+        # num_executors = number_of_base_stations if number_of_base_stations >= 16 else 16
+        #
+        # spark_command[topology_file_pos] = spark_command[topology_file_pos].format(number_of_nodes)
+        # spark_command[num_stations_pos] = str(number_of_base_stations)
+        # spark_command[duration_pos] = str(float(duration))
+        # spark_command[num_executor_pos] = str(num_executors)
+        # spark_command[window_pos] = str(window)
+        # log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
+        # log_file = open(log_file_name, 'wb')
+        # call(spark_command, stdout=log_file)
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
         p.join()
-        time.sleep(duration+20)
-        log_file.close()
-        collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
+        # time.sleep(duration+20)
+        # log_file.close()
+        # collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
 
-    cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
+    # cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
     hdfs_client.close()
 
 main()
