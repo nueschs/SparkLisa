@@ -20,8 +20,10 @@ window = None
 duration = None
 number_of_values = None
 number_of_files = None
-hdfs_path = 'hdfs://localhost:9999/sparkLisa/'
-hdfs_client = Client('localhost', 9999, use_trash=False)
+hdfs_path = 'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/'
+hdfs_client = Client('diufpc56.unifr.ch', 8020, use_trash=False)
+# hdfs_path = 'hdfs://localhost:9999/sparkLisa/'
+# hdfs_client = Client('localhost', 9999, use_trash=False)
 duration_pos = 1
 num_executor_pos = 10
 topology_file_pos = 12
