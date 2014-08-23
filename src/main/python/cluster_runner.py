@@ -27,8 +27,8 @@ num_executor_pos = 10
 topology_file_pos = 12
 num_stations_pos = 13
 spark_command = [
-    'timeout'
-    ''
+    'timeout',
+    '',
     'spark-submit',
     '--class',
     'ch.unibnf.mcs.sparklisa.app.FileInputLisaStreamingJob',
@@ -38,8 +38,8 @@ spark_command = [
     'client',
     '--num-executors',
     '',
-    '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar'
-    '../resources/topology/topology_bare_{0}_2.5.txt'
+    '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar',
+    '../resources/topology/topology_bare_{0}_2.5.txt',
     ''
 ]
 log_file_path = '../resources/logs/'
