@@ -21,9 +21,10 @@ window = None
 duration = None
 number_of_values = None
 number_of_files = None
-hdfs_path = 'hdfs://localhost:9999/sparkLisa/values/'
+hdfs_path = 'hdfs://localhost:9999/sparkLisa/'
 hdfs_client = Client('localhost', 9999, use_trash=False)
 duration_pos = 1
+num_executor_pos = 10
 topology_file_pos = 12
 num_stations_pos = 13
 spark_command = [
@@ -37,7 +38,7 @@ spark_command = [
     '--deploy-mode',
     'client',
     '--num-executors',
-    '4',
+    '',
     'target/SparkLisa-0.0.1-SNAPSHOT.jar'
     'src/main/resources/topology/topology_bare_{0}_2.5.txt'
     ''
@@ -89,7 +90,7 @@ def create_values(num_nodes):
 
 def upload_values(num_files, num_values, num_nodes, num_base_stations, window_):
     base_path = '../resources/node_values/per_base_{0}/'.format(num_base_stations)
-    hdfs_base_path = hdfs_path+'{0}_{1}/'.format(num_nodes, num_base_stations)
+    hdfs_base_path = hdfs_path+'values/{0}_{1}/'.format(num_nodes, num_base_stations)
     for i in range(0, num_files):
         for j in range(0, num_base_stations):
             hdfs_client.mkdir(['/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
@@ -103,30 +104,49 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_):
 def cleanup_hdfs(num_nodes, num_base_stations):
     hdfs_client.delete(['/sparkLisa/values/{0}_{1}/'.format(num_nodes, num_base_stations)], recurse=True).next()
 
+def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
+    values_base_path = '../resources/node_values/per_base_{0}/'.format(num_base_stations)
+    output_folder = 'temp/'
+    if not os.path.isdir(output_folder):
+        os.makedirs(output_folder)
+    os.makedirs(output_folder+'node_values/')
+    os.makedirs(output_folder+'results/')
+
+    shutil.copyfile(log_file_name, output_folder+log_file_name.split('/')[-1])
+    shutil.copytree(values_base_path, output_folder+'node_values/')
+    shutil.copyfile('../resources/topology/topology_bare_{0}_2.5.txt').format(num_nodes)
+    hdfs_client.copyToLocal(hdfs_path+'results/{0}_{1}'.format(num_base_stations, num_nodes)+'/', output_folder+'results/')
+
+
+
 def main():
+    parse_arguments()
+
     if not os.path.isdir(log_file_path):
         os.makedirs(log_file_path)
 
     for number_of_nodes in numbers_of_nodes:
         create_values(number_of_nodes)
         create_topology(number_of_nodes)
+        num_executors = number_of_base_stations if number_of_base_stations >= 16 else 16
 
         spark_command[topology_file_pos] = spark_command[topology_file_pos].format(number_of_nodes)
         spark_command[num_stations_pos] = str(number_of_base_stations)
         spark_command[duration_pos] = str(float(duration))
+        spark_command[num_executor_pos] = str(num_executors)
         log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
         log_file = open(log_file_name, 'wb')
         call(spark_command, stdout=log_file)
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
         p.join()
-
-
-
+        time.sleep(duration+20)
+        log_file.close()
+        collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
 
     cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
+    hdfs_client.close()
 
-parse_arguments()
 main()
 
 # def clear_hdfs_values()

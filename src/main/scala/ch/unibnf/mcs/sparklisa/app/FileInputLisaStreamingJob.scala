@@ -28,7 +28,6 @@ object FileInputLisaStreamingJob {
   val config: Properties = new Properties()
   var Env: String = null
   var HdfsPath: String = null
-  var Window = None: Option[Long]
   var Strategy = None: Option[String]
 
   object ReceiverStrategy extends Enumeration {
@@ -44,7 +43,7 @@ object FileInputLisaStreamingJob {
     initConfig()
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(Window.getOrElse(4L)))
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(args(2).toLong))
     ssc.addStreamingListener(new LisaStreamingListener())
 
     ssc.checkpoint(".checkpoint")
@@ -78,9 +77,10 @@ object FileInputLisaStreamingJob {
     val allNeighbourVals: DStream[(String, Double)] = allLisaVals.flatMap(value => mapToNeighbourKeys(value, nodeMap))
     val neighboursNormalizedSums = allNeighbourVals.groupByKey().map(value => (value._1, value._2.sum / value._2.size.toDouble))
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
-
-    allValues.saveAsTextFiles(HdfsPath + "/allValues")
-    finalLisaValues.saveAsTextFiles(HdfsPath + "/finalLisaValues")
+    val numberOfBaseStations = topology.getBasestation.size().toString
+    val numberOfNodes = topology.getNode.size().toString
+    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_${numberOfNodes}/allValues")
+    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_${numberOfNodes}/finalLisaValues")
 
     ssc.start()
     ssc.awaitTermination()
@@ -130,7 +130,6 @@ object FileInputLisaStreamingJob {
     config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
     Env = config.getProperty("build.env")
     HdfsPath = config.getProperty("hdfs.path." + Env)
-    Window = Some(config.getProperty("window.seconds").toLong)
     Strategy = Some(config.getProperty("receiver.strategy"))
   }
 
