@@ -11,6 +11,7 @@ import value_file_generator as vals
 from multiprocessing import Process
 from subprocess import call
 from snakebite.client import Client
+import tarfile
 
 avg_degree = 2.5
 numbers_of_nodes = None
@@ -120,6 +121,8 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
     shutil.copytree(values_base_path, output_folder+'node_values/')
     shutil.copyfile('../resources/topology/topology_bare_{0}_2.5.txt').format(num_nodes)
     hdfs_client.copyToLocal(hdfs_path+'results/{0}_{1}'.format(num_base_stations, num_nodes)+'/', output_folder+'results/')
+    with tarfile.open(log_file_name.split('.')[0]+'.tar.gz', 'w:gz') as tar:
+        tar.add('results/')
 
 
 
