@@ -153,7 +153,6 @@ def main():
         sys.stdout = Logger(log_file_name)
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
-        time.sleep(5)
         call(spark_command)
         time.sleep(duration+20)
         p.join()
