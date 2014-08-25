@@ -145,10 +145,10 @@ def main():
         spark_command[window_pos] = str(window)
         log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
         spark_command[log_file_pos] = log_file_name
-        print(" ".join(spark_command))
+        spark_command_ = " ".join(spark_command)
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
-        call(" ".join(spark_command), shell=True)
+        os.system(spark_command_)
         time.sleep(duration+20)
         p.join()
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
