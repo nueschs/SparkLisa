@@ -5,7 +5,7 @@ import shutil
 import os
 import math
 import time
-import sys
+import shlex
 from datetime import datetime
 import topology_creator as topo
 import value_file_generator as vals
@@ -145,6 +145,7 @@ def main():
         spark_command[window_pos] = str(window)
         log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
         spark_command[log_file_pos] = log_file_name
+        spark_command = shlex.split(" ".join(spark_command))
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
         call(spark_command, shell=True)
