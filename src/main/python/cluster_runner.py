@@ -105,6 +105,9 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_):
             print('>>> uploading file: '+src_file)
             call(command)
         time.sleep(window_)
+        while not os.path.isfile('../resources/batch.ack'):
+            time.sleep(0.1)
+        os.remove('../resources/batch.ack')
 
 # def cleanup_hdfs(num_nodes, num_base_stations):
 #     hdfs_client.delete(['/sparkLisa/values/{0}_{1}/'.format(num_nodes, num_base_stations)], recurse=True).next()

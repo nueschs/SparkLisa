@@ -1,6 +1,6 @@
 package ch.unibnf.mcs.sparklisa.listener
 
-import java.io.File
+import java.io.{PrintWriter, File}
 
 import org.apache.spark.streaming.scheduler._
 import org.slf4j.{LoggerFactory, Logger}
@@ -14,12 +14,8 @@ class LisaStreamingListener extends StreamingListener {
   val Log: Logger = LoggerFactory.getLogger(getClass)
 
   override def onBatchCompleted(batchCompleted: StreamingListenerBatchCompleted) = {
-    var s : String = ""
-    for(f <- new File("/home/stefan").listFiles()){
-      s+=f.getName+"\n"
-    }
-    s += "batch_completed (" + Platform.currentTime.toString + "): \n" + batchTime(batchCompleted.batchInfo)
-    Log.info(s)
+    Log.info("batch_completed (" + Platform.currentTime.toString + "): \n" + batchTime(batchCompleted.batchInfo))
+    createAckFile()
   }
 
   override def onBatchStarted(batchStarted: StreamingListenerBatchStarted) = {
@@ -43,6 +39,12 @@ class LisaStreamingListener extends StreamingListener {
     batchTimeString += "\ttotal_delay: " + batchInfo.totalDelay
 
     return batchTimeString
+  }
+
+  private def createAckFile() = {
+    val writer = new PrintWriter(new File("/home/stefan/SparkLisa/src/main/resources/batch.ack"))
+    writer.write("_")
+    writer.close()
   }
 
   /*
