@@ -5,12 +5,22 @@ import shutil
 import os
 import math
 import time
+import sys
 from datetime import datetime
 import topology_creator as topo
 import value_file_generator as vals
 from multiprocessing import Process
 from subprocess import call
 from snakebite.client import Client
+
+class Logger(object):
+    def __init__(self, filename="../resources/logs/default.log"):
+        self.terminal = sys.stdout
+        self.log = open(filename, "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
 
 avg_degree = 2.5
 numbers_of_nodes = None
@@ -140,11 +150,11 @@ def main():
         spark_command[num_executor_pos] = str(num_executors)
         spark_command[window_pos] = str(window)
         log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
-        log_file = open(log_file_name, 'wb')
+        sys.stdout = Logger(log_file_name)
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
         time.sleep(5)
-        call(spark_command, stdout=log_file)
+        call(spark_command)
         time.sleep(duration+20)
         p.join()
         log_file.close()

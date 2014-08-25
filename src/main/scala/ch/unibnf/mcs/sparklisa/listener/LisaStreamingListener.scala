@@ -37,13 +37,4 @@ class LisaStreamingListener extends StreamingListener{
 
     return batchTimeString
   }
-
-  /*
-  [StreamingListenerBus] INFO ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener -
-  batch_started: BatchInfo(1408608640000 ms,Map(),1408608654375,None,None)
-
-  [StreamingListenerBus] INFO ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener -
-  batch_completed: BatchInfo(1408608640000 ms,Map(),1408608654375,Some(1408608654380),Some(1408608658703))
-   */
-
 }
