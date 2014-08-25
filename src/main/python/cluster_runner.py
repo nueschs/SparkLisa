@@ -30,6 +30,7 @@ num_executor_pos = 10
 topology_file_pos = 12
 num_stations_pos = 13
 window_pos = 14
+log_file_pos = 16
 spark_command = [
     'timeout',
     '',
@@ -45,6 +46,8 @@ spark_command = [
     '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar',
     '../resources/topology/topology_bare_{0}_2.5.txt',
     '',
+    '',
+    '>>',
     ''
 ]
 log_file_path = '../resources/logs/'
@@ -141,12 +144,10 @@ def main():
         spark_command[num_executor_pos] = str(num_executors)
         spark_command[window_pos] = str(window)
         log_file_name = log_file_path+'{0}_{1}_{2}_{3}_{4}_{5}.log'.format(number_of_nodes, number_of_base_stations, rate, window, duration, datetime.now().strftime(date_format))
-        log_file =  open(log_file_name, 'w')
-        sys.stdout = log_file
-        sys.stderr = log_file
+        spark_command[log_file_pos] = log_file_name
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
         p.start()
-        call(spark_command)
+        call(spark_command, shell=True)
         time.sleep(duration+20)
         p.join()
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
