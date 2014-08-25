@@ -157,7 +157,6 @@ def main():
         call(spark_command)
         time.sleep(duration+20)
         p.join()
-        log_file.close()
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
 
     # cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
