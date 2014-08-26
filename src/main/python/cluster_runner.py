@@ -137,14 +137,14 @@ def main():
 
         spark_command[topology_file_pos] = spark_command[topology_file_pos].format(number_of_nodes)
         spark_command[num_stations_pos] = str(number_of_base_stations)
-        spark_command[duration_pos] = str(float(duration))
+        spark_command[duration_pos] = str(float(duration+60))
         spark_command[num_executor_pos] = str(num_executors)
         spark_command[window_pos] = str(window)
         spark_command_ = " ".join(spark_command)
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window, 20))
         p.start()
         os.system(spark_command_)
-        time.sleep(duration*2)
+        time.sleep(duration+60)
         p.join()
         log_file_name = log_file_path+'sparkLisa-job.log'
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
