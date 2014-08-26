@@ -92,7 +92,8 @@ def create_values(num_nodes):
         vals.one_file_per_basestation(num_nodes, number_of_values, number_of_base_stations)
 
 
-def upload_values(num_files, num_values, num_nodes, num_base_stations, window_):
+def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, initial_delay):
+    time.sleep(initial_delay)
     base_path = '../resources/node_values/per_base_{0}/'.format(num_base_stations)
     hdfs_base_path = hdfs_path+'values/{0}_{1}/'.format(num_nodes, num_base_stations)
     for i in range(0, num_files):
@@ -141,10 +142,10 @@ def main():
         spark_command[num_executor_pos] = str(num_executors)
         spark_command[window_pos] = str(window)
         spark_command_ = " ".join(spark_command)
-        p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window))
+        p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window, 20))
         p.start()
         os.system(spark_command_)
-        time.sleep(duration+20)
+        time.sleep(duration*2)
         p.join()
         log_file_name = log_file_path+'sparkLisa-job.log'
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
