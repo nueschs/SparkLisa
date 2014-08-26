@@ -47,7 +47,8 @@ spark_command = [
     '',
     '',
 ]
-log_file_path = '../resources/logs/'
+log_file_path = '../resources/logs/'    hdfs_client.close()
+
 date_format = '%d%m%Y%H%M%S'
 
 
@@ -125,7 +126,7 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
 
 
 def create_tar(tar_path, tar_name, path):
-    tar_file =  tarfile.TarFile(os.path.join(tar_path, tar_name)+'.tar.gz', 'w:gz')
+    tar_file =  tarfile.open(os.path.join(tar_path, tar_name)+'.tar.gz', 'w:gz')
     tar_file.add(path, arcname=tar_name)
     tar_file.close()
 
@@ -156,6 +157,5 @@ def main():
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
 
     # cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
-    hdfs_client.close()
 
 main()
