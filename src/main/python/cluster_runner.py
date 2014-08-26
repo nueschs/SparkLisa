@@ -112,10 +112,9 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, 
 def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
     values_base_path = '../resources/node_values/per_base_{0}/'.format(num_base_stations)
     output_folder = '../resources/temp/'
-    if not os.path.isdir(output_folder):
-        os.makedirs(output_folder)
-    os.makedirs(output_folder+'node_values/')
-    os.makedirs(output_folder+'results/')
+    if not os.path.isdir(output_folder): os.makedirs(output_folder)
+    if not os.path.isdir(output_folder+'node_values/'): os.makedirs(output_folder+'node_values/')
+    if not os.path.isdir(output_folder+'results/'): os.makedirs(output_folder+'results/')
 
     shutil.copyfile(log_file_name, output_folder+log_file_name.split('/')[-1])
     shutil.copytree(values_base_path, output_folder+'node_values/')
