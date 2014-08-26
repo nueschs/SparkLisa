@@ -122,7 +122,7 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
     list(hdfs_client.copyToLocal(['sparkLisa/results/{0}_{1}'.format(num_base_stations, num_nodes)+'/'], output_folder+'results/'))
     tar_name = '{0}_{1}_{2}_{3}_{4}_{5}'.format(num_base_stations, num_nodes, rate, window, duration, datetime.now().strftime(date_format))
     create_tar('../resources/', tar_name, '../resources/temp')
-    # delete_folder_contents('../resources/temp/')
+    delete_folder_contents('../resources/temp/')
     # delete_folder_contents('../resources/node_values')
     # delete_folder_contents('../resources/topology')
     # delete_folder_contents('../resources/logs')
