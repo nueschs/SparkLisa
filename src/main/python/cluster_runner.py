@@ -5,13 +5,13 @@ import shutil
 import os
 import math
 import time
-import shlex
-from datetime import datetime
+import tarfile
 import topology_creator as topo
 import value_file_generator as vals
 from multiprocessing import Process
 from subprocess import call
 from snakebite.client import Client
+from datetime import datetime
 
 avg_degree = 2.5
 numbers_of_nodes = None
@@ -119,7 +119,15 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
     shutil.copytree(values_base_path, output_folder+'node_values/')
     shutil.copy('../resources/topology/topology_bare_{0}_2.5.txt'.format(num_nodes), '../resources/temp/')
     hdfs_client.copyToLocal(hdfs_path+'results/{0}_{1}'.format(num_base_stations, num_nodes)+'/', output_folder+'results/')
+    tar_name = '{0}_{1}_{2}_{3}_{4}_{5}'.format(num_base_stations, num_nodes, rate, window, duration, datetime.now().strftime(date_format))
+    create_tar('../resources/', tar_name, '../resources/temp')
+    delete_folder_contents('../resources/temp/')
 
+
+def create_tar(tar_path, tar_name, path):
+    tar_file =  tarfile.TarFile(os.path.join(tar_path, tar_name)+'.tar.gz', 'w:gz')
+    tar_file.add(path, arcname=tar_name)
+    tar_file.close()
 
 
 def main():
