@@ -155,6 +155,7 @@ def main():
         p.start()
         os.system(spark_command_)
         time.sleep(duration+60)
+        print('>>> finalizing')
         p.join()
         log_file_name = log_file_path+'sparkLisa-job.log'
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
