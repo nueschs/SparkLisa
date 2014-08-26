@@ -47,7 +47,7 @@ spark_command = [
     '',
     '',
 ]
-log_file_path = '../resources/logs/'    hdfs_client.close()
+log_file_path = '../resources/logs/'
 
 date_format = '%d%m%Y%H%M%S'
 
