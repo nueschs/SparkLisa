@@ -119,10 +119,13 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
     shutil.copyfile(log_file_name, output_folder+log_file_name.split('/')[-1])
     shutil.copytree(values_base_path, output_folder+'node_values/')
     shutil.copy('../resources/topology/topology_bare_{0}_2.5.txt'.format(num_nodes), '../resources/temp/')
-    hdfs_client.copyToLocal(hdfs_path+'results/{0}_{1}'.format(num_base_stations, num_nodes)+'/', output_folder+'results/')
+    hdfs_client.copyToLocal(hdfs_path+'results/{0}_{1}'.format(num_base_stations, num_nodes)+'/', output_folder+'results/').next()
     tar_name = '{0}_{1}_{2}_{3}_{4}_{5}'.format(num_base_stations, num_nodes, rate, window, duration, datetime.now().strftime(date_format))
     create_tar('../resources/', tar_name, '../resources/temp')
     delete_folder_contents('../resources/temp/')
+    # delete_folder_contents('../resources/node_values')
+    # delete_folder_contents('../resources/topology')
+    # delete_folder_contents('../resources/logs')
 
 
 def create_tar(tar_path, tar_name, path):
@@ -155,7 +158,5 @@ def main():
         p.join()
         log_file_name = log_file_path+'sparkLisa-job.log'
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
-
-    # cleanup_hdfs(numbers_of_nodes[0], number_of_base_stations)
 
 main()
