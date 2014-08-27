@@ -108,7 +108,6 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, 
         call('hadoop fs -put '+ base_path+'temp/* '+hdfs_base_path, shell=True)
         delete_folder_contents(base_path+'temp')
         time.sleep(window_)
-    os.remove(base_path+'temp')
 
 def cleanup_hdfs(num_nodes, num_base_stations):
     hdfs_client.delete(['sparkLisa/values/{0}_{1}/'.format(num_nodes, num_base_stations)], recurse=True).next()
@@ -150,13 +149,13 @@ def main():
         print('>>> creating topology: {0}'.format(number_of_nodes))
         create_topology(number_of_nodes)
         num_executors = number_of_base_stations if number_of_base_stations >= 16 else 16
-
-        spark_command[topology_file_pos] = spark_command[topology_file_pos].format(number_of_nodes)
-        spark_command[num_stations_pos] = str(number_of_base_stations)
-        spark_command[duration_pos] = str(float(duration+60))
-        spark_command[num_executor_pos] = str(num_executors)
-        spark_command[window_pos] = str(window)
-        spark_command_ = " ".join(spark_command)
+        spark_command_ = list(spark_command)
+        spark_command_[topology_file_pos] = spark_command_[topology_file_pos].format(number_of_nodes)
+        spark_command_[num_stations_pos] = str(number_of_base_stations)
+        spark_command_[duration_pos] = str(float(duration+60))
+        spark_command_[num_executor_pos] = str(num_executors)
+        spark_command_[window_pos] = str(window)
+        spark_command_ = " ".join(spark_command_)
         print('>>> uploading values')
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window, 20))
         p.start()
