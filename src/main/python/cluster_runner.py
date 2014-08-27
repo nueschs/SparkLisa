@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-from scipy.weave.tests.weave_test_utils import temp_catalog_files
 import shutil
 import os
 import math
