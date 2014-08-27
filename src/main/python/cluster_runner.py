@@ -103,7 +103,7 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, 
             os.mkdir(temp_path)
             hdfs_client.mkdir(['/user/stefan/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
             file_name = '{0}_{1}_{2}.txt'.format(num_nodes, num_values, i)
-            shutil.copy(base_path+'/{0}/{1}'.format(j+1, file_name), temp_path)
+            shutil.copy(base_path+'{0}/{1}'.format(j+1, file_name), temp_path)
         print('>>> uploading values: {0}'.format(i))
         call('hadoop fs -put '+ base_path+'temp/* '+hdfs_base_path, shell=True)
         delete_folder_contents(base_path+'temp')
