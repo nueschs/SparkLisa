@@ -104,19 +104,10 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, 
             hdfs_client.mkdir(['/user/stefan/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
             file_name = '{0}_{1}_{2}.txt'.format(num_nodes, num_values, i)
             shutil.copy(base_path+'/{0}/{1}'.format(j+1, file_name), temp_path)
-
-
-            # hdfs_client.mkdir(['/user/stefan/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
-            #
-            # src_file = base_path + '{0}/{1}'.format(j+1, file_name)
-            # dst_file = hdfs_base_path +'{0}/'.format(j+1)
-            # command = ['hadoop', 'fs', '-copyFromLocal', src_file, dst_file]
-            # print('>>> uploading file: '+src_file)
-            # call(command)
-        call(['hadoop', 'fs', '-put', base_path+'temp/*', hdfs_base_path])
+        call('hadoop fs -put '+ base_path+'temp/* '+hdfs_base_path, shell=True)
         delete_folder_contents(base_path+'temp')
         time.sleep(window_)
-    # os.remove(base_path+'temp')
+    os.remove(base_path+'temp')
 
 # def cleanup_hdfs(num_nodes, num_base_stations):
 #     hdfs_client.delete(['/sparkLisa/values/{0}_{1}/'.format(num_nodes, num_base_stations)], recurse=True).next()
@@ -166,7 +157,6 @@ def main():
         p.start()
         os.system(spark_command_)
         time.sleep(duration+60)
-        print('>>> finalizing')
         p.join()
         log_file_name = log_file_path+'sparkLisa-job.log'
         collect_and_zip_output(log_file_name, number_of_base_stations, number_of_nodes)
