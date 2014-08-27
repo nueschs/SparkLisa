@@ -34,7 +34,7 @@ class LisaStreamingListener extends StreamingListener{
     batchTimeString += "\tprocessing_end_time: "+batchInfo.processingEndTime+"\n"
     batchTimeString += "\tprocessing_delay: "+batchInfo.processingDelay+"\n"
     batchTimeString += "\ttotal_delay: "+batchInfo.totalDelay
-
+    batchTimeString += "\tblock_info: "+(batchInfo.receivedBlockInfo mkString(";"))
     return batchTimeString
   }
 }
