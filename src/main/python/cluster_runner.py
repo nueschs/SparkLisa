@@ -129,6 +129,7 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes):
     delete_folder_contents('../resources/node_values')
     delete_folder_contents('../resources/topology')
     delete_folder_contents('../resources/logs')
+    cleanup_hdfs(num_nodes, num_base_stations)
 
 
 def create_tar(tar_path, tar_name, path):
