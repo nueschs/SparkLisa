@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+from scipy.weave.tests.weave_test_utils import temp_catalog_files
 import shutil
 import os
 import math
@@ -95,17 +96,28 @@ def create_values(num_nodes):
 
 def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, initial_delay):
     base_path = '../resources/node_values/per_base_{0}/'.format(num_base_stations)
+    if not os.path.isdir(base_path+'temp/'): os.makedirs(base_path+'temp/')
     hdfs_base_path = hdfs_path+'values/{0}_{1}/'.format(num_nodes, num_base_stations)
     for i in range(0, num_files):
         for j in range(0, num_base_stations):
+            temp_path = base_path+'temp/{0}/'.format(j+1)
+            os.mkdir(temp_path)
             hdfs_client.mkdir(['/user/stefan/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
             file_name = '{0}_{1}_{2}.txt'.format(num_nodes, num_values, i)
-            src_file = base_path + '{0}/{1}'.format(j+1, file_name)
-            dst_file = hdfs_base_path +'{0}/'.format(j+1)
-            command = ['hadoop', 'fs', '-copyFromLocal', src_file, dst_file]
-            print('>>> uploading file: '+src_file)
-            call(command)
+            shutil.copy(base_path+'/{0}/{1}'.format(j+1, file_name), temp_path)
+
+
+            # hdfs_client.mkdir(['/user/stefan/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
+            #
+            # src_file = base_path + '{0}/{1}'.format(j+1, file_name)
+            # dst_file = hdfs_base_path +'{0}/'.format(j+1)
+            # command = ['hadoop', 'fs', '-copyFromLocal', src_file, dst_file]
+            # print('>>> uploading file: '+src_file)
+            # call(command)
+        call(['hadoop', 'fs', '-put', base_path+'temp/*', hdfs_base_path])
+        delete_folder_contents(base_path+'temp')
         time.sleep(window_)
+    # os.remove(base_path+'temp')
 
 # def cleanup_hdfs(num_nodes, num_base_stations):
 #     hdfs_client.delete(['/sparkLisa/values/{0}_{1}/'.format(num_nodes, num_base_stations)], recurse=True).next()
