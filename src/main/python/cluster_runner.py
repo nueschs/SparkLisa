@@ -157,7 +157,7 @@ def main():
         spark_command_[window_pos] = str(window)
         spark_command_ = " ".join(spark_command_)
         print('>>> uploading values')
-        p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window, 20))
+        p = Process(target=upload_values, args=(number_of_files, number_of_values, number_of_nodes, number_of_base_stations, window, 20))
         p.start()
         print('>>> running spark')
         os.system(spark_command_)
