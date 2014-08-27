@@ -104,6 +104,7 @@ def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, 
             hdfs_client.mkdir(['/user/stefan/sparkLisa/values/{0}_{1}/{2}'.format(num_nodes, num_base_stations, j+1)], create_parent=True).next()
             file_name = '{0}_{1}_{2}.txt'.format(num_nodes, num_values, i)
             shutil.copy(base_path+'/{0}/{1}'.format(j+1, file_name), temp_path)
+        print('>>> uploading values: {0}'.format(i))
         call('hadoop fs -put '+ base_path+'temp/* '+hdfs_base_path, shell=True)
         delete_folder_contents(base_path+'temp')
         time.sleep(window_)
@@ -144,7 +145,9 @@ def main():
         os.makedirs(log_file_path)
 
     for number_of_nodes in numbers_of_nodes:
+        print('>>> creating values: {0}'.format(number_of_nodes))
         create_values(number_of_nodes)
+        print('>>> creating topology: {0}'.format(number_of_nodes))
         create_topology(number_of_nodes)
         num_executors = number_of_base_stations if number_of_base_stations >= 16 else 16
 
@@ -154,8 +157,10 @@ def main():
         spark_command[num_executor_pos] = str(num_executors)
         spark_command[window_pos] = str(window)
         spark_command_ = " ".join(spark_command)
+        print('>>> uploading values')
         p = Process(target=upload_values, args=(number_of_files, number_of_values, numbers_of_nodes[0], number_of_base_stations, window, 20))
         p.start()
+        print('>>> running spark')
         os.system(spark_command_)
         time.sleep(duration+60)
         p.join()
