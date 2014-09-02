@@ -7,7 +7,7 @@ import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.{RDD}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scala.collection.JavaConverters._
@@ -34,7 +34,7 @@ object FileInputLisaStreamingJobKeyed {
 
 
   def main(args: Array[String]) {
-    Logger.getRootLogger.setLevel(Level.DEBUG)
+    Logger.getRootLogger.setLevel(Level.INFO)
     initConfig()
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(args(2).toLong))
