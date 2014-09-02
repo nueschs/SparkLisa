@@ -90,7 +90,7 @@ def create_values(num_nodes):
     base_file_name = '../resources/node_values/per_base_{0}/'.format(number_of_base_stations)
     delete_folder_contents(base_file_name)
     for i in range(0, number_of_files):
-        vals.one_file_per_basestation(num_nodes, number_of_values, number_of_base_stations)
+        vals.one_file_per_basestation(num_nodes, number_of_values, number_of_base_stations, 2)
 
 
 def upload_values(num_files, num_values, num_nodes, num_base_stations, window_, initial_delay):
