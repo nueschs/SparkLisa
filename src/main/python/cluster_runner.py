@@ -35,7 +35,7 @@ spark_command = [
     '',
     'spark-submit',
     '--class',
-    'ch.unibnf.mcs.sparklisa.app.FileInputLisaStreamingJob',
+    'ch.unibnf.mcs.sparklisa.app.FileInputLisaStreamingJobKeyed',
     '--master',
     'yarn',
     '--deploy-mode',
