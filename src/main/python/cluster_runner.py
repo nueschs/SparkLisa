@@ -43,7 +43,7 @@ spark_command = [
     '--num-executors',
     '',
     '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar',
-    '../resources/topology/topology_bare_{0}_2.5.txt',
+    '../resources/topology/topology_bare_{0}.txt',
     '',
     '',
 ]

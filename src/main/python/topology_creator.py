@@ -9,72 +9,65 @@ import os
 
 def usage():
     print
-    print('Usage: python topology_creator.py number_of_nodes [avg_degree]')
+    print('Usage: python topology_creator.py number_of_nodes')
     print
     print('number_of_nodes has to be a square number\n(square of an integer)')
-    print('avg_degree represent the average number\nof connections per node (default 2.5)')
 
-def create_random_topology(num_nodes_, avg_degree_):
+def create_random_topology(num_nodes_):
     if not math.sqrt(num_nodes_).is_integer():
         usage()
         sys.exit(0)
 
     side_length = int(math.sqrt(num_nodes_))
-    p = avg_degree_ / 4.0
-    matrix = create_sparse_matrix_right_half(num_nodes_, side_length, p)
-    matrix = mirror_matrix(matrix, num_nodes_, side_length)
-    write_matrix_bare(matrix, num_nodes_, avg_degree_)
+    matrix = create_random_connected_topology(num_nodes_, side_length)
+    write_matrix_bare(matrix, num_nodes_)
 
+def find_eligible_node(nodes_edges, num_nodes_, side_length):
+    eligible_nodes = {}
 
-def create_sparse_matrix_right_half(num_nodes_, side_length, p):
+    for node in nodes_edges.keys():
+        is_right = node % side_length == side_length - 1
+        is_bottom = num_nodes_ - node <= side_length
+        is_top = node < side_length
+        is_left = node % side_length == 0
+
+        append_to_eligible_nodes(eligible_nodes, nodes_edges, is_right, node+1, node)
+        append_to_eligible_nodes(eligible_nodes, nodes_edges, is_bottom, node+side_length, node)
+        append_to_eligible_nodes(eligible_nodes, nodes_edges, is_top, node-side_length, node)
+        append_to_eligible_nodes(eligible_nodes, nodes_edges, is_left, node-1, node)
+
+    new_node = random.choice(eligible_nodes.keys())
+    edge = random.choice(eligible_nodes[new_node])
+
+    return edge, new_node
+
+def append_to_eligible_nodes(eligible_nodes, nodes_edges, boolean, new_node, node):
+    if not boolean and new_node not in nodes_edges:
+        if new_node not in eligible_nodes:
+            eligible_nodes[new_node] = []
+        eligible_nodes[new_node].append(node)
+
+def create_random_connected_topology(num_nodes_, side_length,):
+    nodes_edges = {0:[]}
+
+    while len(nodes_edges.keys()) < num_nodes_:
+        node, new_node = find_eligible_node(nodes_edges, num_nodes_, side_length)
+        nodes_edges[new_node] = [node]
+        nodes_edges[node].append(new_node)
+
     matrix = [[int(x) for x in y] for y in numpy.zeros((num_nodes_, num_nodes_))]
-    for i in range(0, num_nodes_):
-        is_right = i % side_length == side_length - 1
-        is_bottom = num_nodes_ - i <= side_length
 
-        if not is_right: matrix[i][i + 1] = int(random.random() <= p)
-        if not is_bottom: matrix[i][i + side_length] = int(random.random() <= p)
+    for y, xs in nodes_edges.items():
+        for x in xs:
+            matrix[y][x] = 1
 
     return matrix
 
 
-def mirror_matrix(matrix, num_nodes_, side_length):
-    for i in range(0, num_nodes_):
-        is_top = i < side_length
-        is_left = i % side_length == 0
-
-        if not is_left: matrix[i][i-1] = matrix[i-1][i]
-        if not is_top: matrix[i][i-side_length] = matrix[i-side_length][i]
-
-    return matrix
-
-
-def write_matrix(matrix, num_nodes_, avg_degree_):
+def write_matrix_bare(matrix, num_nodes_):
     file_name_base = '../resources/topology/'
     if not os.path.isdir(file_name_base): os.makedirs(file_name_base)
-    file_name = file_name_base+'topology_'+str(num_nodes_)+'_'+str(avg_degree_)+'.txt'
-    if os.path.isfile(file_name): os.remove(file_name)
-
-    file_ = open(file_name, 'wb')
-
-    header_line = ''
-    for idx, _ in enumerate(matrix):
-        header_line += 'node'+str(idx)+',\t'
-    file_.write(header_line.rstrip().rstrip(',')+'\n')
-
-    for idx, row in enumerate(matrix):
-        line = 'node'+str(idx)+',\t'
-        for x in row:
-            line += str(x)+',\t'
-        file_.write(line.rstrip().rstrip(',')+'\n')
-
-    file_.close()
-
-
-def write_matrix_bare(matrix, num_nodes_, avg_degree_):
-    file_name_base = '../resources/topology/'
-    if not os.path.isdir(file_name_base): os.makedirs(file_name_base)
-    file_name = file_name_base+'topology_bare_'+str(num_nodes_)+'_'+str(avg_degree_)+'.txt'
+    file_name = file_name_base+'topology_bare_'+str(num_nodes_)+'.txt'
     if os.path.isfile(file_name): os.remove(file_name)
 
     file_ = open(file_name, 'wb')
