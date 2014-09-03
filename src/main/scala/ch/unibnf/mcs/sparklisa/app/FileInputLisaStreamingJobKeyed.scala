@@ -7,7 +7,6 @@ import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scala.collection.JavaConverters._
@@ -34,6 +33,7 @@ object FileInputLisaStreamingJobKeyed {
 
 
   def main(args: Array[String]) {
+
     Logger.getRootLogger.setLevel(Level.INFO)
     initConfig()
     val conf: SparkConf = createSparkConf()
@@ -43,39 +43,36 @@ object FileInputLisaStreamingJobKeyed {
 
     val topology: Topology = TopologyHelper.topologyFromBareFile(args(0), args(1).toInt)
 
-    val allValues: DStream[(String, Double)] = createAllValues(ssc, topology)
+    val allValues: DStream[((String, String), Double)] = createAllValues(ssc, topology)
+    val allValuesPerKey: DStream[(String, (String, Double))] = allValues.map(value => (value._1._2, (value._1._1, 
+      value._2)))
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
 
-    val runningCount = allValues.count()
-    val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
-    //
-    val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
-      val mean = meanRDD.reduce(_ + _)
-      valueRDD.map(value => {
-        math.pow(value._2 - mean, 2.0)
-      })
-    })
+    val runningCount: DStream[(String, Double)] = allValuesPerKey.map(value => (value._1, 1.0)).reduceByKey(_ + _)
+    val runningMean: DStream[(String, Double)] = allValues.map(value => (value._1._2, (value._2,
+      1.0))).reduceByKey((a, b) => (a._1 + b._1, a._2 + b._2)).map(value => (value._1, value._2._1 / value._2._2))
 
+    val variance: DStream[(String, (String, Double))] = allValuesPerKey.join(runningMean)
+      .map(value => (value._1, (value._2._1._1, math.pow(value._2._1._2 - value._2._2, 2.0))))
 
-    val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
-      val variance: Double = varianceRDD.reduce(_ + _)
-      countRDD.map(cnt => {
-        math.sqrt(variance / cnt.toDouble)
-      })
-    })
+    val stdev: DStream[(String, Double)] = variance.map(value => (value._1, value._2._2)).reduceByKey(_ + _)
+       .join(runningCount).map(value => (value._1, math.sqrt(value._2._1 / value._2._2)))
 
-    val allLisaValues: DStream[(String, Double)] = createLisaValues(allValues, runningMean, stdDev)
-    val allNeighbourValues: DStream[(String, (String, Double))] = allLisaValues.map(value => {
-      (value._1.split("_")(1), (value._1.split("_")(0), value._2))
-    }).flatMapValues(value => mapToNeighbourKeys(value, nodeMap))
-
-    val neighboursNormalizedSums: DStream[((String, String), Double)] = allNeighbourValues.map(value => ((value._1,
+    val allLisaValues: DStream[(String, (String, Double))] = allValuesPerKey.join(runningMean)
+      .map(value => (value._1, (value._2._1._1, value._2._1._2-value._2._2)))
+      .join(stdev)
+      .map(value => (value._1, (value._2._1._1, value._2._1._2/value._2._2)))
+    
+    val allNeighbourValues: DStream[(String, (String, Double))] = allLisaValues
+      .flatMapValues(value => mapToNeighbourKeys(value, nodeMap))
+    
+    val neighboursStandardizedSums: DStream[((String, String), Double)] = allNeighbourValues.map(value => ((value._1,
       value._2._1), value._2._2))
       .groupByKey().map(value => (value._1, value._2.sum / value._2.size.toDouble))
 
-    val finalLisaValues: DStream[((String, String), Double)] = allLisaValues.map(value => {
-      ((value._1.split("_")(1), value._1.split("_")(0)), value._2)
-    }).join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
+    val finalLisaValues: DStream[((String, String), Double)] = allLisaValues.map(value => ((value._1, value._2._1), value._2._2))
+      .join(neighboursStandardizedSums)
+      .map(value => (value._1, value._2._1*value._2._2))
 
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
@@ -117,29 +114,17 @@ object FileInputLisaStreamingJobKeyed {
   }
 
 
-  /*
-  * returns a DStream[(NodeType, Double)]
-   */
-  private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double],
-                               stdDev: DStream[Double]): DStream[(String, Double)] = {
-    return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
-      val mean_ = meanRDD.reduce(_ + _)
-      nodeRDD.map(value => (value._1, value._2 - mean_))
-    }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
-      val stdDev_ = stdDevRDD.reduce(_ + _)
-      nodeDiffRDD.map(value => (value._1, value._2 / stdDev_))
-    })
-  }
-
-  private def createAllValues(ssc: StreamingContext, topology: Topology): DStream[(String, Double)] = {
+  private def createAllValues(ssc: StreamingContext, topology: Topology): DStream[((String, String), Double)] = {
     val srcPath: String = HdfsPath + "/values/" + topology.getNode.size().toString + "_" + topology.getBasestation
       .size().toString + "/"
-    var allValues: DStream[(String, Double)] = null
+    var allValues: DStream[((String, String), Double)] = null
     topology.getBasestation.asScala.foreach(station => {
 
       val stream = ssc.textFileStream(srcPath + station.getStationId.takeRight((1))).map(line => {
         val line_arr: Array[String] = line.split(";")
-        (line_arr(0), line_arr(1).toDouble)
+        val nodeId = line_arr(0).split("_")(0)
+        val cnt = line_arr(0).split("_")(1)
+        ((nodeId, cnt), line_arr(1).toDouble)
       })
       if (allValues == null) {
         allValues = stream
