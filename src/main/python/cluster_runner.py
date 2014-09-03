@@ -13,7 +13,6 @@ from subprocess import call
 from snakebite.client import Client
 from datetime import datetime
 
-avg_degree = 2.5
 numbers_of_nodes = None
 number_of_base_stations = None
 rate = None
@@ -75,7 +74,7 @@ def parse_arguments():
 
 
 def create_topology(nodes_):
-    topo.create_random_topology(nodes_, avg_degree)
+    topo.create_random_topology(nodes_)
 
 
 def delete_folder_contents(path):
