@@ -55,7 +55,7 @@ def calculate_expected_results(node_values, node_map):
             neighbour_val = 0
             for neighbour in neighbours:
                 neighbour_val += lisa_values[cnt][neighbour]/len(neighbours)
-            expected_results[cnt][node_id] = round(lisa_val*neighbour_val, 13)
+            expected_results[cnt][node_id] = round(lisa_val*neighbour_val, 9)
 
     return expected_results
 
@@ -75,7 +75,7 @@ def parse_results(results_folder):
 
         if not cnt in spark_results:
             spark_results[cnt] = dict()
-        spark_results[cnt][nodeid] = round(float(lisa_val), 13)
+        spark_results[cnt][nodeid] = round(float(lisa_val), 9)
 
     return spark_results
 
