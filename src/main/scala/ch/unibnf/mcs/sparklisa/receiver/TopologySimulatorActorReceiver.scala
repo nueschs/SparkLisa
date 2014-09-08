@@ -24,6 +24,7 @@ class TopologySimulatorActorReceiver(topology: Topology, rate: Int) extends Acto
         store[(String, Double)]((node.getNodeId, random.nextGaussian()))
       }
       Thread.sleep(sleepDuration)
+      self ! SensorSimulator()
     }
 
   }
