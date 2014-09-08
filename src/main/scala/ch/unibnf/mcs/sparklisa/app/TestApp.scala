@@ -17,6 +17,7 @@ object TestApp {
 
   val Master: String = "local[2]"
   var gt: Thread = null
+  var Env: String = null
 
   def createSparkConf(): SparkConf = {
     val conf: SparkConf = new SparkConf()
@@ -32,17 +33,19 @@ object TestApp {
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(1))
     val config: Properties = new Properties()
     config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
-    val hdfsPath = config.getProperty(config.getProperty("hdfs.path." + config.getProperty("build.env")))
+    Env = config.getProperty("build.env")
+    val hdfsPath = config.getProperty(config.getProperty("hdfs.path." + Env))
+    val masterHost = config.getProperty("master.host."+Env)
 
     ActorSystem().actorOf(Props(classOf[Generator], 0))
     ActorSystem().actorOf(Props(classOf[Generator], 1))
     ActorSystem().actorOf(Props(classOf[Generator], 2))
     ActorSystem().actorOf(Props(classOf[Generator], 3))
 
-    val vals = ssc.socketTextStream("localhost", 25250)
-      .union(ssc.socketTextStream("localhost", 25251))
-      .union(ssc.socketTextStream("localhost", 25252))
-      .union(ssc.socketTextStream("localhost", 25253))
+    val vals = ssc.socketTextStream(masterHost, 25250)
+      .union(ssc.socketTextStream(masterHost, 25251))
+      .union(ssc.socketTextStream(masterHost, 25252))
+      .union(ssc.socketTextStream(masterHost, 25253))
       .map(line => (line.split(";")(0), line.split(";")(1).toDouble))
     vals.saveAsTextFiles(hdfsPath+"/results/test")
 
