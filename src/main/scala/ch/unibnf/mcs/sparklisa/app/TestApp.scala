@@ -29,9 +29,16 @@ object TestApp {
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(1))
 
-    ActorSystem().actorOf(Props[Generator])
+    ActorSystem().actorOf(Props(classOf[Generator], 0))
+    ActorSystem().actorOf(Props(classOf[Generator], 1))
+    ActorSystem().actorOf(Props(classOf[Generator], 2))
+    ActorSystem().actorOf(Props(classOf[Generator], 3))
 
-    val vals = ssc.socketTextStream("localhost", 2525).map(line => (line.split(";")(0), line.split(";")(1).toDouble))
+    val vals = ssc.socketTextStream("localhost", 25250)
+      .union(ssc.socketTextStream("localhost", 25251))
+      .union(ssc.socketTextStream("localhost", 25252))
+      .union(ssc.socketTextStream("localhost", 25253))
+      .map(line => (line.split(";")(0), line.split(";")(1).toDouble))
     vals.print()
 
 //    val values = ssc.actorStream[Double](Props(new TestReceiver()), "receiver")
@@ -43,7 +50,7 @@ object TestApp {
     ssc.awaitTermination()
   }
 
-  class Generator extends Actor {
+  class Generator(pos: Int) extends Actor {
 
     import akka.io.Tcp._
     import akka.util.ByteString
@@ -51,7 +58,7 @@ object TestApp {
 
     val random = new Random()
 
-    IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", 2525))
+    IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", ("2525"+pos.toString).toInt))
 
     def receive = {
       case c@Connected(remote, local) => {
@@ -60,7 +67,7 @@ object TestApp {
 
         while(true) {
           for (i <- 1 to 4) {
-            val test = ByteString("node" + i.toString + ";" + random.nextGaussian().toString + "\n")
+            val test = ByteString("node" + (pos*4+i).toString + ";" + random.nextGaussian().toString + "\n")
             sender ! Write(test)
           }
           Thread.sleep(500)
