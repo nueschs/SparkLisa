@@ -1,6 +1,7 @@
 package ch.unibnf.mcs.sparklisa.app
 
 import java.net.InetSocketAddress
+import java.util.Properties
 
 import akka.actor.{Props, ActorSystem, Actor, ActorRef}
 import akka.io.{IO, Tcp}
@@ -28,6 +29,9 @@ object TestApp {
   def main(args: Array[String]){
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(1))
+    val config: Properties = new Properties()
+    config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
+    val hdfsPath = config.getProperty(config.getProperty("hdfs.path." + config.getProperty("build.env")))
 
     ActorSystem().actorOf(Props(classOf[Generator], 0))
     ActorSystem().actorOf(Props(classOf[Generator], 1))
@@ -39,7 +43,7 @@ object TestApp {
       .union(ssc.socketTextStream("localhost", 25252))
       .union(ssc.socketTextStream("localhost", 25253))
       .map(line => (line.split(";")(0), line.split(";")(1).toDouble))
-    vals.print()
+    vals.saveAsTextFiles(hdfsPath+"/results/test")
 
 //    val values = ssc.actorStream[Double](Props(new TestReceiver()), "receiver")
 //    val mappedValues : DStream[(String, Double)] = values.map(d => ("test_"+new Random().nextInt(3).toString, d))
