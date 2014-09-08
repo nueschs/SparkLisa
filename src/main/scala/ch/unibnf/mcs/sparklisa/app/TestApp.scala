@@ -58,7 +58,7 @@ object TestApp {
     ssc.awaitTermination()
   }
 
-  class Generator(pos: Int) extends Actor {
+  class Generator(pos: Int, masterHost: String) extends Actor {
 
     import akka.io.Tcp._
     import akka.util.ByteString
@@ -66,7 +66,7 @@ object TestApp {
 
     val random = new Random()
 
-    IO(Tcp) ! Bind(self, new InetSocketAddress("localhost", ("2525"+pos.toString).toInt))
+    IO(Tcp) ! Bind(self, new InetSocketAddress(masterHost, ("2525"+pos.toString).toInt))
 
     def receive = {
       case c@Connected(remote, local) => {
