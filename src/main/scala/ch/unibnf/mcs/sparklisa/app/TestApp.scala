@@ -20,9 +20,10 @@ object TestApp {
 
   def createSparkConf(): SparkConf = {
     val conf: SparkConf = new SparkConf()
-    conf.setAppName("Simple Streaming App").setMaster(Master)
-      .setSparkHome("/home/snoooze/spark/spark-1.0.0")
-      .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
+    conf.setAppName("Simple Streaming App")
+//      .setMaster(Master)
+//      .setSparkHome("/home/snoooze/spark/spark-1.0.0")
+//      .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
     return conf
   }
 
