@@ -37,10 +37,10 @@ object TestApp {
     val hdfsPath = config.getProperty(config.getProperty("hdfs.path." + Env))
     val masterHost = config.getProperty("master.host."+Env)
 
-    ActorSystem().actorOf(Props(classOf[Generator], 0))
-    ActorSystem().actorOf(Props(classOf[Generator], 1))
-    ActorSystem().actorOf(Props(classOf[Generator], 2))
-    ActorSystem().actorOf(Props(classOf[Generator], 3))
+    ActorSystem().actorOf(Props(classOf[Generator], 0, masterHost))
+    ActorSystem().actorOf(Props(classOf[Generator], 1, masterHost))
+    ActorSystem().actorOf(Props(classOf[Generator], 2, masterHost))
+    ActorSystem().actorOf(Props(classOf[Generator], 3, masterHost))
 
     val vals = ssc.socketTextStream(masterHost, 25250)
       .union(ssc.socketTextStream(masterHost, 25251))
