@@ -8,16 +8,23 @@ import scala.util.Random
 /**
  * Created by snoooze on 04.08.14.
  */
-class TestReceiver extends Actor with ActorHelper {
+class TestReceiver(nodes: List[String]) extends Actor with ActorHelper {
 
   case class TestSimulator()
+
+  val random = new Random()
 
   override def preStart = {
     self ! TestSimulator()
   }
 
   def receive = {
-    case _: TestSimulator => store[Double](new Random().nextGaussian())
+
+    case _: TestSimulator => {
+      for (node <- nodes) {
+        store[(String, Double)]((node, random.nextGaussian()))
+      }
+    }
     Thread.sleep(500L)
     self ! TestSimulator()
   }

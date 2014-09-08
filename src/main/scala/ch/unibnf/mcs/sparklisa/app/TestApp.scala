@@ -61,11 +61,13 @@ object TestApp {
 //      .map(line => (line.split(";")(0), line.split(";")(1).toDouble))
 //    vals.saveAsTextFiles(hdfsPath+"/results/test")
 
-    val values = ssc.actorStream[Double](Props(new TestReceiver()), "receiver")
-    val mappedValues : DStream[(String, Double)] = values.map(d => ("test_"+new Random().nextInt(3).toString, d))
-    val doubleMappedValues: DStream[(String, (String, Double))] = mappedValues.map(d => ("test_"+new Random().nextInt(3).toString, d))
-    doubleMappedValues.saveAsTextFiles(hdfsPath+"/results/test")
-    doubleMappedValues.print()
+
+    val values = ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node1", "node2", "node3", "node4"))), "receiver")
+    values.print()
+//    val mappedValues : DStream[(String, Double)] = values.map(d => ("test_"+new Random().nextInt(3).toString, d))
+//    val doubleMappedValues: DStream[(String, (String, Double))] = mappedValues.map(d => ("test_"+new Random().nextInt(3).toString, d))
+//    doubleMappedValues.saveAsTextFiles(hdfsPath+"/results/test")
+//    doubleMappedValues.print()
 
     ssc.start()
     ssc.awaitTermination()
