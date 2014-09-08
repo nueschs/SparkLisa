@@ -3,7 +3,7 @@ package ch.unibnf.mcs.sparklisa.app
 import java.net.InetSocketAddress
 import java.util.Properties
 
-import akka.actor.{Props, ActorSystem, Actor, ActorRef}
+import akka.actor._
 import akka.io.{IO, Tcp}
 import ch.unibnf.mcs.sparklisa.app.FileInputLisaStreamingJob._
 import ch.unibnf.mcs.sparklisa.receiver.TestReceiver
@@ -62,10 +62,10 @@ object TestApp {
 //    vals.saveAsTextFiles(hdfsPath+"/results/test")
 
 
-    val values = ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node1", "node2", "node3", "node4"))), "receiver")
-    .union(ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node5", "node6", "node7", "node8"))), "receiver"))
-    .union(ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node9", "node10", "node11", "node12"))), "receiver"))
-    .union(ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node13", "node14", "node15", "node16"))), "receiver"))
+    val values = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node1", "node2", "node3", "node4")), "receiver")
+    .union(ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node5", "node6", "node7", "node8")), "receiver"))
+    .union(ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node9", "node10", "node11", "node12")), "receiver"))
+    .union(ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node13", "node14", "node15", "node16")), "receiver"))
     values.saveAsTextFiles(hdfsPath+"/results/test")
 //    val mappedValues : DStream[(String, Double)] = values.map(d => ("test_"+new Random().nextInt(3).toString, d))
 //    val doubleMappedValues: DStream[(String, (String, Double))] = mappedValues.map(d => ("test_"+new Random().nextInt(3).toString, d))
