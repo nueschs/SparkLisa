@@ -32,10 +32,6 @@ object TestApp {
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(1))
 
-    val config: Properties = new Properties()
-    config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
-    Env = config.getProperty("build.env")
-    val hdfsPath = config.getProperty(config.getProperty("hdfs.path." + Env))
 //    val masterHost = config.getProperty("master.host."+Env)
 //
 //
@@ -66,7 +62,7 @@ object TestApp {
 //    val values2 =  ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node5", "node6", "node7", "node8")), "receiver")
 //    val values3 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node9", "node10", "node11", "node12")), "receiver")
 //    val values4 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node13", "node14", "node15", "node16")), "receiver")
-    values.saveAsTextFiles(hdfsPath+"/results/values")
+    values.saveAsTextFiles(HdfsPath+"/results/values")
 //    values2.saveAsTextFiles(hdfsPath+"/results/values2")
 //    values3.saveAsTextFiles(hdfsPath+"/results/values3")
 //    values4.saveAsTextFiles(hdfsPath+"/results/values4")
