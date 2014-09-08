@@ -63,6 +63,9 @@ object TestApp {
 
 
     val values = ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node1", "node2", "node3", "node4"))), "receiver")
+    .union(ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node5", "node6", "node7", "node8"))), "receiver"))
+    .union(ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node9", "node10", "node11", "node12"))), "receiver"))
+    .union(ssc.actorStream[(String, Double)](Props(new TestReceiver(List("node13", "node14", "node15", "node16"))), "receiver"))
     values.print()
 //    val mappedValues : DStream[(String, Double)] = values.map(d => ("test_"+new Random().nextInt(3).toString, d))
 //    val doubleMappedValues: DStream[(String, (String, Double))] = mappedValues.map(d => ("test_"+new Random().nextInt(3).toString, d))
