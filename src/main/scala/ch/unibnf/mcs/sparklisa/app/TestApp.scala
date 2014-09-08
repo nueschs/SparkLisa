@@ -5,9 +5,12 @@ import java.util.Properties
 
 import akka.actor._
 import akka.io.{IO, Tcp}
+import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.app.FileInputLisaStreamingJob._
-import ch.unibnf.mcs.sparklisa.receiver.TestReceiver
+import ch.unibnf.mcs.sparklisa.receiver.{TopologySimulatorActorReceiver, TestReceiver}
 import org.apache.spark.SparkConf
+import org.apache.spark.serializer.KryoRegistrator
+import com.esotericsoftware.kryo.Kryo
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
@@ -18,8 +21,8 @@ import scala.util.Random
  */
 object TestApp {
 
-//  val Master: String = "local[2]"
-  val Master: String = "spark://saight02:7077"
+  val Master: String = "local[2]"
+//  val Master: String = "spark://saight02:7077"
   var gt: Thread = null
 
   val config: Properties = new Properties()
@@ -31,57 +34,11 @@ object TestApp {
     initConfig()
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(args(0).toInt))
-
-//    val masterHost = config.getProperty("master.host."+Env)
-//
-//
-////    ActorSystem().actorOf(Props(classOf[Generator], 0, masterHost))
-////    ActorSystem().actorOf(Props(classOf[Generator], 1, masterHost))
-////    ActorSystem().actorOf(Props(classOf[Generator], 2, masterHost))
-////    ActorSystem().actorOf(Props(classOf[Generator], 3, masterHost))
-//
-//    val b1 = ssc.socketTextStream("localhost", 25250)
-//    val b2 = ssc.socketTextStream("localhost", 25251)
-//    val b3 = ssc.socketTextStream("localhost", 25252)
-//    val b4 = ssc.socketTextStream("localhost", 25253)
-//
-//    println(b1.getReceiver())
-//    println(b2.getReceiver())
-//    println(b3.getReceiver())
-//    println(b4.getReceiver())
-//
-//    val vals = ssc.socketTextStream(masterHost, 25250)
-//      .union(ssc.socketTextStream(masterHost, 25251))
-//      .union(ssc.socketTextStream(masterHost, 25252))
-//      .union(ssc.socketTextStream(masterHost, 25253))
-//      .map(line => (line.split(";")(0), line.split(";")(1).toDouble))
-//    vals.saveAsTextFiles(hdfsPath+"/results/test")
+    val topology = TopologyHelper.topologyFromBareFile(args(1), 4)
 
 
-    val values = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node1", "node2", "node3", "node4")), "receiver")
-    val values2 =  ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node5", "node6", "node7", "node8")), "receiver")
-    val values3 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node9", "node10", "node11", "node12")), "receiver")
-    val values4 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node13", "node14", "node15", "node16")), "receiver")
-    val values5 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node17", "node18", "node19", "node20")), "receiver")
-    val values6 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node21", "node22", "node23", "node24")), "receiver")
-    val values7 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node25", "node26", "node27", "node28")), "receiver")
-    val values8 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node29", "node30", "node31", "node32")), "receiver")
-    val values9 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node33", "node34", "node35", "node36")), "receiver")
-    val values10 = ssc.actorStream[(String, Double)](Props(classOf[TestReceiver], List("node37", "node38", "node39", "node40")), "receiver")
+    val values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology, 60), "receiver")
     values.saveAsTextFiles(HdfsPath+"/results/values")
-    values2.saveAsTextFiles(HdfsPath+"/results/values2")
-    values3.saveAsTextFiles(HdfsPath+"/results/values3")
-    values4.saveAsTextFiles(HdfsPath+"/results/values4")
-    values5.saveAsTextFiles(HdfsPath+"/results/values4")
-    values6.saveAsTextFiles(HdfsPath+"/results/values4")
-    values7.saveAsTextFiles(HdfsPath+"/results/values4")
-    values8.saveAsTextFiles(HdfsPath+"/results/values4")
-    values9.saveAsTextFiles(HdfsPath+"/results/values4")
-    values10.saveAsTextFiles(HdfsPath+"/results/values4")
-//    val mappedValues : DStream[(String, Double)] = values.map(d => ("test_"+new Random().nextInt(3).toString, d))
-//    val doubleMappedValues: DStream[(String, (String, Double))] = mappedValues.map(d => ("test_"+new Random().nextInt(3).toString, d))
-//    doubleMappedValues.saveAsTextFiles(hdfsPath+"/results/test")
-//    doubleMappedValues.print()
 
     ssc.start()
     ssc.awaitTermination()
@@ -131,5 +88,4 @@ object TestApp {
 //      }
 //    }
 //  }
-
 }
