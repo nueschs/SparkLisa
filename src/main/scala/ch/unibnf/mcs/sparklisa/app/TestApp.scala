@@ -9,7 +9,7 @@ import ch.unibnf.mcs.sparklisa.topology.{BasestationType, Topology, NodeType}
 import com.esotericsoftware.kryo.Kryo
 import org.apache.spark.SparkConf
 import org.apache.spark.serializer.KryoRegistrator
-import org.apache.spark.streaming.dstream.ReceiverInputDStream
+import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 import scala.collection.JavaConversions._
@@ -19,7 +19,7 @@ import scala.collection.JavaConversions._
  */
 object TestApp {
 
-  val Master: String = "local[2]"
+  val Master: String = "local[32]"
 //  val Master: String = "spark://saight02:7077"
   var gt: Thread = null
 
@@ -35,27 +35,33 @@ object TestApp {
     val topology = TopologyHelper.topologyFromBareFile(args(1), 4)
     val numBaseStations = args(2).toInt
     val nodesPerBase = topology.getNode.size() / numBaseStations
-    val values: ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(0,8), 60)), "receiver")
-    val values2:ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(8,16), 60)), "receiver")
+    println("nodesPerBase: "+nodesPerBase.toString)
+    println("numBaseStations: "+numBaseStations.toString)
+
+    var values: DStream[(String, Double)] = null
+
+//    val values: ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(0,8), 60)), "receiver")
+//    val values2:ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(8,16), 60)), "receiver")
 
 
 
 
-//    for (i <- 0 until numBaseStations){
-//      if (values == null){
-//      values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, 60), "receiver")
-//      } else {
-//        values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), 60), "receiver"))
-//      }
-//    }
+    for (i <- 0 until numBaseStations){
+      if (values == null){
+        values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), 30), "receiver")
+      } else {
+        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), 30), "receiver"))
+      }
+    }
 
 
 //     ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology, 60), "receiver")
 //    values.slice(Time)
 
-//    values.print()
+//    values.count().print()
 //    values2.print()
     values.saveAsTextFiles(HdfsPath+"/results/values")
+    values.count().print()
 
     ssc.start()
     ssc.awaitTermination()
