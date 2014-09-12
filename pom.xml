@@ -267,7 +267,7 @@
     </build>
 
     <properties>
-        <spark.version>1.0.0</spark.version>
+        <spark.version>1.0.2</spark.version>
         <!--<spark.version>1.0.0-SNAPSHOT</spark.version>-->
         <jaxb2.version>2.2.5</jaxb2.version>
         <plexus.utils.version>3.0.17</plexus.utils.version>
