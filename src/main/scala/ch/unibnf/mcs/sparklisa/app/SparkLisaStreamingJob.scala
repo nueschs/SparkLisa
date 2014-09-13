@@ -2,15 +2,18 @@ package ch.unibnf.mcs.sparklisa.app
 
 import java.util.Properties
 
+import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
+import ch.unibnf.mcs.sparklisa.receiver.TopologySimulatorActorReceiver
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.{RDD}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 
 import scala.collection.mutable
@@ -18,40 +21,33 @@ import scala.collection.mutable
 /**
  * Created by Stefan Nüesch on 16.06.14.
  */
-object FileInputLisaStreamingJob {
+object SparkLisaStreamingJob {
 
   val SumKey: String = "SUM_KEY"
 
-  val Master: String = "spark://saight02:7077"
-  //    val Master: String = "local[2]"
+//  val Master: String = "spark://saight02:7077"
+      val Master: String = "local[32]"
 
   val config: Properties = new Properties()
   var Env: String = null
   var HdfsPath: String = null
   var Strategy = None: Option[String]
 
-  object ReceiverStrategy extends Enumeration {
-    type ReceiverStrategy = Value
-    val PER_BASE = Value("PER_BASE")
-    val SINGLE = Value("SINGLE")
-  }
-
-  import ReceiverStrategy._
-
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
     initConfig()
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(args(2).toLong))
+    val numBaseStations: Int = args(1).toInt
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(args(0).toLong))
     ssc.addStreamingListener(new LisaStreamingListener())
 
     ssc.checkpoint(".checkpoint")
 
-    val topology: Topology = TopologyHelper.topologyFromBareFile(args(0), args(1).toInt)
+    val topology: Topology = TopologyHelper.topologyFromBareFile(args(2), numBaseStations)
 
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
-    val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, ReceiverStrategy.withName(Strategy.getOrElse("SINGLE")))
+    val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations)
 
 
     val runningCount = allValues.count()
@@ -79,8 +75,8 @@ object FileInputLisaStreamingJob {
     val finalLisaValues = allLisaVals.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
-    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_${numberOfNodes}/allValues")
-    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_${numberOfNodes}/finalLisaValues")
+    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
+    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
     ssc.start()
     ssc.awaitTermination()
@@ -99,31 +95,17 @@ object FileInputLisaStreamingJob {
     return conf
   }
 
-  private def createAllValues(ssc: StreamingContext, topology: Topology, strategy: ReceiverStrategy): DStream[(String, Double)] = {
-    val srcPath : String = HdfsPath + "/values/" + topology.getNode.size().toString + "_" + topology.getBasestation.size().toString + "/"
-    strategy match {
-      case PER_BASE => {
-        var allValues: DStream[(String, Double)] = null
-        topology.getBasestation.asScala.foreach(station => {
-          val stream = ssc.textFileStream(srcPath + station.getStationId.takeRight((1))).map(line => {
-            val line_arr: Array[String] = line.split(";")
-            (line_arr(0), line_arr(1).toDouble)
-          })
-          if (allValues == null) {
-            allValues = stream
-          } else {
-            allValues = allValues.union(stream)
-          }
-        })
-        return allValues
-      }
-      case SINGLE => {
-        return ssc.textFileStream(srcPath).map(line => {
-          val line_arr: Array[String] = line.split(";")
-          (line_arr(0), line_arr(1).toDouble)
-        })
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int): DStream[(String, Double)] = {
+    val nodesPerBase = topology.getNode.size()/numBaseStations
+    var values: DStream[(String, Double)] = null
+    for (i <- 0 until numBaseStations){
+      if (values == null){
+        values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), 30), "receiver")
+      } else {
+        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), 30), "receiver"))
       }
     }
+    return values
   }
 
   private def initConfig() = {

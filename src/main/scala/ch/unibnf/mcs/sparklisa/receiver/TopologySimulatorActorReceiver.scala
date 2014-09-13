@@ -16,7 +16,7 @@ class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int) extends A
   private val sleepDuration: Int = ((rate / 60.0) * 1000).toInt
 
   override def preStart = {
-    context.system.scheduler.schedule((sleepDuration / 2) milliseconds, sleepDuration milliseconds)({
+    context.system.scheduler.schedule((sleepDuration * 3.5) milliseconds, sleepDuration milliseconds)({
       val values: mutable.MutableList[(String, Double)] = mutable.MutableList()
       for (node <- nodes) {
         values += ((node.getNodeId, random.nextGaussian()))
