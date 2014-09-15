@@ -45,6 +45,8 @@ object SparkLisaStreamingJob {
 
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
+    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    conf.set("spark.kryo.registrator", "ch.unibnf.mcs.sparklisa.SparkLisaRegistrator")
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
     ssc.addStreamingListener(new LisaStreamingListener())
 
