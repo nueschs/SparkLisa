@@ -36,16 +36,24 @@ object SparkLisaTimeBasedStreamingJob {
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
     initConfig()
+
+    val batchDuration: Int = args(0).toInt
+    val rate: Int = args(1).toInt
+    val numBaseStations: Int = args(2).toInt
+    val timeout: Int = args(3).toInt
+    val topologyPath: String = args(4)
+    val k: Int = args(5).toInt
+
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
-    val numBaseStations: Int = args(1).toInt
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(args(0).toLong))
-    ssc.addStreamingListener(new LisaStreamingListener())
-    val topology: Topology = TopologyHelper.topologyFromBareFile(args(3), numBaseStations)
-    val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
-    val k: Int = args(2).toInt
 
-    val allValues: DStream[(String, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k)
+    val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
+    ssc.addStreamingListener(new LisaStreamingListener())
+    val topology: Topology = TopologyHelper.topologyFromBareFile(topologyPath, numBaseStations)
+    val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
+
+
+    val allValues: DStream[(String, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
 
     val currentValues: DStream[(String, Double)] = allValues.map(t => (t._1, t._2(0)))
     val pastValues: DStream[(String, Array[Double])] = allValues.map(t => (t._1, t._2.takeRight(t._2.size-1)))
@@ -56,8 +64,8 @@ object SparkLisaTimeBasedStreamingJob {
 
     val variance = allValuesFlat.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
       val mean = meanRDD.reduce(_ + _)
-      valueRDD.map(value => {
-        math.pow(value._2 - mean, 2.0)
+      valueRDD.map(t => {
+        math.pow(t._2 - mean, 2.0)
       })
     })
 
@@ -70,13 +78,13 @@ object SparkLisaTimeBasedStreamingJob {
 
     val allLisaValues = createLisaValues(currentValues, runningMean, stdDev)
 
-    val allNeighbourValues: DStream[(String, Double)] = allLisaValues.flatMap(value => mapToNeighbourKeys(value, nodeMap))
+    val allNeighbourValues: DStream[(String, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
 
     val allPastLisaValues: DStream[(String, Double)] = createLisaValues(pastValuesFlat, runningMean, stdDev)
     val neighboursNormalizedSums = allNeighbourValues.union(allPastLisaValues).groupByKey()
-      .map(value => (value._1, value._2.sum / value._2.size.toDouble))
+      .map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
-    val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(value => (value._1, value._2._1 * value._2._2))
+    val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     allValues
@@ -87,7 +95,7 @@ object SparkLisaTimeBasedStreamingJob {
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
     ssc.start()
-    ssc.awaitTermination()
+    ssc.awaitTermination(timeout*1000)
 
   }
 
@@ -103,17 +111,17 @@ object SparkLisaTimeBasedStreamingJob {
     return conf
   }
 
-  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int): DStream[(String, Array[Double])] = {
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int, rate: Int): DStream[(String, Array[Double])] = {
     val nodesPerBase = topology.getNode.size()/numBaseStations
     var values: DStream[(String, Array[Double])] = null
     for (i <- 0 until numBaseStations){
       if (values == null){
         values = ssc.actorStream[(String, Array[Double])](Props(classOf[TimeBasedTopologySimulatorActorReceiver],
-          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), 30, k), "receiver")
+          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate, k), "receiver")
       } else {
         values = values.union(ssc.actorStream[(String, Array[Double])]
           (Props(classOf[TimeBasedTopologySimulatorActorReceiver],
-            topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), 30, k), "receiver"))
+            topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate, k), "receiver"))
       }
     }
     return values
@@ -142,10 +150,10 @@ object SparkLisaTimeBasedStreamingJob {
   private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
     return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
       val mean_ = meanRDD.reduce(_ + _)
-      nodeRDD.map(value => (value._1, value._2 - mean_))
+      nodeRDD.map(t => (t._1, t._2 - mean_))
     }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
       val stdDev_ = stdDevRDD.reduce(_ + _)
-      nodeDiffRDD.map(value => (value._1, value._2 / stdDev_))
+      nodeDiffRDD.map(t => (t._1, t._2 / stdDev_))
     })
   }
 }
