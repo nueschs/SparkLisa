@@ -2,6 +2,7 @@ package ch.unibnf.mcs.sparklisa.receiver
 
 import akka.actor.{ActorSystem, UntypedActor, Actor}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
+import org.apache.log4j.Logger
 import org.apache.spark.streaming.receiver.ActorHelper
 
 import scala.collection.JavaConversions._
@@ -14,9 +15,10 @@ class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int) extends A
 
   val random = new Random()
   private val sleepDuration: Int = ((60.0)/ rate).toInt
+  val log = Logger.getLogger(getClass)
 
   override def preStart = {
-    print("sleepDuration: "+sleepDuration.toString)
+    log.info("Sending 1600 values")
     context.system.scheduler.schedule(20 seconds, sleepDuration seconds)({
       val values: mutable.MutableList[(String, Double)] = mutable.MutableList()
       for (node <- nodes) {

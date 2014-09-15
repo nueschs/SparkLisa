@@ -90,6 +90,8 @@ def main():
 
     topology_type = 'connected'
     for num_base in [1]:
+        log_file_name = 'sparklisa_spatial_{0}.log'.format(num_base)
+        log_file = os.path.join(log_file_path, log_file_name)
         spark_command_ = spark_command.format(
             'SparkLisaStreamingJob',
             num_base * 2,
@@ -100,14 +102,11 @@ def main():
             topology_type,
             ''
         )
-        log_file_name = 'sparklisa_spatial_{0}.log'.format(num_base)
-        log_file = os.path.join(log_file_path, log_file_name)
-        print(spark_command_)
-        p = subprocess.Popen(shlex.split('script ' + log_file), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                             shell=False)
-        p.stdin.write(spark_command_ + '\n')
+        log = open(log_file, 'w')
+        p = subprocess.Popen(shlex.split(spark_command_), stdout=log, stderr=log)
         time.sleep(duration + 60)
-        p.stdin.write('exit\n')
+        p.terminate()
+        log.close()
         collect_and_zip_output(log_file, num_base, 1600, topology_type, 'spatial')
 
 
