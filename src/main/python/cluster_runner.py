@@ -110,4 +110,6 @@ def main():
         collect_and_zip_output(log_file, num_base, 1600, topology_type, 'spatial')
 
 
+
+
 main()

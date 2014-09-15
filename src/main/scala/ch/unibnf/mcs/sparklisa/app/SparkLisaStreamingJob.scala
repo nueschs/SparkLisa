@@ -106,13 +106,14 @@ object SparkLisaStreamingJob {
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate:Int): DStream[(String, Double)] = {
     val nodesPerBase = topology.getNode.size()/numBaseStations
     var values: DStream[(String, Double)] = null
-    for (i <- 0 until numBaseStations){
-      if (values == null){
-        values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver")
-      } else {
-        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver"))
-      }
-    }
+//    for (i <- 0 until numBaseStations){
+//      if (values == null){
+    values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
+//    values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver")
+//      } else {
+//        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver"))
+//      }
+//    }
     return values
   }
 
