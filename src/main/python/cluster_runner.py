@@ -23,7 +23,8 @@ hdfs_path = 'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/'
 hdfs_client = Client('diufpc56.unifr.ch', 8020, use_trash=False)
 # hdfs_path = 'hdfs://localhost:9999/sparkLisa/'
 # hdfs_client = Client('localhost', 9999, use_trash=False)
-spark_command = 'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0} --master yarn-client --num-executors ' \
+spark_bin_path = '/home/stefan/spark/bin/'
+spark_command = spark_bin_path+'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0} --master yarn-client --num-executors ' \
                 '{1} ../../../target/SparkLisa-0.0.1-SNAPSHOT.jar {2} {3} {4} {5} ' \
                 '../resources/topology/topology_bare_{6}_1600.txt {7}'
 log_file_path = '../resources/logs'
@@ -86,6 +87,8 @@ def main():
 
     if not os.path.isdir(log_file_path):
         os.makedirs(log_file_path)
+
+    os.environ['HADOOP_CONF_DIR'] = '/etc/hadoop/conf'
 
     topology_type = 'connected'
     for num_base in [1]:
