@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int) extends Actor with ActorHelper {
 
   val random = new Random()
-  private val sleepDuration: Int = ((rate * 1000)/ 60.0).toInt
+  private val sleepDuration: Int = ((60.0 * 1000)/ rate).toInt
 
   override def preStart = {
     context.system.scheduler.schedule((sleepDuration * 3.5) milliseconds, sleepDuration milliseconds)({
