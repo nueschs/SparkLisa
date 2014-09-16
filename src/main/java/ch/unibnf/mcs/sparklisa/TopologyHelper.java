@@ -5,10 +5,21 @@ import ch.unibnf.mcs.sparklisa.topology.NodeType;
 import ch.unibnf.mcs.sparklisa.topology.ObjectFactory;
 import ch.unibnf.mcs.sparklisa.topology.Topology;
 import com.google.common.collect.Maps;
+import org.apache.commons.io.IOUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.CompressionCodecFactory;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.lang.Math;
@@ -17,6 +28,8 @@ import java.lang.Math;
  * Created by snoooze on 17.06.14.
  */
 public class TopologyHelper {
+
+    private static final java.lang.String HDFS_PREFIX = "hdfs:";
 
     public static void main(String[] args) throws IOException {
         StringBuilder str = new StringBuilder();
@@ -46,7 +59,12 @@ public class TopologyHelper {
 
     public static Topology topologyFromBareFile(String path, Integer numberOfBaseStations) throws IOException {
         Topology topology = new Topology();
-        List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+        List<String> lines = null;
+        if (path.startsWith(HDFS_PREFIX)) {
+            lines = readHdfsFile(new Path(path), new Configuration());
+        } else {
+            lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+        }
         Integer numberOfNodes = lines.size();
 
         if (numberOfNodes % numberOfBaseStations != 0){
@@ -205,5 +223,40 @@ public class TopologyHelper {
         t.getBasestation().add(bs4);
 
         return t;
+    }
+
+    private static List<String> readHdfsFile(Path location, Configuration conf) throws IOException {
+        FileSystem fileSystem = FileSystem.get(location.toUri(), conf);
+        CompressionCodecFactory factory = new CompressionCodecFactory(conf);
+        FileStatus[] items = fileSystem.listStatus(location);
+        if (items == null) return new ArrayList<>();
+        List<String> results = new ArrayList<>();
+        for(FileStatus item: items) {
+
+            // ignoring files like _SUCCESS
+            if(item.getPath().getName().startsWith("_")) {
+                continue;
+            }
+
+            CompressionCodec codec = factory.getCodec(item.getPath());
+            InputStream stream = null;
+
+            // check if we have a compression codec we need to use
+            if (codec != null) {
+                stream = codec.createInputStream(fileSystem.open(item.getPath()));
+            }
+            else {
+                stream = fileSystem.open(item.getPath());
+            }
+
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(stream, writer, "UTF-8");
+            String raw = writer.toString();
+            String[] resulting = raw.split("\n");
+            for(String str: resulting) {
+                results.add(str);
+            }
+        }
+        return results;
     }
 }
