@@ -11,10 +11,10 @@ import scala.concurrent.duration._
 import scala.util.Random
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int) extends Actor with ActorHelper {
+class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double) extends Actor with ActorHelper {
 
   val random = new Random()
-  private val sleepDuration: Int = ((60.0)/ rate).toInt
+  private val sleepDuration: Int = (60.0/ rate).toInt
   val log = Logger.getLogger(getClass)
 
   override def preStart = {

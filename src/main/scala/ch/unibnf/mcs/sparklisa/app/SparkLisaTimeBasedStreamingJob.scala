@@ -21,37 +21,11 @@ import scala.collection.mutable
 /**
  * Created by Stefan Nüesch on 16.06.14.
  */
-object SparkLisaTimeBasedStreamingJob {
+object SparkLisaTimeBasedStreamingJob extends SparkLisaApp {
 
-  val SumKey: String = "SUM_KEY"
-
-//  val Master: String = "spark://saight02:7077"
-      val Master: String = "local[32]"
-
-  val config: Properties = new Properties()
-  var Env: String = null
-  var HdfsPath: String = null
-  var Strategy = None: Option[String]
-
-  def main(args: Array[String]) {
-    Logger.getRootLogger.setLevel(Level.INFO)
-    initConfig()
-
-    val batchDuration: Int = args(0).toInt
-    val rate: Int = args(1).toInt
-    val numBaseStations: Int = args(2).toInt
-    val timeout: Int = args(3).toInt
-    val topologyPath: String = args(4)
-    val k: Int = args(5).toInt
-
+  override def run_calculations(topology: Topology, nodeMap: mutable.Map[String, NodeType],
+                                ssc: StreamingContext, numBaseStations: Int, rate: Double, k: Int) = {
     import org.apache.spark.streaming.StreamingContext._
-    val conf: SparkConf = createSparkConf()
-
-    val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
-    ssc.addStreamingListener(new LisaStreamingListener())
-    val topology: Topology = TopologyHelper.topologyFromBareFile(topologyPath, numBaseStations)
-    val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
-
 
     val allValues: DStream[(String, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
 
@@ -94,66 +68,21 @@ object SparkLisaTimeBasedStreamingJob {
     allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
-    ssc.start()
-    ssc.awaitTermination(timeout*1000)
+}
 
-  }
-
-  private def createSparkConf(): SparkConf = {
-    val conf: SparkConf = new SparkConf()
-    conf.setAppName("File Input LISA Streaming Job")
-    if ("local" == Env) {
-      conf.setMaster(Master)
-        .setSparkHome("/home/snoooze/spark/spark-1.0.0")
-        .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
-    }
-
-    return conf
-  }
-
-  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int, rate: Int): DStream[(String, Array[Double])] = {
-    val nodesPerBase = topology.getNode.size()/numBaseStations
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int, rate: Double): DStream[(String, Array[Double])] = {
+    val nodesPerBase = topology.getNode.size() / numBaseStations
     var values: DStream[(String, Array[Double])] = null
-    for (i <- 0 until numBaseStations){
-      if (values == null){
+    for (i <- 0 until numBaseStations) {
+      if (values == null) {
         values = ssc.actorStream[(String, Array[Double])](Props(classOf[TimeBasedTopologySimulatorActorReceiver],
-          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate, k), "receiver")
+          topology.getNode.toList.slice(i * nodesPerBase, (i + 1) * nodesPerBase), rate, k), "receiver")
       } else {
         values = values.union(ssc.actorStream[(String, Array[Double])]
           (Props(classOf[TimeBasedTopologySimulatorActorReceiver],
-            topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate, k), "receiver"))
+            topology.getNode.toList.slice(i * nodesPerBase, (i + 1) * nodesPerBase), rate, k), "receiver"))
       }
     }
     return values
-  }
-
-  private def initConfig() = {
-    config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
-    Env = config.getProperty("build.env")
-    HdfsPath = config.getProperty("hdfs.path." + Env)
-    Strategy = Some(config.getProperty("receiver.strategy"))
-  }
-
-  private def mapToNeighbourKeys(value: (String, Double), nodeMap: mutable.Map[String, NodeType]): mutable.Traversable[(String, Double)] = {
-    var mapped: mutable.MutableList[(String, Double)] = mutable.MutableList()
-    import scala.collection.JavaConversions._
-    for (n <- nodeMap.get(value._1).getOrElse(new NodeType()).getNeighbour()) {
-      mapped += ((n, value._2))
-    }
-    return mapped
-  }
-
-
-  /*
-  * returns a DStream[(NodeType, Double)]
-   */
-  private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
-    return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
-      val mean_ = meanRDD.reduce(_ + _)
-      nodeRDD.map(t => (t._1, t._2 - mean_))
-    }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
-      val stdDev_ = stdDevRDD.reduce(_ + _)
-      nodeDiffRDD.map(t => (t._1, t._2 / stdDev_))
-    })
   }
 }
