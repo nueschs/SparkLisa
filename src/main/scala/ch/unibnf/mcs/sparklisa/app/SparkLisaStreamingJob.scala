@@ -21,8 +21,6 @@ trait SparkLisaStreamingTrait extends SparkLisaApp {
                                 ssc: StreamingContext, numBaseStations: Int, rate: Double, k: Int) = {
     import org.apache.spark.streaming.StreamingContext._
 
-    try {
-
     val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
 
     val runningCount = allValues.count()
@@ -54,9 +52,6 @@ trait SparkLisaStreamingTrait extends SparkLisaApp {
     runningCount.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allCount")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
     finalLisaValues.count().saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalCount")
-    } catch {
-      case use: UnsupportedOperationException => {}
-    }
   }
 
   def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
