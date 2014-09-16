@@ -21,9 +21,12 @@ trait SparkLisaStreamingTrait extends SparkLisaApp {
                                 ssc: StreamingContext, numBaseStations: Int, rate: Double, k: Int) = {
     import org.apache.spark.streaming.StreamingContext._
 
+    try {
+
     val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
 
     val runningCount = allValues.count()
+
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
 
     val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
@@ -51,6 +54,9 @@ trait SparkLisaStreamingTrait extends SparkLisaApp {
     runningCount.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allCount")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
     finalLisaValues.count().saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalCount")
+    } catch {
+      case use: UnsupportedOperationException => {}
+    }
   }
 
   def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
