@@ -37,7 +37,7 @@ object SparkLisaStreamingJobMonteCarlo {
     initConfig()
 
     val batchDuration: Int = args(0).toInt
-    val rate: Int = args(1).toInt
+    val rate: Double = args(1).toDouble
     val numBaseStations: Int = args(2).toInt
     val timeout: Int = args(3).toInt
     val topologyPath: String = args(4)

@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 import scala.util.Random
 import scala.collection.immutable.Queue
 
-class TimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int, k: Int) extends Actor with ActorHelper {
+class TimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double, k: Int) extends Actor with ActorHelper {
 
   class FiniteQueue[A](q: Queue[A]) {
     def enqueueFinite[B >: A](elem: B, maxSize: Int): Queue[B] = {
@@ -23,11 +23,11 @@ class TimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int, 
   implicit def queue2finitequeue[A](q: Queue[A]) = new FiniteQueue[A](q)
 
   private val random = new Random()
-  private val sleepDuration: Int = ((rate / 60.0) * 1000).toInt
+  private val sleepDuration: Int = (60.0 / rate).toInt
   private val values: mutable.Map[String, Queue[Double]] = mutable.Map()
 
   override def preStart = {
-    context.system.scheduler.schedule((sleepDuration * 2.5) milliseconds, sleepDuration milliseconds)({
+    context.system.scheduler.schedule(10 seconds, sleepDuration seconds)({
       val pushValues: ArrayBuffer[(String, Array[Double])] = ArrayBuffer()
       for (node <- nodes) {
         if (!values.exists(_._1 == node.getNodeId)){
