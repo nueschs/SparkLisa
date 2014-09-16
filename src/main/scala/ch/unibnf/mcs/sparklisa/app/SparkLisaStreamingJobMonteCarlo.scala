@@ -167,6 +167,8 @@ object SparkLisaStreamingJobMonteCarlo {
     val lisaValuesWithRandomNeighbourIds: DStream[(String, (Double, List[String]))] = allLisaValues
       .flatMap(value => getRandomNeighbours(value, nodeMap, topology))
 
+    lisaValuesWithRandomNeighbourIds.repartition(topology.getBasestation.size())
+
 
     val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String,(Double, List[String])))] =
       lisaValuesWithRandomNeighbourIds.transformWith(allLisaValues, (neighbourRDD, lisaRDD: RDD[(String,
