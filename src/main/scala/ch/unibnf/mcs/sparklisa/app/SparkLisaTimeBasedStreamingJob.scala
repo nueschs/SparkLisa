@@ -108,7 +108,7 @@ object SparkLisaTimeBasedStreamingJob {
     return conf
   }
 
-  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int, rate: Int): DStream[(String, Array[Double])] = {
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int, rate: Double): DStream[(String, Array[Double])] = {
     val nodesPerBase = topology.getNode.size()/numBaseStations
     var values: DStream[(String, Array[Double])] = null
     for (i <- 0 until numBaseStations){

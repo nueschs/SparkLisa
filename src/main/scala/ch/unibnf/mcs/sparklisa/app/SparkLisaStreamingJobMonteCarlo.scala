@@ -102,7 +102,7 @@ object SparkLisaStreamingJobMonteCarlo {
     return conf
   }
 
-  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate:Int): DStream[(String, Double)] = {
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
     val nodesPerBase = topology.getNode.size()/numBaseStations
     var values: DStream[(String, Double)] = null
 //    for (i <- 0 until numBaseStations){
