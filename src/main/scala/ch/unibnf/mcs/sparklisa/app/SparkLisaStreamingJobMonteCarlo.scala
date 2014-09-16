@@ -183,7 +183,7 @@ object SparkLisaStreamingJobMonteCarlo {
       .join(allLisaValues)
       .map(t => (t._1, t._2._2*t._2._1))
 
-    val measureadValuesPositions = randomLisaValues.groupByKey()
+    val measuredValuesPositions = randomLisaValues.groupByKey()
       .join(allLisaValues)
       .map(t => {
         (t._1, (t._2._1.filter(_ < t._2._2).size.toDouble/t._2._1.size.toDouble))
@@ -193,6 +193,6 @@ object SparkLisaStreamingJobMonteCarlo {
     lisaValuesWithRandomNeighbourLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourLisaValues")
     randomNeighbourSums.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourSums")
     randomLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomLisaValues")
-    measureadValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measureadValuesPositions")
+    measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
   }
 }
