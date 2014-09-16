@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-lines=$(hadoop fs -ls -d $1/results/1_1600/allValues* | awk '{print $8}')
+lines=$(hadoop fs -ls -d $1* | awk '{print $8}')
 
 for line in $lines
 do

@@ -19,10 +19,11 @@ class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int) extends A
 
   override def preStart = {
     context.system.scheduler.schedule(20 seconds, sleepDuration seconds)({
-      log.info("Sending 1600 values")
       val values: mutable.MutableList[(String, Double)] = mutable.MutableList()
       for (node <- nodes) {
-        values += ((node.getNodeId, random.nextGaussian()))
+        for (i <- 0 until 1000){
+          values += ((node.getNodeId, random.nextGaussian()))
+        }
       }
       self ! values.iterator
     })
