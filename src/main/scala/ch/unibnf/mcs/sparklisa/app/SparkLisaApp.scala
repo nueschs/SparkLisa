@@ -84,16 +84,10 @@ abstract class SparkLisaApp extends Serializable {
  */
   def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
     return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
-      var mean_ = 0.0
-      try {mean_ = meanRDD.reduce( _+_ )} catch {
-        case use: UnsupportedOperationException => {}
-      }
+      val mean_ = meanRDD.reduce(_ + _)
       nodeRDD.map(t => (t._1, t._2 - mean_))
     }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
-      var stdDev_ = 0.0
-      try {stdDev_ = stdDevRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
-      }
+      val stdDev_ = stdDevRDD.reduce(_ + _)
       nodeDiffRDD.map(t => (t._1, t._2 / stdDev_))
     })
   }
