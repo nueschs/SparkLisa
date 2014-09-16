@@ -47,7 +47,7 @@ object SparkLisaStreamingJobMonteCarlo {
 
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
-
+    conf.set("spark.default.parallelism", numBaseStations.toString)
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
     ssc.addStreamingListener(new LisaStreamingListener())
 
