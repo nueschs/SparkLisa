@@ -28,7 +28,10 @@ trait SparkLisaStreamingTrait extends SparkLisaApp {
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
 
     val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
-      val mean = meanRDD.reduce(_ + _)
+      var mean = 0.0
+      try { mean = meanRDD.reduce(_ + _) } catch {
+        case use: UnsupportedOperationException => {}
+      }
       valueRDD.map(value => {
         math.pow(value._2 - mean, 2.0)
       })
@@ -36,7 +39,10 @@ trait SparkLisaStreamingTrait extends SparkLisaApp {
 
 
     val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
-      val variance: Double = varianceRDD.reduce(_ + _)
+      var variance = 0.0
+      try { variance = varianceRDD.reduce(_ + _)} catch {
+        case use: UnsupportedOperationException => {}
+      }
       countRDD.map(cnt => {
         math.sqrt(variance / cnt.toDouble)
       })
