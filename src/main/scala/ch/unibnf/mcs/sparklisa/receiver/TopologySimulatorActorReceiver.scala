@@ -21,9 +21,7 @@ class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Int) extends A
     context.system.scheduler.schedule(20 seconds, sleepDuration seconds)({
       val values: mutable.MutableList[(String, Double)] = mutable.MutableList()
       for (node <- nodes) {
-        for (i <- 0 until 1000){
           values += ((node.getNodeId, random.nextGaussian()))
-        }
       }
       self ! values.iterator
     })
