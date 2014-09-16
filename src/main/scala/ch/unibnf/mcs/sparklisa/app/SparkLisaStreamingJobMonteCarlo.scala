@@ -10,7 +10,7 @@ import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.dstream.{InputDStream, DStream}
+import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
@@ -21,7 +21,7 @@ import scala.collection.mutable
 /**
  * Created by Stefan Nüesch on 16.06.14.
  */
-object SparkLisaStreamingJob {
+object SparkLisaStreamingJobMonteCarlo {
 
   val SumKey: String = "SUM_KEY"
 
@@ -55,7 +55,6 @@ object SparkLisaStreamingJob {
 
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
     val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
-
 
 
     val runningCount = allValues.count()
@@ -116,7 +115,6 @@ object SparkLisaStreamingJob {
 //        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver"))
 //      }
 //    }
-    values.repartition(numBaseStations)
     return values
   }
 
