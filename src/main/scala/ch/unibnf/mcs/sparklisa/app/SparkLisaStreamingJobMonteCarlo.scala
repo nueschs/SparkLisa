@@ -86,7 +86,7 @@ object SparkLisaStreamingJobMonteCarlo {
     val numberOfNodes = topology.getNode.size().toString
     allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
-    createLisaMonteCarlo(allLisaValues, nodeMap, topology).saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuePosition")
+    createLisaMonteCarlo(allLisaValues, nodeMap, topology)
 
     ssc.start()
     ssc.awaitTermination(timeout*1000)
@@ -161,14 +161,13 @@ object SparkLisaStreamingJobMonteCarlo {
   }
 
   private def createLisaMonteCarlo(allLisaValues: DStream[(String, Double)], nodeMap: mutable.Map[String,
-    NodeType], topology: Topology): DStream[(String, Double)] = {
+    NodeType], topology: Topology) = {
+    val numberOfBaseStations: Int = topology.getBasestation.size()
+    val numberOfNodes: Int = topology.getNode.size()
     import org.apache.spark.streaming.StreamingContext._
 
     val lisaValuesWithRandomNeighbourIds: DStream[(String, (Double, List[String]))] = allLisaValues
       .flatMap(value => getRandomNeighbours(value, nodeMap, topology))
-
-    lisaValuesWithRandomNeighbourIds.repartition(topology.getBasestation.size())
-
 
     val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String,(Double, List[String])))] =
       lisaValuesWithRandomNeighbourIds.transformWith(allLisaValues, (neighbourRDD, lisaRDD: RDD[(String,
@@ -184,6 +183,9 @@ object SparkLisaStreamingJobMonteCarlo {
       .join(allLisaValues)
       .map(t => (t._1, t._2._2*t._2._1))
 
-    return randomLisaValues
+    lisaValuesWithRandomNeighbourIds.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourIds")
+    lisaValuesWithRandomNeighbourLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourLisaValues")
+    randomNeighbourSums.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourSums")
+    randomLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomLisaValues")
   }
 }
