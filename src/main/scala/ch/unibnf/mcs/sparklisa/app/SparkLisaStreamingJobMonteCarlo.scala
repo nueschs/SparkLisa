@@ -6,6 +6,7 @@ import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
 import ch.unibnf.mcs.sparklisa.receiver.TopologySimulatorActorReceiver
+import ch.unibnf.mcs.sparklisa.statistics.RandomTupleGenerator
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -32,6 +33,7 @@ object SparkLisaStreamingJobMonteCarlo {
   var Env: String = null
   var HdfsPath: String = null
   var Strategy = None: Option[String]
+  val statGen = RandomTupleGenerator
 
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
@@ -83,9 +85,8 @@ object SparkLisaStreamingJobMonteCarlo {
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
-    runningCount.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allCount")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
-    finalLisaValues.count().saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalCount")
+    createLisaMonteCarlo(allLisaValues, nodeMap, topology).saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuePosition")
 
     ssc.start()
     ssc.awaitTermination(timeout*1000)
@@ -146,5 +147,41 @@ object SparkLisaStreamingJobMonteCarlo {
       val stdDev_ = stdDevRDD.reduce(_ + _)
       nodeDiffRDD.map(t => (t._1, t._2 / stdDev_))
     })
+  }
+
+  private def getRandomNeighbours(value: (String, Double), nodeMap: mutable.Map[String, NodeType], topology: Topology):
+  mutable.MutableList[(String, (Double, List[String]))]  = {
+
+    val randomNeighbours = statGen.createRandomNeighboursList(nodeMap.get(value._1).get.getNodeId, 1000, topology.getNode.size())
+    var mapped: mutable.MutableList[(String, (Double, List[String]))] = mutable.MutableList()
+    randomNeighbours.foreach(n => {
+      mapped += ((value._1, (value._2, n)))
+    })
+    return mapped
+  }
+
+  private def createLisaMonteCarlo(allLisaValues: DStream[(String, Double)], nodeMap: mutable.Map[String,
+    NodeType], topology: Topology): DStream[(String, Double)] = {
+    import org.apache.spark.streaming.StreamingContext._
+
+    val lisaValuesWithRandomNeighbourIds: DStream[(String, (Double, List[String]))] = allLisaValues
+      .flatMap(value => getRandomNeighbours(value, nodeMap, topology))
+
+
+    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String,(Double, List[String])))] =
+      lisaValuesWithRandomNeighbourIds.transformWith(allLisaValues, (neighbourRDD, lisaRDD: RDD[(String,
+      Double)]) => lisaRDD.cartesian(neighbourRDD))
+      .filter(value => value._2._2._2.contains(value._1._1))
+
+    val randomNeighbourSums: DStream[((String, List[String]), Double)] = lisaValuesWithRandomNeighbourLisaValues
+      .map(t => ((t._2._1, t._2._2._2), t._1._2))
+      .groupByKey()
+      .map(t => (t._1, t._2.sum / t._2.size.toDouble))
+
+    val randomLisaValues: DStream[(String, Double)] = randomNeighbourSums.map(t => (t._1._1, t._2))
+      .join(allLisaValues)
+      .map(t => (t._1, t._2._2*t._2._1))
+
+    return randomLisaValues
   }
 }
