@@ -18,9 +18,6 @@ import scala.collection.JavaConversions._
 
 import scala.collection.mutable
 
-/**
- * Created by Stefan Nüesch on 16.06.14.
- */
 object SparkLisaStreamingJob {
 
   val SumKey: String = "SUM_KEY"

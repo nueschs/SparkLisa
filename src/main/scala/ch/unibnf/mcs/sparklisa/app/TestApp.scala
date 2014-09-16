@@ -14,9 +14,6 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 import scala.collection.JavaConversions._
 
-/**
- * Created by snoooze on 04.08.14.
- */
 object TestApp {
 
   val Master: String = "local[32]"

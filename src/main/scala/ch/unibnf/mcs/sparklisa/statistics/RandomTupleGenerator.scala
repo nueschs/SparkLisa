@@ -8,9 +8,6 @@ import scala.collection.mutable
 import scala.collection.JavaConverters._
 import scala.math
 
-/**
- * Created by Stefan Nüesch on 06.09.14.
- */
 object RandomTupleGenerator {
 
   val random : Random = new Random()

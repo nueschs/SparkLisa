@@ -5,9 +5,6 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import scala.compat.Platform
 
-/**
- * Created by Stefan Nüesch on 14.08.14.
- */
 class LisaStreamingListener extends StreamingListener{
   val Log: Logger = LoggerFactory.getLogger(getClass)
 

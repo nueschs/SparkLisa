@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.lang.Math;
 
-/**
- * Created by snoooze on 17.06.14.
- */
 public class TopologyHelper {
 
     private static final java.lang.String HDFS_PREFIX = "hdfs:";

@@ -13,11 +13,6 @@ import org.xml.sax.SAXException;
 import ch.unibnf.mcs.sparklisa.topology.NodeType;
 import ch.unibnf.mcs.sparklisa.topology.Topology;
 
-/**
- * 
- * @author Stefan Nüesch
- * 
- */
 public class XmlParser {
 
 	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException, JAXBException {

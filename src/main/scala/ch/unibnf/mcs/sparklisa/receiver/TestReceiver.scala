@@ -5,9 +5,6 @@ import org.apache.spark.streaming.receiver.ActorHelper
 
 import scala.util.Random
 
-/**
- * Created by snoooze on 04.08.14.
- */
 class TestReceiver(nodes: List[String]) extends Actor with ActorHelper {
 
   case class TestSimulator()

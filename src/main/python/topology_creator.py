@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-__author__ = 'Stefan Nüesch'
 import math
 import sys
 import numpy
