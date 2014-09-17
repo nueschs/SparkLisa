@@ -11,6 +11,7 @@ import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
+import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scala.collection.JavaConverters._
@@ -163,13 +164,23 @@ object SparkLisaStreamingJobMonteCarlo {
     val numberOfNodes: Int = topology.getNode.size()
     import org.apache.spark.streaming.StreamingContext._
 
+    allLisaValues.persist(StorageLevel.MEMORY_AND_DISK_SER_2)
+
     val lisaValuesWithRandomNeighbourIds: DStream[(String, (Double, List[String]))] = allLisaValues
       .flatMap(value => getRandomNeighbours(value, nodeMap, topology))
 
-    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String,(Double, List[String])))] =
-      lisaValuesWithRandomNeighbourIds.transformWith(allLisaValues, (neighbourRDD, lisaRDD: RDD[(String,
-      Double)]) => lisaRDD.cartesian(neighbourRDD))
-      .filter(value => value._2._2._2.contains(value._1._1))
+    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String, (Double, List[String])))] =
+      lisaValuesWithRandomNeighbourIds.map(t => ((t._1, t._2._1), t._2._2))
+      .map(t => ((t._1, t._2), t._2))
+      .flatMapValues(l => l)
+      .map(t => (t._2, t._1))
+      .join(allLisaValues)
+      .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
+
+//    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String,(Double, List[String])))] =
+//      lisaValuesWithRandomNeighbourIds.transformWith(allLisaValues, (neighbourRDD, lisaRDD: RDD[(String,
+//      Double)]) => lisaRDD.cartesian(neighbourRDD))
+//      .filter(value => value._2._2._2.contains(value._1._1))
 
     val randomNeighbourSums: DStream[((String, List[String]), Double)] = lisaValuesWithRandomNeighbourLisaValues
       .map(t => ((t._2._1, t._2._2._2), t._1._2))
