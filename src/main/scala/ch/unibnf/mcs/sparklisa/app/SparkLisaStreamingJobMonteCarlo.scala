@@ -61,7 +61,10 @@ object SparkLisaStreamingJobMonteCarlo {
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
 
     val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
-      val mean = meanRDD.reduce(_ + _)
+      var mean = 0.0
+      try {mean = meanRDD.reduce(_ + _)} catch {
+        case use: UnsupportedOperationException => {}
+      }
       valueRDD.map(value => {
         math.pow(value._2 - mean, 2.0)
       })
@@ -69,7 +72,10 @@ object SparkLisaStreamingJobMonteCarlo {
 
 
     val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
-      val variance: Double = varianceRDD.reduce(_ + _)
+      var variance = 0.0
+      try {variance = varianceRDD.reduce(_ + _)} catch {
+        case use: UnsupportedOperationException => {}
+      }
       countRDD.map(cnt => {
         math.sqrt(variance / cnt.toDouble)
       })
@@ -139,10 +145,16 @@ object SparkLisaStreamingJobMonteCarlo {
    */
   private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
     return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
-      val mean_ = meanRDD.reduce(_ + _)
+      var mean_ = 0.0
+      try{mean_ = meanRDD.reduce(_ + _)} catch {
+        case use: UnsupportedOperationException => {}
+      }
       nodeRDD.map(t => (t._1, t._2 - mean_))
     }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
-      val stdDev_ = stdDevRDD.reduce(_ + _)
+      var stdDev_ = 0.0
+      try {stdDev_ = stdDevRDD.reduce(_ + _)} catch {
+        case use: UnsupportedOperationException => {}
+      }
       nodeDiffRDD.map(t => (t._1, t._2 / stdDev_))
     })
   }
