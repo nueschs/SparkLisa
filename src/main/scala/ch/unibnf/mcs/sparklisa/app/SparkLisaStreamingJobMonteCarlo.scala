@@ -198,16 +198,24 @@ object SparkLisaStreamingJobMonteCarlo {
       .join(allLisaValues)
       .map(t => (t._1, t._2._2*t._2._1))
 
-    val measuredValuesPositions = randomLisaValues.groupByKey()
-      .join(allLisaValues)
-      .map(t => {
-        (t._1, (t._2._1.filter(_ < t._2._2).size.toDouble/t._2._1.size.toDouble))
-      })
+    val t0: DStream[(String, Iterable[Double])] = randomLisaValues.groupByKey()
+    val t1: DStream[(String, (Iterable[Double], Double))] = t0.join(allLisaValues)
+    val measuredValuesPositions = t1.map(t => {
+      (t._1, t._2._1.filter(_ < t._2._2).size.toDouble / t._2._1.size.toDouble)
+    })
+
+//    val measuredValuesPositions = randomLisaValues.groupByKey()
+//      .join(allLisaValues)
+//      .map(t => {
+//        (t._1, (t._2._1.filter(_ < t._2._2).size.toDouble/t._2._1.size.toDouble))
+//      })
 
     lisaValuesWithRandomNeighbourIds.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourIds")
     lisaValuesWithRandomNeighbourLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourLisaValues")
     randomNeighbourSums.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourSums")
     randomLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomLisaValues")
+    t0.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t0")
+    t1.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t1")
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
   }
 }
