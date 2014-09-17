@@ -23,7 +23,7 @@ object RandomTupleGenerator {
   private def asNodeIds(permutations: List[List[Int]]): List[List[String]] = {
     return permutations.map(tup => {
       tup.map(x => {
-        "node"+x.toString
+        "node"+(x).toString
       })
     })
   }
