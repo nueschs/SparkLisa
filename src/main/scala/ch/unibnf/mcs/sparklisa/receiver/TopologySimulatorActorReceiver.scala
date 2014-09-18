@@ -23,6 +23,8 @@ class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double) extend
       for (node <- nodes) {
           values += ((node.getNodeId, random.nextGaussian()))
       }
+      val size = values.size
+      log.info(s"Sending $size values")
       self ! values.iterator
     })
   }
