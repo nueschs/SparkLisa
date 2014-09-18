@@ -13,9 +13,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.CompressionCodecFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -236,6 +234,7 @@ public class TopologyHelper {
             }
 
             CompressionCodec codec = factory.getCodec(item.getPath());
+            BufferedReader br = null;
             InputStream stream = null;
 
             // check if we have a compression codec we need to use
@@ -246,13 +245,24 @@ public class TopologyHelper {
                 stream = fileSystem.open(item.getPath());
             }
 
-            StringWriter writer = new StringWriter();
-            IOUtils.copy(stream, writer, "UTF-8");
-            String raw = writer.toString();
-            String[] resulting = raw.split("\n");
-            for(String str: resulting) {
-                results.add(str);
+            br = new BufferedReader(new InputStreamReader(stream));
+            try {
+                String line = br.readLine();
+                while (line != null){
+                    results.add(line);
+                    line = br.readLine();
+                }
+            } finally {
+                br.close();
             }
+
+//            StringWriter writer = new StringWriter();
+//            IOUtils.copy(stream, writer, "UTF-8");
+//            String raw = writer.toString();
+//            String[] resulting = raw.split("\n");
+//            for(String str: resulting) {
+//                results.add(str);
+//            }
         }
         return results;
     }

@@ -202,7 +202,7 @@ import file_evaluator as ev
 
 p = '../resources/temp/'
 
-ev.verify_results_stats(p+'av-part-00000', p+'flv-all', p+'lvni-part-00000', p+'mvp-all', p+'topology_bare_connected_1600.txt')
+ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_1600.txt')
 
 
 
