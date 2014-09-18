@@ -1,15 +1,14 @@
 package ch.unibnf.mcs.sparklisa.receiver
 
-import akka.actor.{ActorSystem, UntypedActor, Actor}
-import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
+import akka.actor.Actor
+import ch.unibnf.mcs.sparklisa.topology.NodeType
 import org.apache.log4j.Logger
 import org.apache.spark.streaming.receiver.ActorHelper
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.util.Random
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double) extends Actor with ActorHelper {
 
