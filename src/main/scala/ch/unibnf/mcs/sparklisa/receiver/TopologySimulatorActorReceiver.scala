@@ -18,6 +18,7 @@ class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double) extend
   val log = Logger.getLogger(getClass)
 
   override def preStart = {
+    log.info(s"Sleep duration set to $sleepDuration")
     context.system.scheduler.schedule(5 seconds, sleepDuration seconds)({
       val values: mutable.MutableList[(String, Double)] = mutable.MutableList()
       for (node <- nodes) {
