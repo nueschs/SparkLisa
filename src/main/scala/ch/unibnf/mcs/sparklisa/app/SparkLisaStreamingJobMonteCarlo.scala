@@ -25,7 +25,7 @@ object SparkLisaStreamingJobMonteCarlo {
   val SumKey: String = "SUM_KEY"
 
 //  val Master: String = "spark://saight02:7077"
-      val Master: String = "local[32]"
+      val Master: String = "local[5]"
 
   val config: Properties = new Properties()
   var Env: String = null
@@ -90,7 +90,7 @@ object SparkLisaStreamingJobMonteCarlo {
     val numberOfNodes = topology.getNode.size().toString
     allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
-    createLisaMonteCarlo(allLisaValues, nodeMap, topology)
+    createLisaMonteCarlo(allLisaValues, finalLisaValues, nodeMap, topology)
 
     ssc.start()
     ssc.awaitTermination(timeout*1000)
@@ -170,7 +170,7 @@ object SparkLisaStreamingJobMonteCarlo {
     return mapped
   }
 
-  private def createLisaMonteCarlo(allLisaValues: DStream[(String, Double)], nodeMap: mutable.Map[String,
+  private def createLisaMonteCarlo(allLisaValues: DStream[(String, Double)], finalLisaValues: DStream[(String, Double)], nodeMap: mutable.Map[String,
     NodeType], topology: Topology) = {
     val numberOfBaseStations: Int = topology.getBasestation.size()
     val numberOfNodes: Int = topology.getNode.size()
@@ -199,9 +199,9 @@ object SparkLisaStreamingJobMonteCarlo {
       .map(t => (t._1, t._2._2*t._2._1))
 
     val t0: DStream[(String, Iterable[Double])] = randomLisaValues.groupByKey()
-    val t1: DStream[(String, (Iterable[Double], Double))] = t0.join(allLisaValues)
+    val t1: DStream[(String, (Iterable[Double], Double))] = t0.join(finalLisaValues)
     val measuredValuesPositions = t1.map(t => {
-      (t._1, t._2._1.filter(_ < t._2._2).size.toDouble / t._2._1.size.toDouble)
+      (t._1, t._2._1.count(_ < t._2._2).toDouble / t._2._1.size.toDouble)
     })
 
 //    val measuredValuesPositions = randomLisaValues.groupByKey()

@@ -18,7 +18,7 @@ class TopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double) extend
   val log = Logger.getLogger(getClass)
 
   override def preStart = {
-    context.system.scheduler.schedule(20 seconds, sleepDuration seconds)({
+    context.system.scheduler.schedule(5 seconds, sleepDuration seconds)({
       val values: mutable.MutableList[(String, Double)] = mutable.MutableList()
       for (node <- nodes) {
           values += ((node.getNodeId, random.nextGaussian()))
