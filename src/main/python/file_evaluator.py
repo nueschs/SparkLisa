@@ -199,6 +199,21 @@ def verify_results_stats(value_file, results_file, with_ids_file, stats_file, to
 
 
 def test(list_left, list_right_path):
+    list_right = dict()
+    with open(list_right_path, 'rb') as f:
+        data = f.readlines()
+    for line in data:
+        node_id = line.lstrip('(').split(',')[0]
+        if not node_id in list_right:
+            list_right[node_id] = list()
+        values = dict()
+        for i in range(0, len(line.split('ArrayBuffer')[1].split(','))):
+            nei_id = line.split('List(')[1].split(',')[i].strip().rstrip(')')
+            nei_val = line.split('ArrayBuffer(')[1].split(',')[i].strip().rstrip(')')
+            values[nei_id] = nei_val
+        list_right[node_id].append(values)
+
+    print(list_right['node1'])
 
 
 
@@ -210,7 +225,8 @@ import file_evaluator as ev
 
 p = '../resources/temp/'
 
-ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_16.txt')
+# ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_16.txt')
+test('', p+'lvwrnlv')
 
 
 
