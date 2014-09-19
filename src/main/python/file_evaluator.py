@@ -1,5 +1,5 @@
 import numpy
-import os
+import os, sys
 
 TOLERANCE = 0.0000000001
 
@@ -128,6 +128,7 @@ def calculate_expected_positions(with_ids_file, node_values, results):
     mean = numpy.average([x for x in node_values.values()])
 
     random_lisas = dict()
+    random_lisas_node1 = dict()
 
     for line in lines:
         line_str = line[:-2]
@@ -142,6 +143,13 @@ def calculate_expected_positions(with_ids_file, node_values, results):
             random_lisas[node_id] = list()
 
         random_lisas[node_id].append(lisa_val*neighbours_avg)
+        if node_id == 'node1':
+            neistr = '('
+            for nid in neighbours: neistr += nid+', '
+            neistr = neistr.rstrip().rstrip(',')+')'
+            random_lisas_node1[neistr]=lisa_val*neighbours_avg
+
+
 
 
 
@@ -169,13 +177,15 @@ def verify_results(values_folder, results_folder, topology_file):
     print(bad_count)
 
 
-def verify_results_stats(value_file, results_file, with_ids_file, stats_file, topology_file):
+def verify_results_stats(value_file, results_file, with_ids_file, stats_file, topology_file, test):
     node_values = read_single_file_values(value_file)
     node_map = create_node_map(topology_file)
     expected_results = calculate_expected_results_single(node_values, node_map)
     spark_results = parse_results_single_file(results_file)
     expected_positions, random_lisas_node1 = calculate_expected_positions(with_ids_file, node_values, expected_results)
     calculated_positions = parse_results_single_file(stats_file)
+    test(expected_positions, test)
+    sys.exit(0)
 
     bad_count = 0
     for node_id, lisa_val in spark_results.items():
@@ -204,16 +214,22 @@ def test(list_left, list_right_path):
         data = f.readlines()
     for line in data:
         node_id = line.lstrip('(').split(',')[0]
-        if not node_id in list_right:
-            list_right[node_id] = list()
-        values = dict()
-        for i in range(0, len(line.split('ArrayBuffer')[1].split(','))):
-            nei_id = line.split('List(')[1].split(',')[i].strip().rstrip(')')
-            nei_val = line.split('ArrayBuffer(')[1].split(',')[i].strip().rstrip(')')
-            values[nei_id] = nei_val
-        list_right[node_id].append(values)
+        if node_id != 'node1':
+            continue
+        nei_id = line.split('List')[1].split('),')[0]
+        nei_sum = float(line.split(',')[-1].strip().rstrip(')'))
+        list_right[nei_id]=nei_sum
 
-    print(list_right['node1'])
+    for k,v in list_left.items():
+        good_count = 0
+        if not k in list_right:
+            print('Key Error: '+k)
+        elif not approx_Equal(float(v), float(list_right[k])):
+            print('differs', k, v, list_right[k])
+        else:
+            good_count += 1
+        print('good_count', good_count)
+
 
 
 
@@ -225,8 +241,7 @@ import file_evaluator as ev
 
 p = '../resources/temp/'
 
-# ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_16.txt')
-test('', p+'lvwrnlv')
+ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_16.txt', p+'rns')
 
 
 
