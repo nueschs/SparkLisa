@@ -36,7 +36,7 @@ object RandomTupleGenerator {
 
       while (tup.size < len) {
         var rand = -1
-        while (rand < 0 || rand == nodeId.takeRight(1).toInt) {
+        while (rand < 0 || rand == nodeId.substring(4).toInt) {
           rand = random.nextInt(numNodes)
         }
         tup += rand
