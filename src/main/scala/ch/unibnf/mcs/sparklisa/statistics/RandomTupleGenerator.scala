@@ -1,12 +1,7 @@
 package ch.unibnf.mcs.sparklisa.statistics
 
-import ch.unibnf.mcs.sparklisa.TopologyHelper
-import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
-import scala.compat.Platform
-import scala.util.Random
 import scala.collection.mutable
-import scala.collection.JavaConverters._
-import scala.math
+import scala.util.Random
 
 object RandomTupleGenerator {
 
@@ -36,7 +31,7 @@ object RandomTupleGenerator {
 
       while (tup.size < len) {
         var rand = -1
-        while (rand < 0 || rand == nodeId.substring(4).toInt) {
+        while (rand < 0 || rand+1 == nodeId.substring(4).toInt) {
           rand = random.nextInt(numNodes)
         }
         tup += rand
