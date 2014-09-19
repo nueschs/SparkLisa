@@ -58,7 +58,8 @@ object SparkLisaStreamingJobMonteCarlo {
 
 
     val runningCount = allValues.count()
-    val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
+    val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2))
+      .map { case (sum, cnt) => sum/cnt}
 
     val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
       var mean = 0.0
@@ -190,28 +191,42 @@ object SparkLisaStreamingJobMonteCarlo {
 //      .join(allLisaValues)
 //      .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
 
-    val t0: DStream[((String, Double), List[String])] = lisaValuesWithRandomNeighbourIds.map(t => ((t._1, t._2._1), t._2._2))
-    val t1: DStream[(((String, Double), List[String]), List[String])] = t0.map(t => ((t._1, t._2), t._2))
+    val t0: DStream[((String, Double), List[String])] = lisaValuesWithRandomNeighbourIds
+      .map { case (nodeId, (value, randomNeighbours)) => ((nodeId, value), randomNeighbours) }
+
+    val t1: DStream[(((String, Double), List[String]), List[String])] = t0
+      .map { case ((nodeId, value), randomNeighbours) => (((nodeId, value), randomNeighbours), randomNeighbours) }
+
     val t2: DStream[(((String, Double), List[String]), String)] = t1.flatMapValues(l => l)
-    val t3: DStream[(String, ((String, Double), List[String]))] = t2.map(t => (t._2, t._1))
+
+    val t3: DStream[(String, ((String, Double), List[String]))] = t2
+      .map { case (compositeKey, randomValue) => (randomValue, compositeKey)}
+
     val t4: DStream[(String, (((String, Double), List[String]), Double))] = t3.join(allLisaValues)
-    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String, (Double, List[String])))] = t4
-      .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
+
+    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String, (Double, List[String])))] =
+      t4.map {
+        case (randomNeighbourId, (((nodeId, value), randomNeighbours), randomValue)) =>
+          ((randomNeighbourId, randomValue), (nodeId, (value, randomNeighbours)))
+      }
 
     val randomNeighbourSums: DStream[((String, List[String]), Double)] = lisaValuesWithRandomNeighbourLisaValues
-      .map(t => ((t._2._1, t._2._2._2), t._1._2))
+      .map {
+        case ((randomNeighbourId, randomValue), (nodeId, (value, randomNeighbours))) =>
+          ((nodeId, randomNeighbours), randomValue)
+      }
       .groupByKey()
-      .map(t => (t._1, t._2.sum / t._2.size.toDouble))
+      .map { case (compositeKey, randomValues) =>  (compositeKey, randomValues.sum / randomValues.size.toDouble)}
 
-    val randomLisaValues: DStream[(String, Double)] = randomNeighbourSums.map(t => (t._1._1, t._2))
+    val randomLisaValues: DStream[(String, Double)] = randomNeighbourSums
+      .map { case ((nodeId, _), randomNeighbourAverage) => (nodeId, randomNeighbourAverage)}
       .join(allLisaValues)
-      .map(t => (t._1, t._2._2*t._2._1))
+      .map { case (nodeId, (randomNeighbourAverage, lisaValue)) => (nodeId, randomNeighbourAverage*lisaValue)}
 
     val measuredValuesPositions = randomLisaValues.groupByKey()
       .join(finalLisaValues)
-      .map(t => {
-        (t._1, t._2._1.count(_ < t._2._2).toDouble / t._2._1.size.toDouble)
-      })
+      .map { case (nodeId, (randomLisaValues, finalLisaValue)) =>
+        (nodeId, randomLisaValues.count(_ < finalLisaValue).toDouble / randomLisaValues.size.toDouble) }
 
     lisaValuesWithRandomNeighbourIds.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourIds")
     lisaValuesWithRandomNeighbourLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourLisaValues")
