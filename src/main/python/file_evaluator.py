@@ -155,7 +155,6 @@ def calculate_expected_positions(with_ids_file, node_values, results):
 
     pos_map = dict()
     for node_id, res in results.items():
-        if node_id == 'node1': random_lisas_node1 = random_lisas
         filtered_list = [x for x in random_lisas[node_id] if x < res]
         pos_map[node_id] = len(filtered_list)/float(len(random_lisas[node_id]))
     return pos_map, random_lisas_node1
@@ -177,14 +176,14 @@ def verify_results(values_folder, results_folder, topology_file):
     print(bad_count)
 
 
-def verify_results_stats(value_file, results_file, with_ids_file, stats_file, topology_file, test):
+def verify_results_stats(value_file, results_file, with_ids_file, stats_file, topology_file, test_):
     node_values = read_single_file_values(value_file)
     node_map = create_node_map(topology_file)
     expected_results = calculate_expected_results_single(node_values, node_map)
     spark_results = parse_results_single_file(results_file)
     expected_positions, random_lisas_node1 = calculate_expected_positions(with_ids_file, node_values, expected_results)
     calculated_positions = parse_results_single_file(stats_file)
-    test(expected_positions, test)
+    test(random_lisas_node1, test_)
     sys.exit(0)
 
     bad_count = 0
@@ -216,7 +215,10 @@ def test(list_left, list_right_path):
         node_id = line.lstrip('(').split(',')[0]
         if node_id != 'node1':
             continue
-        nei_id = line.split('List')[1].split('),')[0]
+        nei_id = '('+''.join(
+            ['node'+str(int(x.strip().lstrip('node'))+1)+', ' for x in line.split('List')[1].split('),')[0].lstrip('(').rstrip(')').split(',')]
+        )
+        nei_id = nei_id.rstrip().rstrip(',')+')'
         nei_sum = float(line.split(',')[-1].strip().rstrip(')'))
         list_right[nei_id]=nei_sum
 
@@ -228,7 +230,7 @@ def test(list_left, list_right_path):
             print('differs', k, v, list_right[k])
         else:
             good_count += 1
-        print('good_count', good_count)
+    print('good_count', good_count)
 
 
 
