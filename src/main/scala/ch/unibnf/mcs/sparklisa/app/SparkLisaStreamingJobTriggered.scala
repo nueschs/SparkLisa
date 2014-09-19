@@ -51,6 +51,7 @@ object SparkLisaStreamingJobTriggered {
 
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
     val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
+    allValues.repartition(numBaseStations)
 
     val runningCount = allValues.count()
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
