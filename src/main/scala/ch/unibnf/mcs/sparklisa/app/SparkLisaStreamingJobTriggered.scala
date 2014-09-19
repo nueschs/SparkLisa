@@ -40,7 +40,7 @@ object SparkLisaStreamingJobTriggered {
     val topologyPath: String = args(4)
 
     import org.apache.spark.streaming.StreamingContext._
-    val conf: SparkConf = createSparkConf()
+    val conf: SparkConf = createSparkConf(numBaseStations)
 
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
     ssc.addStreamingListener(new TriggeringStreamingListener())
@@ -93,7 +93,7 @@ object SparkLisaStreamingJobTriggered {
 
   }
 
-  private def createSparkConf(): SparkConf = {
+  private def createSparkConf(numberOfBaseStations: Int): SparkConf = {
     val conf: SparkConf = new SparkConf()
     conf.setAppName("File Input LISA Streaming Job")
     if ("local" == Env) {
@@ -101,6 +101,7 @@ object SparkLisaStreamingJobTriggered {
         .setSparkHome("/home/snoooze/spark/spark-1.0.0")
         .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
     }
+    conf.set("spark.default.parallelism", s"$numberOfBaseStations")
 
     return conf
   }
