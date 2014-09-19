@@ -182,12 +182,20 @@ object SparkLisaStreamingJobMonteCarlo {
     val lisaValuesWithRandomNeighbourIds: DStream[(String, (Double, List[String]))] = allLisaValues
       .flatMap(value => getRandomNeighbours(value, nodeMap, topology))
 
-    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String, (Double, List[String])))] =
-      lisaValuesWithRandomNeighbourIds.map(t => ((t._1, t._2._1), t._2._2))
-      .map(t => ((t._1, t._2), t._2))
-      .flatMapValues(l => l)
-      .map(t => (t._2, t._1))
-      .join(allLisaValues)
+//    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String, (Double, List[String])))] =
+//      lisaValuesWithRandomNeighbourIds.map(t => ((t._1, t._2._1), t._2._2))
+//      .map(t => ((t._1, t._2), t._2))
+//      .flatMapValues(l => l)
+//      .map(t => (t._2, t._1))
+//      .join(allLisaValues)
+//      .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
+
+    val t0: DStream[((String, Double), List[String])] = lisaValuesWithRandomNeighbourIds.map(t => ((t._1, t._2._1), t._2._2))
+    val t1: DStream[(((String, Double), List[String]), List[String])] = t0.map(t => ((t._1, t._2), t._2))
+    val t2: DStream[(((String, Double), List[String]), String)] = t1.flatMapValues(l => l)
+    val t3: DStream[(String, ((String, Double), List[String]))] = t2.map(t => (t._2, t._1))
+    val t4: DStream[(String, (((String, Double), List[String]), Double))] = t3.join(allLisaValues)
+    val lisaValuesWithRandomNeighbourLisaValues: DStream[((String, Double), (String, (Double, List[String])))] = t4
       .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
 
     val randomNeighbourSums: DStream[((String, List[String]), Double)] = lisaValuesWithRandomNeighbourLisaValues
@@ -208,6 +216,11 @@ object SparkLisaStreamingJobMonteCarlo {
     lisaValuesWithRandomNeighbourIds.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourIds")
     lisaValuesWithRandomNeighbourLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourLisaValues")
     randomNeighbourSums.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourSums")
+    t0.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t0")
+    t1.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t1")
+    t2.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t2")
+    t3.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t3")
+    t4.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t4")
     randomLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomLisaValues")
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
   }

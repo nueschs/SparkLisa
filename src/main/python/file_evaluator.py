@@ -175,7 +175,7 @@ def verify_results(values_folder, results_folder, topology_file):
     print(bad_count)
 
 
-def verify_results_stats(value_file, results_file, with_ids_file, stats_file, lisa_values,  topology_file, test_):
+def verify_results_stats(value_file, results_file, with_ids_file, stats_file, topology_file, test_):
     node_values = read_single_file_values(value_file)
     node_map = create_node_map(topology_file)
     expected_results = calculate_expected_results_single(node_values, node_map)
@@ -214,71 +214,34 @@ def test(list_left, list_right_path):
         node_id = line.lstrip('(').split(',')[0]
         if node_id != 'node1':
             continue
-        nei_id = '('+''.join([x+', ' for x in line.split('List')[1].split('),')[0].lstrip('(').rstrip(')').split(',')])
-        nei_id = nei_id.replace('  ', ' ').rstrip().rstrip(',')+')'
+        nei_id = '('+','.join([x for x in line.split('List')[1].split('),')[0].lstrip('(').rstrip(')').split(',')]) + ')'
         nei_sum = float(line.split(',')[-1].strip().rstrip(')'))
         list_right[nei_id]=nei_sum
 
-    bad_left = list()
     for k,v in list_left.items():
         good_count = 0
         if not k in list_right:
-            bad_left.append(k)
+            print('Key Error: '+k)
+        elif not approx_Equal(float(v), float(list_right[k])):
+            print('differs', k, v, list_right[k])
         else:
-            list_right.pop(k)
-            # print('Key Error: '+k)
-        # elif not approx_Equal(float(v), float(list_right[k])):
-        #     print('differs', k, v, list_right[k])
-        # else:
-        #     good_count += 1
-    print(sorted(bad_left))
-    print(sorted(list_right.keys()))
+            good_count += 1
     print('good_count', good_count)
 
 def as_ordered_list(string):
     sorted_list = sorted([x.strip() for x in string.strip('()').split(',')])
     return '('+', '.join(sorted_list)+')'
 
-def test2(file_left, file_right):
-    list_left = list()
-    list_right = list()
 
-    with open(file_left, 'r') as f:
-        for line in f.readlines():
-            if line.startswith('(node1,'):
-                list_left.append(as_ordered_list(line.replace('))', '').split('List')[1].strip()))
 
-    with open(file_right, 'r') as f:
-        for line in f.readlines():
-            if line.startswith('((node1,'):
-                list_right.append(as_ordered_list(line.split('List')[1].split('),')[0].strip()))
-
-    bad_count = 0
-    list_left_missing = [x for x in list_left if x not in list_right]
-    list_right_missing = [x for x in list_right if x not in list_left]
-    for k in sorted(list_left_missing):
-        print(k)
-    print('---------------------------')
-    for k in sorted(list_right_missing):
-        print(k)
-    print(bad_count)
-
-def test3(file_name):
-    with open(file_name, 'r') as f:
-        data = f.readlines()
-    for idx, line in enumerate(data):
-        node_id = line.split(',')[0].lstrip('(')
-        neighbour_list = [x.strip() for x in line.split('List(')[1].rstrip().rstrip(')').split(',')]
-        if node_id in neighbour_list:
-            print(idx, line)
 
 
 import file_evaluator as ev
 
+
 p = '../resources/temp/'
 
-# ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'alv', p+'topology_bare_connected_16.txt', p+'rns')
-# ev.test2(p+'lvwni', p+'rns')
-ev.test3(p+'lvwni')
+ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_16.txt', p+'rns')
+
 
 
