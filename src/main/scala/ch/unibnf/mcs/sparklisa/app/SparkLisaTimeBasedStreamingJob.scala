@@ -114,19 +114,10 @@ object SparkLisaTimeBasedStreamingJob {
     return conf
   }
 
-  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int, rate: Double): DStream[(String, Array[Double])] = {
-    val nodesPerBase = topology.getNode.size()/numBaseStations
-    var values: DStream[(String, Array[Double])] = null
-    for (i <- 0 until numBaseStations){
-      if (values == null){
-        values = ssc.actorStream[(String, Array[Double])](Props(classOf[TimeBasedTopologySimulatorActorReceiver],
-          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate, k), "receiver")
-      } else {
-        values = values.union(ssc.actorStream[(String, Array[Double])]
-          (Props(classOf[TimeBasedTopologySimulatorActorReceiver],
-            topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate, k), "receiver"))
-      }
-    }
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int,
+                              rate: Double): DStream[(String, Array[Double])] = {
+    val values: DStream[(String, Array[Double])] = ssc.actorStream[(String, Array[Double])](
+      Props(classOf[TimeBasedTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
     return values
   }
 
