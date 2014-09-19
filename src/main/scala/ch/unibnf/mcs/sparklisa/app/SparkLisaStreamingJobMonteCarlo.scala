@@ -189,33 +189,26 @@ object SparkLisaStreamingJobMonteCarlo {
       .join(allLisaValues)
       .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
 
-    val randomNeighbourSums: DStream[((String, List[String]), Double)] = lisaValuesWithRandomNeighbourLisaValues
+    val t0: DStream[((String, List[String]), Iterable[Double])] = lisaValuesWithRandomNeighbourLisaValues
       .map(t => ((t._2._1, t._2._2._2), t._1._2))
       .groupByKey()
-      .map(t => (t._1, t._2.sum / t._2.size.toDouble))
+
+    val randomNeighbourSums: DStream[((String, List[String]), Double)] = t0.map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
     val randomLisaValues: DStream[(String, Double)] = randomNeighbourSums.map(t => (t._1._1, t._2))
       .join(allLisaValues)
       .map(t => (t._1, t._2._2*t._2._1))
 
-    val t0: DStream[(String, Iterable[Double])] = randomLisaValues.groupByKey()
-    val t1: DStream[(String, (Iterable[Double], Double))] = t0.join(finalLisaValues)
-    val measuredValuesPositions = t1.map(t => {
-      (t._1, t._2._1.count(_ < t._2._2).toDouble / t._2._1.size.toDouble)
-    })
-
-//    val measuredValuesPositions = randomLisaValues.groupByKey()
-//      .join(allLisaValues)
-//      .map(t => {
-//        (t._1, (t._2._1.filter(_ < t._2._2).size.toDouble/t._2._1.size.toDouble))
-//      })
+    val measuredValuesPositions = randomLisaValues.groupByKey()
+      .join(finalLisaValues)
+      .map(t => {
+        (t._1, t._2._1.count(_ < t._2._2).toDouble / t._2._1.size.toDouble)
+      })
 
     lisaValuesWithRandomNeighbourIds.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourIds")
     lisaValuesWithRandomNeighbourLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/lisaValuesWithRandomNeighbourLisaValues")
     randomNeighbourSums.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourSums")
     randomLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomLisaValues")
-    t0.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t0")
-    t1.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/t1")
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
   }
 }

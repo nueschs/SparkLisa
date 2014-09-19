@@ -143,11 +143,15 @@ def calculate_expected_positions(with_ids_file, node_values, results):
 
         random_lisas[node_id].append(lisa_val*neighbours_avg)
 
+
+
     pos_map = dict()
     for node_id, res in results.items():
+        if node_id == 'node1': random_lisas_node1 = random_lisas
         filtered_list = [x for x in random_lisas[node_id] if x < res]
         pos_map[node_id] = len(filtered_list)/float(len(random_lisas[node_id]))
-    return pos_map
+    return pos_map, random_lisas_node1
+
 
 def verify_results(values_folder, results_folder, topology_file):
     node_values = read_values_list(values_folder)
@@ -170,7 +174,7 @@ def verify_results_stats(value_file, results_file, with_ids_file, stats_file, to
     node_map = create_node_map(topology_file)
     expected_results = calculate_expected_results_single(node_values, node_map)
     spark_results = parse_results_single_file(results_file)
-    expected_positions = calculate_expected_positions(with_ids_file, node_values, expected_results)
+    expected_positions, random_lisas_node1 = calculate_expected_positions(with_ids_file, node_values, expected_results)
     calculated_positions = parse_results_single_file(stats_file)
 
     bad_count = 0
@@ -194,6 +198,10 @@ def verify_results_stats(value_file, results_file, with_ids_file, stats_file, to
     print('--------------------------------------------------------\n')
 
 
+def test(list_left, list_right_path):
+
+
+
 
 
 
@@ -202,7 +210,7 @@ import file_evaluator as ev
 
 p = '../resources/temp/'
 
-ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_1600.txt')
+ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_16.txt')
 
 
 
