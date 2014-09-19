@@ -89,6 +89,7 @@ object SparkLisaStreamingJobMonteCarlo {
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
+    allLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allLisaValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
     createLisaMonteCarlo(allLisaValues, finalLisaValues, nodeMap, topology)
 

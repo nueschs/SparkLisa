@@ -134,8 +134,7 @@ def calculate_expected_positions(with_ids_file, node_values, results):
         line_str = line[:-2]
         node_id =line_str.split(',')[0].lstrip('(')
         lisa_val = (node_values[node_id]-mean)/stddev
-        neighbours = ['node'+str(int(x.strip().lstrip('node'))+1) for x in line_str.rstrip(')').split('List(')[1].split(',')]
-        # neighbours = [x.strip() for x in line_str.rstrip(')').split('List(')[1].split(',')]
+        neighbours = [x.strip() for x in line_str.rstrip(')').split('List(')[1].split(',')]
         neighbour_lisas = [(node_values[x]-mean)/stddev for x in neighbours]
         neighbours_avg = sum(neighbour_lisas)/len(neighbour_lisas)
 
@@ -215,10 +214,8 @@ def test(list_left, list_right_path):
         node_id = line.lstrip('(').split(',')[0]
         if node_id != 'node1':
             continue
-        nei_id = '('+''.join(
-            ['node'+str(int(x.strip().lstrip('node'))+1)+', ' for x in line.split('List')[1].split('),')[0].lstrip('(').rstrip(')').split(',')]
-        )
-        nei_id = nei_id.rstrip().rstrip(',')+')'
+        nei_id = '('+''.join([x+', ' for x in line.split('List')[1].split('),')[0].lstrip('(').rstrip(')').split(',')])
+        nei_id = nei_id.replace('  ', ' ').rstrip().rstrip(',')+')'
         nei_sum = float(line.split(',')[-1].strip().rstrip(')'))
         list_right[nei_id]=nei_sum
 
