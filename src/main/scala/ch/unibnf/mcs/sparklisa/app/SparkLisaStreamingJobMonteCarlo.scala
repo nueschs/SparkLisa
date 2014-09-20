@@ -14,7 +14,6 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.dstream.{ReceiverInputDStream, DStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import scala.collection
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
 
@@ -119,7 +118,18 @@ object SparkLisaStreamingJobMonteCarlo {
   }
 
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
+    val nodesPerBase = topology.getNode.size()/numBaseStations
     var values: DStream[(String, Double)] = null
+    for (i <- 0 until numBaseStations){
+      if (values == null) {
+        values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
+          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver")
+      } else {
+        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
+          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver"))
+      }
+    }
+
     values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
     return values
   }
@@ -160,6 +170,17 @@ object SparkLisaStreamingJobMonteCarlo {
     })
   }
 
+  private def getRandomNeighbours(value: (String, Double), nodeMap: mutable.Map[String, NodeType], topology: Topology):
+  mutable.MutableList[(String, (Double, List[String]))]  = {
+
+    val randomNeighbours = statGen.createRandomNeighboursList(nodeMap.get(value._1).get.getNodeId, 10, topology.getNode.size())
+    var mapped: mutable.MutableList[(String, (Double, List[String]))] = mutable.MutableList()
+    randomNeighbours.foreach(n => {
+      mapped += ((value._1, (value._2, n)))
+    })
+    return mapped
+  }
+
   private def createLisaMonteCarlo(allLisaValues: DStream[(String, Double)], finalLisaValues: DStream[(String, Double)], nodeMap: mutable.Map[String,
     NodeType], topology: Topology, randomNeighbours: DStream[(String, List[List[String]])]) = {
     val numberOfBaseStations: Int = topology.getBasestation.size()
@@ -172,18 +193,15 @@ object SparkLisaStreamingJobMonteCarlo {
     val randomNeighbourTuples: DStream[(String, List[String])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourTuples")
 
-    val temp = randomNeighbourTuples.transformWith(allLisaValues,
-      (randomNeighbourRdd, valueRdd: RDD[(String, Double)]) => {
-        val valueMap: collection.Map[String, Double] = valueRdd.collectAsMap()
-        randomNeighbourRdd.mapValues{case l => (l, valueMap)}
-      })
 
-    temp.repartition(numberOfBaseStations)
 
-    val randomNeighbourSums: DStream[(String, Double)] = temp.mapValues{ case randomValuesWithMap => {
-      val randomValuesList = randomValuesWithMap._2.filter(t => randomValuesWithMap._1.contains(t._1)).values.toList
-      randomValuesList.foldLeft(0.0)(_+_) / randomValuesList.foldLeft(0.0)((r,c) => r+1)
-    }}
+    val randomNeighbourSums: DStream[(String, Double)] = randomNeighbourTuples.transformWith(allLisaValues, (t4Rdd, valueRdd: RDD[(String, Double)]) => {
+      val t7: collection.Map[String, Double] = valueRdd.collectAsMap()
+      t4Rdd.mapValues{case l => {
+        val randomValues: List[Double] = t7.filter(t => l.contains(t._1)).values.toList
+        randomValues.foldLeft(0.0)(_+_) / randomValues.foldLeft(0.0)((r,c) => r+1)
+      }}
+    })
 
     val randomLisaValues: DStream[(String, Double)] = randomNeighbourSums
       .join(allLisaValues)
@@ -195,4 +213,11 @@ object SparkLisaStreamingJobMonteCarlo {
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
 
   }
+
+  private def remap1(t: (String, (Double, List[String]))): ((String, Double), List[String]) = {
+    val res = ((t._1, t._2._1), t._2._2)
+    log.info(s"remapping tuple $t to $res")
+    return res
+  }
+
 }
