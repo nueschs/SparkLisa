@@ -191,11 +191,15 @@ object SparkLisaStreamingJobMonteCarlo {
 //      .join(allLisaValues)
 //      .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
 
-    val t0: DStream[((String, Double), List[String])] = lisaValuesWithRandomNeighbourIds
-      .map { case (nodeId, (value, randomNeighbours)) => ((nodeId, value), randomNeighbours) }
+    val t0 = lisaValuesWithRandomNeighbourIds.transform(rdd => {
+      rdd.map { case t => ((t._1, t._2._1), t._2._2)}
+    })
+
+//    val t0: DStream[((String, Double), List[String])] = lisaValuesWithRandomNeighbourIds
+//      .map { case (nodeId1, (value, randomNeighbours)) => ((nodeId1, value), randomNeighbours) }
 
     val t1: DStream[(((String, Double), List[String]), List[String])] = t0
-      .map { case ((nodeId, value), randomNeighbours) => (((nodeId, value), randomNeighbours), randomNeighbours) }
+      .map { case ((nodeId2, value), randomNeighbours) => (((nodeId2, value), randomNeighbours), randomNeighbours) }
 
     val t2: DStream[(((String, Double), List[String]), String)] = t1.flatMapValues(l => l)
 
