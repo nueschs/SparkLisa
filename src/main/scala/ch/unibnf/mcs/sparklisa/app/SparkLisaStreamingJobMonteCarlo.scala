@@ -186,6 +186,7 @@ object SparkLisaStreamingJobMonteCarlo {
 
     val randomNeighbourSums: DStream[(String, Double)] = randomNeighbourTuples.transformWith(allLisaValues, (t4Rdd, valueRdd: RDD[(String, Double)]) => {
       val t7: collection.Map[String, Double] = valueRdd.collectAsMap()
+      t4Rdd.repartition(numberOfBaseStations)
       t4Rdd.mapValues{case l => {
         val randomValues: List[Double] = t7.filter(t => l.contains(t._1)).values.toList
         randomValues.foldLeft(0.0)(_+_) / randomValues.foldLeft(0.0)((r,c) => r+1)

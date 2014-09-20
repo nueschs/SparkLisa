@@ -197,9 +197,9 @@ def verify_results_stats(value_file, results_file, with_ids_file, stats_file, li
 
 
 
-p = '../../../temp/'
+p = '../resources/temp/'
 
-verify_results_stats(p+'av', p+'flv', p+'rnt', p+'mvp', p+'alv', p+'topology_bare_connected_16.txt')
+verify_results_stats(p+'av', p+'flv', p+'rnt', p+'mvp', p+'alv', p+'topology_bare_connected_1600.txt')
 
 
 
