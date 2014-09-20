@@ -247,11 +247,9 @@ object SparkLisaStreamingJobMonteCarlo {
   }
 
   private def remap1(t: (String, (Double, List[String]))): ((String, Double), List[String]) = {
-    val t1 = t._1
-    val t21 = t._2._1
-    val t22 = t._2._2
-    log.info(s"remapping tuple ($t1,($t21, $t22)) to (($t1, $t21), $t22)")
-    return ((t._1, t._2._1), t._2._2)
+    val res = ((t._1, t._2._1), t._2._2)
+    log.info(s"remapping tuple $t to $res")
+    return res
   }
 
 }
