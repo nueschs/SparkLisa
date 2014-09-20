@@ -43,6 +43,7 @@ object SparkLisaStreamingJobMonteCarlo {
     val numBaseStations: Int = args(2).toInt
     val timeout: Int = args(3).toInt
     val topologyPath: String = args(4)
+    val numRandomValues = args(5).toInt
 
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
@@ -56,7 +57,10 @@ object SparkLisaStreamingJobMonteCarlo {
 
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
     val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
-    val randomNeighbours: ReceiverInputDStream[(String, List[List[String]])] = ssc.actorStream[(String, List[List[String]])](Props(classOf[RandomTupleReceiver], topology.getNode.toList, rate), "receiver")
+    val randomNeighbours: ReceiverInputDStream[(String, List[List[String]])] =
+      ssc.actorStream[(String, List[List[String]])](Props(
+        classOf[RandomTupleReceiver], topology.getNode.toList, rate, numRandomValues), "receiver"
+      )
 
 
     val runningCount = allValues.count()
@@ -194,7 +198,7 @@ object SparkLisaStreamingJobMonteCarlo {
 
     val measuredValuesPositions = randomLisaValues.groupByKey()
       .join(finalLisaValues)
-      .mapValues{ case t => t._1.count(_ < t._2)/ t._1.size.toDouble}
+      .mapValues{ case t => (t._1.count(_ < t._2)+1)/ (t._1.size.toDouble+1.0)}
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
 
   }

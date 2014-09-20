@@ -128,12 +128,11 @@ def calculate_expected_positions(with_ids_file, node_values, results):
     mean = numpy.average([x for x in node_values.values()])
 
     random_lisas = dict()
-    random_lisas_node1 = dict()
 
     for line in lines:
         line_str = line[:-2]
         node_id =line_str.split(',')[0].lstrip('(')
-        lisa_val = results[node_id]
+        lisa_val = node_values[node_id]
         neighbours = [x.strip() for x in line_str.rstrip(')').split('List(')[1].split(',')]
         neighbour_lisas = [(node_values[x]-mean)/stddev for x in neighbours]
         neighbours_avg = sum(neighbour_lisas)/len(neighbour_lisas)
@@ -142,21 +141,12 @@ def calculate_expected_positions(with_ids_file, node_values, results):
             random_lisas[node_id] = list()
 
         random_lisas[node_id].append(lisa_val*neighbours_avg)
-        if node_id == 'node1':
-            neistr = '('
-            for nid in neighbours: neistr += nid+', '
-            neistr = neistr.rstrip().rstrip(',')+')'
-            random_lisas_node1[neistr]=lisa_val*neighbours_avg
-
-
-
-
 
     pos_map = dict()
     for node_id, res in results.items():
         filtered_list = [x for x in random_lisas[node_id] if x < res]
-        pos_map[node_id] = len(filtered_list)/float(len(random_lisas[node_id]))
-    return pos_map, random_lisas_node1
+        pos_map[node_id] = (len(filtered_list)+1)/(float(len(random_lisas[node_id]))+1)
+    return pos_map
 
 
 def verify_results(values_folder, results_folder, topology_file):
@@ -175,15 +165,13 @@ def verify_results(values_folder, results_folder, topology_file):
     print(bad_count)
 
 
-def verify_results_stats(value_file, results_file, with_ids_file, stats_file, topology_file, test_):
+def verify_results_stats(value_file, results_file, with_ids_file, stats_file, lisa_values_file, topology_file):
     node_values = read_single_file_values(value_file)
     node_map = create_node_map(topology_file)
     expected_results = calculate_expected_results_single(node_values, node_map)
     spark_results = parse_results_single_file(results_file)
-    expected_positions, random_lisas_node1 = calculate_expected_positions(with_ids_file, node_values, expected_results)
+    expected_positions = calculate_expected_positions(with_ids_file, read_single_file_values(lisa_values_file), expected_results)
     calculated_positions = parse_results_single_file(stats_file)
-    test(random_lisas_node1, test_)
-    sys.exit(0)
 
     bad_count = 0
     for node_id, lisa_val in spark_results.items():
@@ -206,42 +194,12 @@ def verify_results_stats(value_file, results_file, with_ids_file, stats_file, to
     print('--------------------------------------------------------\n')
 
 
-def test(list_left, list_right_path):
-    list_right = dict()
-    with open(list_right_path, 'rb') as f:
-        data = f.readlines()
-    for line in data:
-        node_id = line.lstrip('(').split(',')[0]
-        if node_id != 'node1':
-            continue
-        nei_id = '('+','.join([x for x in line.split('List')[1].split('),')[0].lstrip('(').rstrip(')').split(',')]) + ')'
-        nei_sum = float(line.split(',')[-1].strip().rstrip(')'))
-        list_right[nei_id]=nei_sum
 
-    for k,v in list_left.items():
-        good_count = 0
-        if not k in list_right:
-            print('Key Error: '+k)
-        elif not approx_Equal(float(v), float(list_right[k])):
-            print('differs', k, v, list_right[k])
-        else:
-            good_count += 1
-    print('good_count', good_count)
-
-def as_ordered_list(string):
-    sorted_list = sorted([x.strip() for x in string.strip('()').split(',')])
-    return '('+', '.join(sorted_list)+')'
-
-
-
-
-
-import file_evaluator as ev
 
 
 p = '../../../temp/'
 
-ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_4.txt', p+'rns')
+verify_results_stats(p+'av', p+'flv', p+'rnt', p+'mvp', p+'alv', p+'topology_bare_connected_16.txt')
 
 
 

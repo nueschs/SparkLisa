@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.util.Random
 
-class RandomTupleReceiver(nodes: List[NodeType], rate: Double) extends Actor with ActorHelper {
+class RandomTupleReceiver(nodes: List[NodeType], rate: Double, numRandomValues: Int) extends Actor with ActorHelper {
 
   val random = new Random()
   private val sleepDuration: Int = ((60.0)/ rate).toInt
@@ -24,7 +24,7 @@ class RandomTupleReceiver(nodes: List[NodeType], rate: Double) extends Actor wit
       val values: mutable.MutableList[(String, List[List[String]])] = mutable.MutableList()
 
       for (node <- nodes) {
-        values += ((node.getNodeId, statsGen.createRandomNeighboursList(node.getNodeId, 10, nodes.size)))
+        values += ((node.getNodeId, statsGen.createRandomNeighboursList(node.getNodeId, numRandomValues, nodes.size)))
       }
       val size = values.size
       log.info(s"Sending $size values")
