@@ -239,9 +239,9 @@ def as_ordered_list(string):
 import file_evaluator as ev
 
 
-p = '../resources/temp/'
+p = '../../../temp/'
 
-ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_16.txt', p+'rns')
+ev.verify_results_stats(p+'av', p+'flv', p+'lvwni', p+'mvp', p+'topology_bare_connected_4.txt', p+'rns')
 
 
 

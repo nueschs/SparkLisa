@@ -7,6 +7,10 @@ object RandomTupleGenerator {
 
   val random : Random = new Random()
 
+  def main(args: Array[String]) = {
+    println(createRandomNeighboursList("node1", 100, 4))
+  }
+
   def createRandomNeighboursList(nodeId: String, length: Int, numNodes: Int): List[List[String]] = {
     if (numNodes < 16) {
       return asNodeIds(createRandomPermutationsFromAll(nodeId, length, numNodes))
@@ -39,7 +43,6 @@ object RandomTupleGenerator {
 
       permutations += tup
     }
-
     return permutations.map(x => x.toList).toList
   }
 
@@ -52,6 +55,6 @@ object RandomTupleGenerator {
   }
 
   private def createAllPermutations(n: Int, k: Int): List[List[Int]] = {
-    return (0 to n).toList.combinations(k).toList
+    return (0 to n-1).toList.combinations(k).toList
   }
 }
