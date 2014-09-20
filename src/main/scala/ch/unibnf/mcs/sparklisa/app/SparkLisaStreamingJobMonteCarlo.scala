@@ -32,6 +32,7 @@ object SparkLisaStreamingJobMonteCarlo {
   var HdfsPath: String = null
   var Strategy = None: Option[String]
   val statGen = RandomTupleGenerator
+  val log = Logger.getLogger(getClass)
 
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
@@ -192,7 +193,7 @@ object SparkLisaStreamingJobMonteCarlo {
 //      .map(t => ((t._1, t._2._2), (t._2._1._1._1, (t._2._1._1._2, t._2._1._2))))
 
     val t0 = lisaValuesWithRandomNeighbourIds.transform(rdd => {
-      rdd.map { case t => ((t._1, t._2._1), t._2._2)}
+      rdd.map { case t => remap1(t)}
     })
 
 //    val t0: DStream[((String, Double), List[String])] = lisaValuesWithRandomNeighbourIds
@@ -243,4 +244,13 @@ object SparkLisaStreamingJobMonteCarlo {
     randomLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomLisaValues")
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
   }
+
+  private def remap1(t: (String, (Double, List[String]))): ((String, Double), List[String]) = {
+    val t1 = t._1
+    val t21 = t._2._1
+    val t22 = t._2._2
+    log.info(s"remapping tuple ($t1,($t21, $t22)) to (($t1, $t21), $t22)")
+    return ((t._1, t._2._1), t._2._2)
+  }
+
 }
