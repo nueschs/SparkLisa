@@ -172,16 +172,18 @@ object SparkLisaStreamingJobMonteCarlo {
     val randomNeighbourTuples: DStream[(String, List[String])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourTuples")
 
-    val temp: DStream[(String, List[Double])] = randomNeighbourTuples.transformWith(allLisaValues,
+    val temp = randomNeighbourTuples.transformWith(allLisaValues,
       (randomNeighbourRdd, valueRdd: RDD[(String, Double)]) => {
-      val valueMap: collection.Map[String, Double] = valueRdd.collectAsMap()
-      randomNeighbourRdd.mapValues{case l => {
-        valueMap.filter(t => l.contains(t._1)).values.toList
-      }}
-    })
+        val valueMap: collection.Map[String, Double] = valueRdd.collectAsMap()
+        randomNeighbourRdd.mapValues{case l => (l, valueMap)}
+      })
 
     temp.repartition(numberOfBaseStations)
-    val randomNeighbourSums = temp.mapValues { case randomValues => randomValues.foldLeft(0.0)(_+_) / randomValues.foldLeft(0.0)((r,c) => r+1)}
+
+    val randomNeighbourSums: DStream[(String, Double)] = temp.mapValues{ case randomValuesWithMap => {
+      val randomValuesList = randomValuesWithMap._2.filter(t => randomValuesWithMap._1.contains(t._1)).values.toList
+      randomValuesList.foldLeft(0.0)(_+_) / randomValuesList.foldLeft(0.0)((r,c) => r+1)
+    }}
 
     val randomLisaValues: DStream[(String, Double)] = randomNeighbourSums
       .join(allLisaValues)
