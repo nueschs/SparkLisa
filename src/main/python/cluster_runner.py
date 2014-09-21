@@ -28,7 +28,7 @@ spark_bin_path = '/home/stefan/spark/bin/'
 spark_command = spark_bin_path+'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0}' \
                                ' --master yarn-cluster --num-executors {1} --executor-cores 8 ' \
                                '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar {2} {3} {4} {5} ' \
-                               '../resources/topology/topology_bare_{6}_1600.txt {7}'
+                               'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/topology/topology_bare_{6}_1600.txt {7}'
 log_file_path = '../resources/logs'
 
 date_format = '%d%m%Y%H%M%S'
