@@ -60,7 +60,7 @@ object SparkLisaStreamingJob {
     val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
       var mean = 0.0
       try {mean = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
+        case use: UnsupportedOperationException =>
       }
       valueRDD.map(value => {
         math.pow(value._2 - mean, 2.0)
@@ -71,7 +71,7 @@ object SparkLisaStreamingJob {
     val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
       var variance = 0.0
       try {variance = varianceRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
+        case use: UnsupportedOperationException =>
       }
       countRDD.map(cnt => {
         math.sqrt(variance / cnt.toDouble)
@@ -82,7 +82,7 @@ object SparkLisaStreamingJob {
     val allLisaValues = createLisaValues(allValues, runningMean, stdDev)
     val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().mapValues(l => l.sum / l.size.toDouble)
-    val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(d => (d._1 * d._2))
+    val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(d => d._1 * d._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
@@ -121,7 +121,7 @@ object SparkLisaStreamingJob {
   private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
     var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
     import scala.collection.JavaConversions._
-    for (n <- nodeMap.get(value._1).getOrElse(new NodeType()).getNeighbour()) {
+    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
       mapped += ((n.substring(4).toInt, value._2))
     }
     return mapped

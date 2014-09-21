@@ -55,8 +55,8 @@ object SparkLisaTimeBasedStreamingJobTriggered {
 
     val allValues: DStream[(Int, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
 
-    val currentValues: DStream[(Int, Double)] = allValues.map(t => (t._1, t._2(0)))
-    val pastValues: DStream[(Int, Array[Double])] = allValues.map(t => (t._1, t._2.takeRight(t._2.size-1)))
+    val currentValues: DStream[(Int, Double)] = allValues.mapValues(a => a(0))
+    val pastValues: DStream[(Int, Array[Double])] = allValues.mapValues(a => a.takeRight(a.size-1))
     val pastValuesFlat: DStream[(Int, Double)] = pastValues.flatMapValues(a => a.toList)
     val allValuesFlat: DStream[(Int, Double)] = currentValues.union(pastValuesFlat)
     val runningCount: DStream[Long] = allValuesFlat.count()
@@ -65,7 +65,7 @@ object SparkLisaTimeBasedStreamingJobTriggered {
     val variance = allValuesFlat.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
       var mean = 0.0
       try {mean = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
+        case use: UnsupportedOperationException =>
       }
       valueRDD.map(t => {
         math.pow(t._2 - mean, 2.0)
@@ -75,7 +75,7 @@ object SparkLisaTimeBasedStreamingJobTriggered {
     val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
       var variance = 0.0
       try{variance = varianceRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
+        case use: UnsupportedOperationException =>
       }
       countRDD.map(cnt => {
         math.sqrt(variance / cnt.toDouble)
@@ -144,7 +144,7 @@ object SparkLisaTimeBasedStreamingJobTriggered {
   private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double],
                                stdDev: DStream[Double]): DStream[(Int, Double)] = {
     import org.apache.spark.SparkContext._
-    return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
+    nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
       var mean_ = 0.0
       try {mean_ = meanRDD.reduce(_ + _)} catch {
         case use: UnsupportedOperationException => {}

@@ -65,7 +65,7 @@ object SparkLisaTimeBasedStreamingJob {
     val variance = allValuesFlat.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
       var mean = 0.0
       try {mean = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
+        case use: UnsupportedOperationException =>
       }
       valueRDD.map(t => {
         math.pow(t._2 - mean, 2.0)
@@ -75,7 +75,7 @@ object SparkLisaTimeBasedStreamingJob {
     val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
       var variance = 0.0
       try{variance = varianceRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
+        case use: UnsupportedOperationException =>
       }
       countRDD.map(cnt => {
         math.sqrt(variance / cnt.toDouble)
@@ -141,7 +141,7 @@ object SparkLisaTimeBasedStreamingJob {
    */
   private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(Int, Double)] = {
     import org.apache.spark.SparkContext._
-    return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
+    nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
       var mean_ = 0.0
       try {mean_ = meanRDD.reduce(_ + _)} catch {
         case use: UnsupportedOperationException => {}
