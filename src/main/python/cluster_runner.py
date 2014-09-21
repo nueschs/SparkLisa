@@ -28,7 +28,7 @@ spark_bin_path = '/home/stefan/spark/bin/'
 spark_command = spark_bin_path+'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0}' \
                                ' --master yarn-cluster --num-executors {1} --executor-cores 8 ' \
                                '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar {2} {3} {4} {5} ' \
-                               'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/topology/topology_bare_{6}_1600.txt {7}'
+                               'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/topology/topology_bare_{6}_1600.txt {7} {8}'
 log_file_path = '../resources/logs'
 
 date_format = '%d%m%Y%H%M%S'
@@ -39,13 +39,20 @@ def parse_arguments():
     parser.add_argument('rate', metavar='r', type=int, help='Number of values per minute submitted to each node')
     parser.add_argument('window', metavar='w', type=int, help='Window duration in seconds')
     parser.add_argument('duration', metavar='d', type=int, help='Duration after which the Spark Job is terminated')
+    parser.add_argument('-r','--repetitions', metavar='rp', type=int, default='3',
+                        help='Number of times each stage is run (default 1)')
+    parser.add_argument('-m','--mode', metavar='m', type=int, default='m',
+                        help='s for spatial, t for time based, m for spatial with statistical test, '
+                             'mt for time based with statistical test, tt for topology types (default m)')
 
     args = vars(parser.parse_args())
 
-    global rate, window, duration
+    global rate, window, duration, repetitions, mode
     rate = args['rate']
     window = args['window']
     duration = args['duration']
+    mode = args['mode']
+    repetitions = args['repetitions']
 
 
 def delete_folder_contents(path):
@@ -60,7 +67,7 @@ def cleanup_hdfs(num_nodes, num_base_stations):
     hdfs_client.delete(['sparkLisa/results/{1}_{0}/'.format(num_nodes, num_base_stations)], recurse=True).next()
 
 
-def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, topology_type, run_type):
+def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, run_type):
     output_folder = '../resources/temp/'
     if not os.path.isdir(output_folder): os.makedirs(output_folder)
     if not os.path.isdir(output_folder + 'results/'): os.makedirs(output_folder + 'results/')
@@ -88,9 +95,9 @@ def read_yarn_log(proc):
         err_line = proc.stderr.readline()
 
         if 'application identifier' in err_line:
-            id = err_line.split(':')[1].strip()
-            if id.startswith('application'):
-                app_id = id
+            id_ = err_line.split(':')[1].strip()
+            if id_.startswith('application'):
+                app_id = id_
 
         elif 'appMasterHost' in err_line:
             host = err_line.split(':')[1].strip()
@@ -107,28 +114,21 @@ def wait_for_finish(proc):
             status = err_line.split(':')[1].strip()
 
 
-def main():
-    parse_arguments()
-
-    if not os.path.isdir(log_file_path):
-        os.makedirs(log_file_path)
-
-    os.environ['HADOOP_CONF_DIR'] = '/etc/hadoop/conf'
-
-    topology_type = 'connected'
-    for _ in range(0,3):
-        for num_base in [1]:
-            log_file_name = 'sparklisa_spatial_{0}.log'.format(num_base)
+def run(class_name, base_stations, topology_type, run_type, k='', random_values=''):
+    for num_base in base_stations:
+        for _ in range(0, repetitions):
+            log_file_name = 'sparklisa_{1}_{0}.log'.format(num_base, run_type)
             log_file = os.path.join(log_file_path, log_file_name)
             spark_command_ = spark_command.format(
-                'SparkLisaStreamingJob',
+                class_name,
                 num_base,
                 window,
                 rate,
                 num_base,
                 duration,
                 topology_type,
-                ''
+                k,
+                random_values
             )
             p = subprocess.Popen(shlex.split(spark_command_), stderr=subprocess.PIPE)
             app_id, app_master_host = read_yarn_log(p)
@@ -137,7 +137,59 @@ def main():
             wait_for_finish(p)
             time.sleep(60)
             urllib.urlretrieve(log_url, log_file)
-            collect_and_zip_output(log_file, num_base, 1600, topology_type, 'spatial')
+            collect_and_zip_output(log_file, num_base, 1600, run_type)
+
+def run_spatial():
+    topology_type = 'connected'
+    class_name = 'SparkLisaStreamingJob'
+    run_type = 'spatial'
+    run(class_name, [1,2,4,8,16], topology_type, run_type)
+
+def run_time_based():
+    topology_type = 'connected'
+    class_name = 'SparkLisaTimeBasedStreamingJob'
+    run_type = 'time_based'
+    for k in [1,5,10,20,100]:
+        run(class_name, [16], topology_type, run_type, k=str(k))
+
+def run_monte_carlo():
+    topology_type = 'connected'
+    class_name = 'SparkLisaStreamingJobMonteCarlo'
+    run_type = 'monte_carlo'
+    run(class_name, [1,2,4,8,16], topology_type, run_type, random_values='1000')
+
+def run_monte_carlo_time_based():
+    topology_type = 'connected'
+    class_name = 'SparkLisaTimeBasedStreamingJobMonteCarlo'
+    run_type = 'monte_carlo_time_based'
+    for k in [1,5,10,20]:
+        run(class_name, [1,2,4,8,16], topology_type, run_type, k=str(k), random_values='1000')
+
+def run_topology_types():
+    class_name = 'SparkLisaStreamingJobMonteCarlo'
+    run_type = 'topologies'
+    for topology_type in ['sparse', 'connected', 'dense']:
+        run(class_name, [16], topology_type, run_type, random_values='1000')
+
+
+
+def main():
+    parse_arguments()
+
+    if not os.path.isdir(log_file_path):
+        os.makedirs(log_file_path)
+
+    os.environ['HADOOP_CONF_DIR'] = '/etc/hadoop/conf'
+
+    switch = {
+        's': run_spatial,
+        't': run_time_based,
+        'm': run_monte_carlo,
+        'mt': run_monte_carlo_time_based,
+        'tt': run_topology_types
+    }
+
+    switch[mode]()
 
 
 
