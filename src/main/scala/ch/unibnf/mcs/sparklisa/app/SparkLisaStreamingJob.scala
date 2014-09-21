@@ -103,30 +103,28 @@ object SparkLisaStreamingJob {
     return conf
   }
 
-//  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
-//    val values: DStream[(String, Double)] =  ssc.actorStream[(String, Double)](
-//      Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
-//    values.repartition(numBaseStations)
-//    return values
-//  }
-//
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
-    val nodesPerBase: Int = topology.getNode.size()/numBaseStations
-    var values: DStream[(String, Double)] = null
-    for (i <- 0 until numBaseStations){
-      if (values == null) {
-        values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
-          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver")
-      } else {
-        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
-          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver"))
-      }
-    }
-
-
+    val values: DStream[(String, Double)] =  ssc.actorStream[(String, Double)](
+      Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
     values.repartition(numBaseStations)
     return values
   }
+
+//  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
+//    val nodesPerBase: Int = topology.getNode.size()/numBaseStations
+//    var values: DStream[(String, Double)] = null
+//    for (i <- 0 until numBaseStations){
+//      if (values == null) {
+//        values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
+//          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver")
+//      } else {
+//        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
+//          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver"))
+//      }
+//    }
+//    values.repartition(numBaseStations)
+//    return values
+//  }
 
   private def initConfig() = {
     config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
