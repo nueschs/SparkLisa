@@ -21,11 +21,11 @@ class NumericalRandomTupleReceiver(nodes: List[NodeType], rate: Double, numRando
   override def preStart = {
     log.info(s"Sleep duration set to $sleepDuration")
     context.system.scheduler.schedule(5 seconds, sleepDuration seconds)({
-      val values: mutable.MutableList[(Int, List[List[String]])] = mutable.MutableList()
+      val values: mutable.MutableList[(Int, List[List[Int]])] = mutable.MutableList()
 
       for (node <- nodes) {
         val id : Int = node.getNodeId.substring(4).toInt
-        values += ((id, statsGen.createRandomNeighboursList(node.getNodeId, numRandomValues, nodes.size)))
+        values += ((id, statsGen.createRandomNeighboursListNumerical(node.getNodeId, numRandomValues, nodes.size)))
       }
       val size = values.size
       log.info(s"Sending $size values")
@@ -36,8 +36,8 @@ class NumericalRandomTupleReceiver(nodes: List[NodeType], rate: Double, numRando
   case class SensorSimulator()
 
   override def receive = {
-    case data: Iterator[(Int, List[List[String]])] => {
-      store[(Int, List[List[String]])](data)
+    case data: Iterator[(Int, List[List[Int]])] => {
+      store[(Int, List[List[Int]])](data)
     }
   }
 

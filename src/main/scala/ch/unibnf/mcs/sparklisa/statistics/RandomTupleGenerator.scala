@@ -4,7 +4,6 @@ import scala.collection.mutable
 import scala.util.Random
 
 object RandomTupleGenerator {
-
   val random : Random = new Random()
 
   def main(args: Array[String]) = {
@@ -17,6 +16,11 @@ object RandomTupleGenerator {
     } else {
       return asNodeIds(createRandomPermutations(nodeId, length, numNodes))
     }
+  }
+
+  def createRandomNeighboursListNumerical(nodeId: String, length: Int, numNodes: Int): List[List[Int]] = {
+    val nodeIds: List[List[String]] = createRandomNeighboursList(nodeId, length, numNodes)
+    for (x <- nodeIds) yield for (y <- x) yield y.substring(4).toInt
   }
 
   private def asNodeIds(permutations: List[List[Int]]): List[List[String]] = {

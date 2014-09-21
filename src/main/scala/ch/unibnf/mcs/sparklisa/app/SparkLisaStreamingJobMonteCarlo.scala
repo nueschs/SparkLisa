@@ -14,6 +14,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
+import scala.collection
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -56,8 +57,8 @@ object SparkLisaStreamingJobMonteCarlo {
     val tempMap: mutable.Map[Integer, NodeType] = TopologyHelper.createNumericalNodeMap(topology).asScala
     val nodeMap: mutable.Map[Int, NodeType] = for ((k,v) <- tempMap; (nk,nv) = (k.intValue, v)) yield (nk,nv)
     val allValues: DStream[(Int, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
-    val randomNeighbours: ReceiverInputDStream[(Int, List[List[String]])] =
-      ssc.actorStream[(Int, List[List[String]])](Props(
+    val randomNeighbours: ReceiverInputDStream[(Int, List[List[Int]])] =
+      ssc.actorStream[(Int, List[List[Int]])](Props(
         classOf[NumericalRandomTupleReceiver], topology.getNode.toList, rate, numRandomValues), "receiver"
       )
 
@@ -91,6 +92,9 @@ object SparkLisaStreamingJobMonteCarlo {
     val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().map(t => (t._1, t._2.sum / t._2.size.toDouble))
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
+    val numberOfNodes: Int = topology.getNode.size()
+    allValues.saveAsTextFiles(HdfsPath+ s"/results/${numBaseStations}_$numberOfNodes/allValues")
+    finalLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numBaseStations}_$numberOfNodes/finalLisaValues")
     createLisaMonteCarlo(allLisaValues, finalLisaValues, nodeMap, topology, randomNeighbours)
 
     ssc.start()
@@ -152,39 +156,36 @@ object SparkLisaStreamingJobMonteCarlo {
     })
   }
 
-  private def getRandomNeighbours(value: (String, Double), nodeMap: mutable.Map[String, NodeType], topology: Topology):
-  mutable.MutableList[(String, (Double, List[String]))]  = {
-
-    val randomNeighbours = statGen.createRandomNeighboursList(nodeMap.get(value._1).get.getNodeId, 10, topology.getNode.size())
-    var mapped: mutable.MutableList[(String, (Double, List[String]))] = mutable.MutableList()
-    randomNeighbours.foreach(n => {
-      mapped += ((value._1, (value._2, n)))
-    })
-    return mapped
-  }
-
   private def createLisaMonteCarlo(allLisaValues: DStream[(Int, Double)], finalLisaValues: DStream[(Int, Double)], nodeMap: mutable.Map[Int,
-    NodeType], topology: Topology, randomNeighbours: DStream[(Int, List[List[String]])]) = {
+    NodeType], topology: Topology, randomNeighbours: DStream[(Int, List[List[Int]])]) = {
     val numberOfBaseStations: Int = topology.getBasestation.size()
     val numberOfNodes: Int = topology.getNode.size()
     import org.apache.spark.SparkContext._
     import org.apache.spark.streaming.StreamingContext._
 
-//    allLisaValues.persist(StorageLevel.MEMORY_AND_DISK_SER_2)
-
-    val randomNeighbourTuples: DStream[(Int, List[String])] = randomNeighbours.flatMapValues(l => l)
-
-    allLisaValues.repartition(numberOfBaseStations)
+    val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
+    randomNeighbourTuples.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourTuples")
+    allLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/allLisaValues")
 
+    allLisaValues.map(t => (t._1, t))
 
-    val randomNeighbourSums: DStream[(Int, Double)] = randomNeighbourTuples.transformWith(allLisaValues, (t4Rdd, valueRdd: RDD[(Int, Double)]) => {
-      val t7: collection.Map[Int, Double] = valueRdd.collectAsMap()
-      t4Rdd.mapValues{case l => {
-        val randomValues: List[Double] = t7.filter(t => l.contains(t._1)).values.toList
-        randomValues.foldLeft(0.0)(_+_) / randomValues.foldLeft(0.0)((r,c) => r+1)
-      }}
+    val lisaValuesCartesian: DStream[(Int, collection.Map[Int, Double])] =
+      allLisaValues.transform(valueRDD => {
+      val valueMap: collection.Map[Int, Double] = valueRDD.collectAsMap()
+      valueRDD.mapValues {case _ => valueMap }
     })
+
+    val lisaValuesWithRandomNodes: DStream[(Int, (collection.Map[Int, Double], List[Int]))] =
+      lisaValuesCartesian.join(randomNeighbourTuples)
+
+    lisaValuesWithRandomNodes.repartition(numberOfBaseStations)
+
+    val randomNeighbourSums: DStream[(Int, Double)] = lisaValuesWithRandomNodes.mapValues {
+      case mergeProduct => mergeProduct._1.filter(t => mergeProduct._2.contains(t._1))
+    }.mapValues {
+      case filteredMap => filteredMap.values.foldLeft(0.0)(_+_) / filteredMap.values.foldLeft(0.0)((r,c) => r+1)
+    }
 
     val randomLisaValues: DStream[(Int, Double)] = randomNeighbourSums
       .join(allLisaValues)
@@ -194,7 +195,6 @@ object SparkLisaStreamingJobMonteCarlo {
       .join(finalLisaValues)
       .mapValues{ case t => (t._1.count(_ < t._2)+1)/ (t._1.size.toDouble+1.0)}
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
-
   }
 
   private def remap1(t: (String, (Double, List[String]))): ((String, Double), List[String]) = {

@@ -42,28 +42,25 @@ object TestApp {
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
 
     val values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, 0.01), "receiver1")
-    val randomNeighbourTuples = ssc.actorStream[(String, List[List[String]])](Props(classOf[RandomTupleReceiver], topology.getNode.toList, 0.01), "receiver2")
+    val randomNeighbourTuples = ssc.actorStream[(String, List[List[String]])](Props(classOf[RandomTupleReceiver], topology.getNode.toList, 0.01, 10), "receiver2")
     val t4: DStream[(String, List[String])] = randomNeighbourTuples.flatMapValues(l => l)
     import org.apache.spark.SparkContext._
 
-    val t6: DStream[(String, Double)] = t4.transformWith(values, (t4Rdd, valueRdd: RDD[(String, Double)]) => {
-      val t7: collection.Map[String, Double] = valueRdd.collectAsMap()
-      t4Rdd.mapValues{case l => {
-        val randomValues: List[Double] = t7.filter(t => l.contains(t._1)).values.toList
-        randomValues.foldLeft(0.0)(_+_) / randomValues.foldLeft(0.0)((r,c) => r+1)
-      }}
+    val t5: DStream[(String, collection.Map[String, Double])] = values.transform(valueRDD => {
+      val valueMap: collection.Map[String, Double] = valueRDD.collectAsMap()
+      valueRDD.mapValues(_ => valueMap)
     })
+    val t6: DStream[(String, (collection.Map[String, Double], List[String]))] = t5.join(t4)
+    val t7 = t6.mapValues(mergeProduct => mergeProduct._1.filter(t => mergeProduct._2.contains(t._1)))
+    val t8: DStream[(String, Double)] = t7.mapValues(filteredMap => filteredMap.values.sum)
 
-    val t7 = t6.join(values).mapValues{ case t => t._1*t._2}
-    val t8: DStream[(String, Iterable[Double])] = t7.groupByKey()
-    val t9: DStream[(String, (Iterable[Double], Double))] = t8.join(values)
-    val t10: DStream[(String, Double)] = t9.mapValues{ case t => t._1.count(_ < t._2)/ t._1.size.toDouble}
 
     values.foreachRDD(rdd => {rdd.foreach(f => println(f))})
-    t4.foreachRDD(rdd => {rdd.foreach(f => println(f))})
+//    t4.foreachRDD(rdd => {rdd.foreach(f => println(f))})
+    t5.foreachRDD(rdd => {rdd.foreach(f => println(f))})
     t6.foreachRDD(rdd => {rdd.foreach(f => println(f))})
     t7.foreachRDD(rdd => {rdd.foreach(f => println(f))})
-    t10.foreachRDD(rdd => {rdd.foreach(f => println(f))})
+
 
 //    val values: ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(0,8), 60)), "receiver")
 //    val values2:ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(8,16), 60)), "receiver")
