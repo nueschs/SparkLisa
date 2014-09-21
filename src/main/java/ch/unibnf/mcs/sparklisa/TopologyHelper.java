@@ -52,6 +52,15 @@ public class TopologyHelper {
         return res;
     }
 
+    public static Map<Integer, NodeType> createNumericalNodeMap(Topology t){
+        Map<Integer, NodeType> res = Maps.newHashMap();
+        for (NodeType node : t.getNode()){
+            int nodeId = Integer.parseInt(node.getNodeId().substring(4));
+            res.put(nodeId, node);
+        }
+        return res;
+    }
+
     public static Topology topologyFromBareFile(String path, Integer numberOfBaseStations) throws IOException {
         Topology topology = new Topology();
         List<String> lines = null;
