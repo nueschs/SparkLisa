@@ -7,6 +7,7 @@ import tarfile
 import os
 import subprocess
 import shlex
+import urllib
 from datetime import datetime
 
 from snakebite.client import Client
@@ -24,7 +25,10 @@ hdfs_client = Client('diufpc56.unifr.ch', 8020, use_trash=False)
 # hdfs_path = 'hdfs://localhost:9999/sparkLisa/'
 # hdfs_client = Client('localhost', 9999, use_trash=False)
 spark_bin_path = '/home/stefan/spark/bin/'
-spark_command = spark_bin_path+'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0} --master yarn-client --num-executors {1} ../../../target/SparkLisa-0.0.1-SNAPSHOT.jar {2} {3} {4} {5} ../resources/topology/topology_bare_{6}_1600.txt {7}'
+spark_command = spark_bin_path+'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0}' \
+                               ' --master yarn-cluster --num-executors {1} --executor-cores 8 ' \
+                               '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar {2} {3} {4} {5} ' \
+                               '../resources/topology/topology_bare_{6}_1600.txt {7}'
 log_file_path = '../resources/logs'
 
 date_format = '%d%m%Y%H%M%S'
@@ -79,6 +83,31 @@ def create_tar(tar_path, tar_name, path):
     tar_file.add(path, arcname=tar_name)
     tar_file.close()
 
+def read_yarn_log(proc):
+    app_master_host = None
+    app_id = None
+    while app_id is None or app_master_host is None:
+        err_line = proc.stderr.readline()
+
+        if 'application identifier' in err_line:
+            id = err_line.split(':')[1].strip()
+            if id.startswith('application'):
+                app_id = id
+
+        elif 'appMasterHost' in err_line:
+            host = err_line.split(':')[1].strip()
+            if host.startswith('diufpc'):
+                app_master_host = host
+
+    return app_id, app_master_host
+
+def wait_for_finish(proc):
+    status = None
+    while status != 'FINISHED':
+        err_line = proc.stderr.readline()
+        if 'yarnAppState' in err_line:
+            status = err_line.split(':')[1].strip()
+
 
 def main():
     parse_arguments()
@@ -94,7 +123,7 @@ def main():
         log_file = os.path.join(log_file_path, log_file_name)
         spark_command_ = spark_command.format(
             'SparkLisaStreamingJob',
-            num_base * 2,
+            num_base,
             window,
             rate,
             num_base,
@@ -102,11 +131,13 @@ def main():
             topology_type,
             ''
         )
-        log = open(log_file, 'w')
-        p = subprocess.Popen(shlex.split(spark_command_), stdout=log, stderr=log)
-        time.sleep(duration + 60)
-        p.terminate()
-        log.close()
+        p = subprocess.Popen(shlex.split(spark_command_), stderr=subprocess.PIPE)
+        app_id, app_master_host = read_yarn_log(p)
+        app_id_part = app_id.replace('application_', '')
+        log_url = 'http://{0}:8042/logs/container/{1}/container_{2}_01_000001/stderr'.format(app_master_host, app_id, app_id_part)
+        wait_for_finish(p)
+        time.sleep(60)
+        urllib.urlretrieve(log_url, log_file)
         collect_and_zip_output(log_file, num_base, 1600, topology_type, 'spatial')
 
 
