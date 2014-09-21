@@ -66,8 +66,6 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, topology
     if not os.path.isdir(output_folder + 'results/'): os.makedirs(output_folder + 'results/')
 
     shutil.copyfile(log_file_name, output_folder + log_file_name.split('/')[-1])
-    shutil.copy('../resources/topology/topology_bare_{0}_{1}.txt'.format(topology_type, num_nodes),
-                '../resources/temp/')
     list(hdfs_client.copyToLocal(['sparkLisa/results/{0}_{1}'.format(num_base_stations, num_nodes) + '/'],
                                  output_folder + 'results/'))
     tar_name = '{0}_{1}_{2}_{3}_{4}_{5}_{6}'.format(run_type, num_base_stations, num_nodes, rate, window, duration,
