@@ -116,27 +116,28 @@ def main():
     os.environ['HADOOP_CONF_DIR'] = '/etc/hadoop/conf'
 
     topology_type = 'connected'
-    for num_base in [1]:
-        log_file_name = 'sparklisa_spatial_{0}.log'.format(num_base)
-        log_file = os.path.join(log_file_path, log_file_name)
-        spark_command_ = spark_command.format(
-            'SparkLisaStreamingJob',
-            num_base,
-            window,
-            rate,
-            num_base,
-            duration,
-            topology_type,
-            ''
-        )
-        p = subprocess.Popen(shlex.split(spark_command_), stderr=subprocess.PIPE)
-        app_id, app_master_host = read_yarn_log(p)
-        app_id_part = app_id.replace('application_', '')
-        log_url = 'http://{0}:8042/logs/container/{1}/container_{2}_01_000001/stderr'.format(app_master_host, app_id, app_id_part)
-        wait_for_finish(p)
-        time.sleep(60)
-        urllib.urlretrieve(log_url, log_file)
-        collect_and_zip_output(log_file, num_base, 1600, topology_type, 'spatial')
+    for _ in range(0,3):
+        for num_base in [1]:
+            log_file_name = 'sparklisa_spatial_{0}.log'.format(num_base)
+            log_file = os.path.join(log_file_path, log_file_name)
+            spark_command_ = spark_command.format(
+                'SparkLisaStreamingJob',
+                num_base,
+                window,
+                rate,
+                num_base,
+                duration,
+                topology_type,
+                ''
+            )
+            p = subprocess.Popen(shlex.split(spark_command_), stderr=subprocess.PIPE)
+            app_id, app_master_host = read_yarn_log(p)
+            app_id_part = app_id.replace('application_', '')
+            log_url = 'http://{0}:8042/logs/container/{1}/container_{2}_01_000001/stderr'.format(app_master_host, app_id, app_id_part)
+            wait_for_finish(p)
+            time.sleep(60)
+            urllib.urlretrieve(log_url, log_file)
+            collect_and_zip_output(log_file, num_base, 1600, topology_type, 'spatial')
 
 
 
