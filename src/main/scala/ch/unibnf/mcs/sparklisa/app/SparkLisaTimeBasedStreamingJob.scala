@@ -48,10 +48,11 @@ object SparkLisaTimeBasedStreamingJob {
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
     ssc.addStreamingListener(new LisaStreamingListener())
     val topology: Topology = TopologyHelper.topologyFromBareFile(topologyPath, numBaseStations)
-    val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
+    val tempMap: mutable.Map[Integer, NodeType] = TopologyHelper.createNumericalNodeMap(topology).asScala
+    val nodeMap: mutable.Map[Int, NodeType] = for ((k,v) <- tempMap; (nk,nv) = (k.intValue, v)) yield (nk,nv)
 
 
-    val allValues: DStream[(String, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
+    val allValues: DStream[(Int, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
     allValues.repartition(numBaseStations)
 
     val currentValues: DStream[(String, Double)] = allValues.map(t => (t._1, t._2(0)))
@@ -117,8 +118,8 @@ object SparkLisaTimeBasedStreamingJob {
   }
 
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int,
-                              rate: Double): DStream[(String, Array[Double])] = {
-    val values: DStream[(String, Array[Double])] = ssc.actorStream[(String, Array[Double])](
+                              rate: Double): DStream[(Int, Array[Double])] = {
+    val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](
       Props(classOf[TimeBasedTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
     return values
   }

@@ -5,7 +5,7 @@ import java.util.Properties
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.TopologySimulatorActorReceiver
+import ch.unibnf.mcs.sparklisa.receiver.{NumericalTopologySimulatorActorReceiver, TopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -50,8 +50,9 @@ object SparkLisaStreamingJob {
 
     val topology: Topology = TopologyHelper.topologyFromBareFile(topologyPath, numBaseStations)
 
-    val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
-    val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
+    val tempMap: mutable.Map[Integer, NodeType] = TopologyHelper.createNumericalNodeMap(topology).asScala
+    val nodeMap: mutable.Map[Int, NodeType] = for ((k,v) <- tempMap; (nk,nv) = (k.intValue, v)) yield (nk,nv)
+    val allValues: DStream[(Int, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
 
     val runningCount = allValues.count()
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
@@ -79,7 +80,7 @@ object SparkLisaStreamingJob {
 
     //
     val allLisaValues = createLisaValues(allValues, runningMean, stdDev)
-    val allNeighbourValues: DStream[(String, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().mapValues(l => l.sum / l.size.toDouble)
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(d => (d._1 * d._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
@@ -103,28 +104,12 @@ object SparkLisaStreamingJob {
     return conf
   }
 
-  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
-    val values: DStream[(String, Double)] =  ssc.actorStream[(String, Double)](
-      Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(Int, Double)] = {
+    val values: DStream[(Int, Double)] =  ssc.actorStream[(Int, Double)](
+      Props(classOf[NumericalTopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
     values.repartition(numBaseStations)
     return values
   }
-
-//  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
-//    val nodesPerBase: Int = topology.getNode.size()/numBaseStations
-//    var values: DStream[(String, Double)] = null
-//    for (i <- 0 until numBaseStations){
-//      if (values == null) {
-//        values = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
-//          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver")
-//      } else {
-//        values = values.union(ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver],
-//          topology.getNode.toList.slice(i*nodesPerBase, (i+1)*nodesPerBase), rate), "receiver"))
-//      }
-//    }
-//    values.repartition(numBaseStations)
-//    return values
-//  }
 
   private def initConfig() = {
     config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
@@ -133,11 +118,11 @@ object SparkLisaStreamingJob {
     Strategy = Some(config.getProperty("receiver.strategy"))
   }
 
-  private def mapToNeighbourKeys(value: (String, Double), nodeMap: mutable.Map[String, NodeType]): mutable.Traversable[(String, Double)] = {
-    var mapped: mutable.MutableList[(String, Double)] = mutable.MutableList()
+  private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
+    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
     import scala.collection.JavaConversions._
     for (n <- nodeMap.get(value._1).getOrElse(new NodeType()).getNeighbour()) {
-      mapped += ((n, value._2))
+      mapped += ((n.substring(4).toInt, value._2))
     }
     return mapped
   }
@@ -146,9 +131,9 @@ object SparkLisaStreamingJob {
   /*
   * returns a DStream[(NodeType, Double)]
    */
-  private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
+  private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(Int, Double)] = {
     import org.apache.spark.SparkContext._
-    val variance: DStream[(String, Double)] =  nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
+    val variance: DStream[(Int, Double)] =  nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
       var mean_ = 0.0
       try{mean_ = meanRDD.reduce(_ + _)} catch {
         case use: UnsupportedOperationException => {}

@@ -50,8 +50,9 @@ object SparkLisaStreamingJobTriggered {
 
     val topology: Topology = TopologyHelper.topologyFromBareFile(topologyPath, numBaseStations)
 
-    val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
-    val allValues: DStream[(String, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
+    val tempMap: mutable.Map[Integer, NodeType] = TopologyHelper.createNumericalNodeMap(topology).asScala
+    val nodeMap: mutable.Map[Int, NodeType] = for ((k,v) <- tempMap; (nk,nv) = (k.intValue, v)) yield (nk,nv)
+    val allValues: DStream[(Int, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
 
     val runningCount = allValues.count()
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
@@ -79,14 +80,11 @@ object SparkLisaStreamingJobTriggered {
 
     //
     val allLisaValues = createLisaValues(allValues, runningMean, stdDev)
-    val allNeighbourValues: DStream[(String, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().mapValues(l => l.sum / l.size.toDouble)
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(d => (d._1 * d._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
-    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
-    runningCount.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allCount")
-    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
     finalLisaValues.count().saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalCount")
 
     ssc.start()
@@ -107,8 +105,8 @@ object SparkLisaStreamingJobTriggered {
     return conf
   }
 
-  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(String, Double)] = {
-    val values: DStream[(String, Double)] =  ssc.actorStream[(String, Double)](Props(classOf[TriggerableTopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
+  private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(Int, Double)] = {
+    val values: DStream[(Int, Double)] =  ssc.actorStream[(Int, Double)](Props(classOf[TriggerableTopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
     values.repartition(numBaseStations)
     return values
   }
@@ -120,11 +118,11 @@ object SparkLisaStreamingJobTriggered {
     Strategy = Some(config.getProperty("receiver.strategy"))
   }
 
-  private def mapToNeighbourKeys(value: (String, Double), nodeMap: mutable.Map[String, NodeType]): mutable.Traversable[(String, Double)] = {
-    var mapped: mutable.MutableList[(String, Double)] = mutable.MutableList()
+  private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
+    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
     import scala.collection.JavaConversions._
-    for (n <- nodeMap.get(value._1).getOrElse(new NodeType()).getNeighbour()) {
-      mapped += ((n, value._2))
+    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
+      mapped += ((n.substring(4).toInt, value._2))
     }
     return mapped
   }
@@ -133,7 +131,8 @@ object SparkLisaStreamingJobTriggered {
   /*
   * returns a DStream[(NodeType, Double)]
    */
-  private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
+  private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double], stdDev:
+    DStream[Double]): DStream[(Int, Double)] = {
     import org.apache.spark.SparkContext._
     return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
       var mean_ = 0.0

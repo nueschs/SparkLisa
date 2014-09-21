@@ -26,7 +26,7 @@ class TriggerableTimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], 
 
   val random = new Random()
   val log = Logger.getLogger(getClass)
-  private val values: mutable.Map[String, Queue[Double]] = mutable.Map()
+  private val values: mutable.Map[Int, Queue[Double]] = mutable.Map()
 
   override def preStart = {
     context.actorOf(ReceiverActor.props())
@@ -37,14 +37,15 @@ class TriggerableTimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], 
   }
 
   def storeNewValueBatch() = {
-    val pushValues: ArrayBuffer[(String, Array[Double])] = ArrayBuffer()
+    val pushValues: ArrayBuffer[(Int, Array[Double])] = ArrayBuffer()
     for (node <- nodes) {
+      val nodeId: Int = node.getNodeId.substring(4).toInt
       if (!values.exists(_._1 == node.getNodeId)){
-        values.put(node.getNodeId, Queue(random.nextGaussian()))
+        values.put(nodeId, Queue(random.nextGaussian()))
       } else {
-        values(node.getNodeId) = values(node.getNodeId).enqueueFinite(random.nextGaussian(), k)
+        values(nodeId) = values(nodeId).enqueueFinite(random.nextGaussian(), k)
       }
-      pushValues += ((node.getNodeId, values(node.getNodeId).toArray))
+      pushValues += ((nodeId, values(nodeId).toArray))
     }
     store(pushValues.iterator)
   }

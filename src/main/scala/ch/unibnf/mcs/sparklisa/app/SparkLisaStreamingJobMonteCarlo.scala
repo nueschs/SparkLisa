@@ -91,7 +91,6 @@ object SparkLisaStreamingJobMonteCarlo {
     val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().map(t => (t._1, t._2.sum / t._2.size.toDouble))
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
-    val numberOfNodes: Int = topology.getNode.size()
     createLisaMonteCarlo(allLisaValues, finalLisaValues, nodeMap, topology, randomNeighbours)
 
     ssc.start()

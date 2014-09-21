@@ -26,9 +26,9 @@ class TriggerableTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Dou
   }
 
   def storeNewValueBatch() = {
-    val values: mutable.MutableList[(String, Double)] = mutable.MutableList()
+    val values: mutable.MutableList[(Int, Double)] = mutable.MutableList()
     for (node <- nodes) {
-      values += ((node.getNodeId, random.nextGaussian()))
+      values += ((node.getNodeId.substring(4).toInt, random.nextGaussian()))
     }
     store(values.iterator)
   }

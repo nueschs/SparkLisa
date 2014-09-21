@@ -24,18 +24,19 @@ class TimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Doubl
 
   private val random = new Random()
   private val sleepDuration: Int = (60.0 / rate).toInt
-  private val values: mutable.Map[String, Queue[Double]] = mutable.Map()
+  private val values: mutable.Map[Int, Queue[Double]] = mutable.Map()
 
   override def preStart = {
     context.system.scheduler.schedule(10 seconds, sleepDuration seconds)({
-      val pushValues: ArrayBuffer[(String, Array[Double])] = ArrayBuffer()
+      val pushValues: ArrayBuffer[(Int, Array[Double])] = ArrayBuffer()
       for (node <- nodes) {
+        val nodeId: Int = node.getNodeId.substring(4).toInt
         if (!values.exists(_._1 == node.getNodeId)){
-          values.put(node.getNodeId, Queue(random.nextGaussian()))
+          values.put(nodeId, Queue(random.nextGaussian()))
         } else {
-          values(node.getNodeId) = values(node.getNodeId).enqueueFinite(random.nextGaussian(), k)
+          values(nodeId) = values(nodeId).enqueueFinite(random.nextGaussian(), k)
         }
-        pushValues += ((node.getNodeId, values(node.getNodeId).toArray))
+        pushValues += ((node.getNodeId.substring(4).toInt, values(nodeId).toArray))
       }
       self ! pushValues.iterator
     })
@@ -44,8 +45,8 @@ class TimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Doubl
   case class SensorSimulator()
 
   override def receive = {
-    case data: Iterator[(String, Array[Double])] => {
-      store[(String, Array[Double])](data)
+    case data: Iterator[(Int, Array[Double])] => {
+      store[(Int, Array[Double])](data)
     }
   }
 
