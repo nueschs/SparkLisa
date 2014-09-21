@@ -85,6 +85,7 @@ object SparkLisaStreamingJob {
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(d => d._1 * d._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
+    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
     ssc.start()

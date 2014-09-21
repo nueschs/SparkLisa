@@ -100,6 +100,7 @@ object SparkLisaTimeBasedStreamingJobMonteCarlo {
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(t => t._1*t._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
+    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
     createLisaMonteCarlo(allLisaValues, allPastLisaValues, finalLisaValues, nodeMap, topology, randomNeighbours)
 
