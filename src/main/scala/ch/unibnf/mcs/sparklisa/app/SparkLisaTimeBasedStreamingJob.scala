@@ -43,6 +43,7 @@ object SparkLisaTimeBasedStreamingJob {
 
     import org.apache.spark.streaming.StreamingContext._
     val conf: SparkConf = createSparkConf()
+    conf.set("spark.default.parallelism", s"$numBaseStations")
 
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
     ssc.addStreamingListener(new LisaStreamingListener())
@@ -51,6 +52,7 @@ object SparkLisaTimeBasedStreamingJob {
 
 
     val allValues: DStream[(String, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
+    allValues.repartition(numBaseStations)
 
     val currentValues: DStream[(String, Double)] = allValues.map(t => (t._1, t._2(0)))
     val pastValues: DStream[(String, Array[Double])] = allValues.map(t => (t._1, t._2.takeRight(t._2.size-1)))
@@ -90,11 +92,11 @@ object SparkLisaTimeBasedStreamingJob {
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
-    allValues
-      .flatMapValues(a => a.toList.zipWithIndex.map(t => ("k-"+t._2.toString, t._1)))
-      .map(t => ((t._1, t._2._1), t._2._2))
-      .saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/timedMappedValues")
-    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
+//    allValues
+//      .flatMapValues(a => a.toList.zipWithIndex.map(t => ("k-"+t._2.toString, t._1)))
+//      .map(t => ((t._1, t._2._1), t._2._2))
+//      .saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/timedMappedValues")
+//    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
     ssc.start()
@@ -142,18 +144,19 @@ object SparkLisaTimeBasedStreamingJob {
   * returns a DStream[(NodeType, Double)]
    */
   private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
+    import org.apache.spark.SparkContext._
     return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
       var mean_ = 0.0
       try {mean_ = meanRDD.reduce(_ + _)} catch {
         case use: UnsupportedOperationException => {}
       }
-      nodeRDD.map(t => (t._1, t._2 - mean_))
+      nodeRDD.mapValues(d => d-mean_)
     }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
       var stdDev_ = 0.0
       try {stdDev_ = stdDevRDD.reduce(_ + _)} catch {
         case use: UnsupportedOperationException => {}
       }
-      nodeDiffRDD.map(t => (t._1, t._2 / stdDev_))
+      nodeDiffRDD.mapValues(d => d/stdDev_)
     })
   }
 }
