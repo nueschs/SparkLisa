@@ -188,11 +188,13 @@ object SparkLisaStreamingJobMonteCarlo {
     import org.apache.spark.streaming.StreamingContext._
     import org.apache.spark.SparkContext._
 
-    allLisaValues.persist(StorageLevel.MEMORY_AND_DISK_SER_2)
+//    allLisaValues.persist(StorageLevel.MEMORY_AND_DISK_SER_2)
 
     val randomNeighbourTuples: DStream[(String, List[String])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourTuples")
 
+    allLisaValues.repartition(numberOfBaseStations)
+    randomNeighbourTuples.repartition(numberOfBaseStations)
 
 
     val randomNeighbourSums: DStream[(String, Double)] = randomNeighbourTuples.transformWith(allLisaValues, (t4Rdd, valueRdd: RDD[(String, Double)]) => {
