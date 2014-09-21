@@ -50,9 +50,8 @@ def create_node_map(topology_file):
 
     for i in range(0, len(data)):
         connections = [int(x) for x in data[i].split(',')]
-        named_connections = ['node'+str(k+1) for k,x in enumerate(connections) if x == 1]
-        node_map['node'+str(i+1)] = named_connections
-
+        named_connections = [str(k+1) for k,x in enumerate(connections) if x == 1]
+        node_map[str(i+1)] = named_connections
     return node_map
 
 

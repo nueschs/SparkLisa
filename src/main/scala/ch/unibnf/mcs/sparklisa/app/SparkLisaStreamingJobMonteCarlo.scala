@@ -14,7 +14,6 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
-import scala.collection
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -93,8 +92,6 @@ object SparkLisaStreamingJobMonteCarlo {
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().map(t => (t._1, t._2.sum / t._2.size.toDouble))
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
     val numberOfNodes: Int = topology.getNode.size()
-    allValues.saveAsTextFiles(HdfsPath+ s"/results/${numBaseStations}_$numberOfNodes/allValues")
-    finalLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numBaseStations}_$numberOfNodes/finalLisaValues")
     createLisaMonteCarlo(allLisaValues, finalLisaValues, nodeMap, topology, randomNeighbours)
 
     ssc.start()
@@ -130,7 +127,7 @@ object SparkLisaStreamingJobMonteCarlo {
   private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
     var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
     import scala.collection.JavaConversions._
-    for (n <- nodeMap.get(value._1).getOrElse(new NodeType()).getNeighbour()) {
+    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
       mapped += ((n.substring(4).toInt, value._2))
     }
     return mapped
@@ -165,8 +162,6 @@ object SparkLisaStreamingJobMonteCarlo {
 
     val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
-    randomNeighbourTuples.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourTuples")
-    allLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/allLisaValues")
 
     allLisaValues.map(t => (t._1, t))
 
@@ -195,12 +190,6 @@ object SparkLisaStreamingJobMonteCarlo {
       .join(finalLisaValues)
       .mapValues{ case t => (t._1.count(_ < t._2)+1)/ (t._1.size.toDouble+1.0)}
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
-  }
-
-  private def remap1(t: (String, (Double, List[String]))): ((String, Double), List[String]) = {
-    val res = ((t._1, t._2._1), t._2._2)
-    log.info(s"remapping tuple $t to $res")
-    return res
   }
 
 }
