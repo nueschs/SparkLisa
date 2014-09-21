@@ -5,20 +5,17 @@ import java.util.Properties
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, NumericalTopologySimulatorActorReceiver,
-RandomTupleReceiver, TopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, NumericalTopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.statistics.RandomTupleGenerator
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
-import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.dstream.{ReceiverInputDStream, DStream}
+import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import scala.collection.JavaConverters._
+
 import scala.collection.JavaConversions._
-
-
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 object SparkLisaStreamingJobMonteCarlo {
@@ -90,15 +87,10 @@ object SparkLisaStreamingJobMonteCarlo {
       })
     })
 
-    //
     val allLisaValues = createLisaValues(allValues, runningMean, stdDev)
     val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().map(t => (t._1, t._2.sum / t._2.size.toDouble))
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
-    val numberOfBaseStations = topology.getBasestation.size().toString
-    val numberOfNodes = topology.getNode.size().toString
-    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
-    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
     createLisaMonteCarlo(allLisaValues, finalLisaValues, nodeMap, topology, randomNeighbours)
 
     ssc.start()
@@ -175,13 +167,12 @@ object SparkLisaStreamingJobMonteCarlo {
     NodeType], topology: Topology, randomNeighbours: DStream[(Int, List[List[String]])]) = {
     val numberOfBaseStations: Int = topology.getBasestation.size()
     val numberOfNodes: Int = topology.getNode.size()
-    import org.apache.spark.streaming.StreamingContext._
     import org.apache.spark.SparkContext._
+    import org.apache.spark.streaming.StreamingContext._
 
 //    allLisaValues.persist(StorageLevel.MEMORY_AND_DISK_SER_2)
 
     val randomNeighbourTuples: DStream[(Int, List[String])] = randomNeighbours.flatMapValues(l => l)
-    randomNeighbourTuples.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/randomNeighbourTuples")
 
     allLisaValues.repartition(numberOfBaseStations)
     randomNeighbourTuples.repartition(numberOfBaseStations)
