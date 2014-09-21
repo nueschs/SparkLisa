@@ -46,7 +46,7 @@ class TriggerableTimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], 
       }
       pushValues += ((node.getNodeId, values(node.getNodeId).toArray))
     }
-    store(values.iterator)
+    store(pushValues.iterator)
   }
 
   object ReceiverActor {
