@@ -31,7 +31,7 @@ class TimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Doubl
       val pushValues: ArrayBuffer[(Int, Array[Double])] = ArrayBuffer()
       for (node <- nodes) {
         val nodeId: Int = node.getNodeId.substring(4).toInt
-        if (!values.exists(_._1 == node.getNodeId)){
+        if (!values.exists(_._1 == nodeId)){
           values.put(nodeId, Queue(random.nextGaussian()))
         } else {
           values(nodeId) = values(nodeId).enqueueFinite(random.nextGaussian(), k)

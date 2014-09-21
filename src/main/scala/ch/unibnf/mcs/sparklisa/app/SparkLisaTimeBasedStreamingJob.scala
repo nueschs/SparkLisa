@@ -55,10 +55,10 @@ object SparkLisaTimeBasedStreamingJob {
     val allValues: DStream[(Int, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
     allValues.repartition(numBaseStations)
 
-    val currentValues: DStream[(String, Double)] = allValues.map(t => (t._1, t._2(0)))
-    val pastValues: DStream[(String, Array[Double])] = allValues.map(t => (t._1, t._2.takeRight(t._2.size-1)))
-    val pastValuesFlat: DStream[(String, Double)] = pastValues.flatMapValues(a => a.toList)
-    val allValuesFlat: DStream[(String, Double)] = currentValues.union(pastValuesFlat)
+    val currentValues: DStream[(Int, Double)] = allValues.map(t => (t._1, t._2(0)))
+    val pastValues: DStream[(Int, Array[Double])] = allValues.map(t => (t._1, t._2.takeRight(t._2.size-1)))
+    val pastValuesFlat: DStream[(Int, Double)] = pastValues.flatMapValues(a => a.toList)
+    val allValuesFlat: DStream[(Int, Double)] = currentValues.union(pastValuesFlat)
     val runningCount: DStream[Long] = allValuesFlat.count()
     val runningMean: DStream[Double] = allValuesFlat.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
 
@@ -84,20 +84,15 @@ object SparkLisaTimeBasedStreamingJob {
 
     val allLisaValues = createLisaValues(currentValues, runningMean, stdDev)
 
-    val allNeighbourValues: DStream[(String, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
 
-    val allPastLisaValues: DStream[(String, Double)] = createLisaValues(pastValuesFlat, runningMean, stdDev)
+    val allPastLisaValues: DStream[(Int, Double)] = createLisaValues(pastValuesFlat, runningMean, stdDev)
     val neighboursNormalizedSums = allNeighbourValues.union(allPastLisaValues).groupByKey()
       .map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
-//    allValues
-//      .flatMapValues(a => a.toList.zipWithIndex.map(t => ("k-"+t._2.toString, t._1)))
-//      .map(t => ((t._1, t._2._1), t._2._2))
-//      .saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/timedMappedValues")
-//    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
     ssc.start()
@@ -131,11 +126,11 @@ object SparkLisaTimeBasedStreamingJob {
     Strategy = Some(config.getProperty("receiver.strategy"))
   }
 
-  private def mapToNeighbourKeys(value: (String, Double), nodeMap: mutable.Map[String, NodeType]): mutable.Traversable[(String, Double)] = {
-    var mapped: mutable.MutableList[(String, Double)] = mutable.MutableList()
+  private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
+    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
     import scala.collection.JavaConversions._
-    for (n <- nodeMap.get(value._1).getOrElse(new NodeType()).getNeighbour()) {
-      mapped += ((n, value._2))
+    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
+      mapped += ((n.substring(4).toInt, value._2))
     }
     return mapped
   }
@@ -144,7 +139,7 @@ object SparkLisaTimeBasedStreamingJob {
   /*
   * returns a DStream[(NodeType, Double)]
    */
-  private def createLisaValues(nodeValues: DStream[(String, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(String, Double)] = {
+  private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(Int, Double)] = {
     import org.apache.spark.SparkContext._
     return nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
       var mean_ = 0.0
