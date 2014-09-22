@@ -150,7 +150,7 @@ def run_time_based():
     class_name = 'SparkLisaTimeBasedStreamingJob'
     run_type = 'time_based'
     for k in [1,5,10,20,100]:
-        run(class_name, [16], topology_type, run_type, k=str(k))
+        run(class_name, [1,16], topology_type, run_type, k=str(k))
 
 def run_monte_carlo():
     topology_type = 'connected'
@@ -162,8 +162,8 @@ def run_monte_carlo_time_based():
     topology_type = 'connected'
     class_name = 'SparkLisaTimeBasedStreamingJobMonteCarlo'
     run_type = 'monte_carlo_time_based'
-    for k in [1,5,10,20]:
-        run(class_name, [1,2,4,8,16], topology_type, run_type, k=str(k), random_values='1000')
+    for k in [1,2,5,10,20]:
+        run(class_name, [16], topology_type, run_type, k=str(k), random_values='1000')
 
 def run_topology_types():
     class_name = 'SparkLisaStreamingJobMonteCarlo'

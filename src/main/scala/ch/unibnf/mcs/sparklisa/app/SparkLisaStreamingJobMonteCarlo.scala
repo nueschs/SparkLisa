@@ -165,8 +165,6 @@ object SparkLisaStreamingJobMonteCarlo {
     val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
 
-    allLisaValues.map(t => (t._1, t))
-
     val lisaValuesCartesian: DStream[(Int, collection.Map[Int, Double])] =
       allLisaValues.transform(valueRDD => {
       val valueMap: collection.Map[Int, Double] = valueRDD.collectAsMap()
