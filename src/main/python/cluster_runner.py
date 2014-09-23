@@ -14,7 +14,6 @@ from snakebite.client import Client
 
 
 numbers_of_nodes = None
-number_of_base_stations = None
 rate = None
 window = None
 duration = None
@@ -44,15 +43,19 @@ def parse_arguments():
     parser.add_argument('-m','--mode', metavar='m', type=str, default='s',
                         help='s for spatial, t for time based, m for spatial with statistical test, '
                              'mt for time based with statistical test, tt for topology types (default s)')
+    parser.add_argument('-bs', '--basestations', metavar='bs', nargs='*', type=int, help='List of numbers af base stations.')
+    parser.add_argument('-ks', '--temporal_values', metavar='ks', nargs='*', type=int, help='List of temporal values to be used.')
 
     args = vars(parser.parse_args())
 
-    global rate, window, duration, repetitions, mode
+    global rate, window, duration, repetitions, mode, base_stations, ks
     rate = args['rate']
     window = args['window']
     duration = args['duration']
     mode = args['mode']
     repetitions = args['repetitions']
+    base_stations = args['basestations']
+    ks = args['temporal_values']
 
 
 def delete_folder_contents(path):
@@ -75,7 +78,7 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, run_type
     shutil.copyfile(log_file_name, output_folder + log_file_name.split('/')[-1])
     list(hdfs_client.copyToLocal(['sparkLisa/results/{0}_{1}'.format(num_base_stations, num_nodes) + '/'],
                                  output_folder + 'results/'))
-    tar_name = '{0}_{1}_{2}_{3}_{4}_{5}_{6}'.format(run_type, num_base_stations, num_nodes, rate, window, duration,
+    tar_name = '{0}_{1}_{2}_{3}_{4}_{5}_{6}'.format(run_type, base_stations, num_nodes, rate, window, duration,
                                                     datetime.now().strftime(date_format))
     create_tar('../resources/', tar_name, '../resources/temp')
     delete_folder_contents('../resources/temp/')
@@ -140,38 +143,43 @@ def run(class_name, base_stations, topology_type, run_type, k='', random_values=
             collect_and_zip_output(log_file, num_base, 1600, run_type)
 
 def run_spatial():
+    stations = [1,2,4,8,16] if not base_stations else base_stations
     topology_type = 'connected'
     class_name = 'SparkLisaStreamingJob'
     run_type = 'spatial'
-    run(class_name, [1,2,4,8,16], topology_type, run_type)
+    run(class_name, stations, topology_type, run_type)
 
 def run_time_based():
+    stations = [1,16] if not base_stations else base_stations
+    ks_ = [1,5,10,20,100] if not ks else ks
     topology_type = 'connected'
     class_name = 'SparkLisaTimeBasedStreamingJob'
     run_type = 'time_based'
-    for k in [1,5,10,20,100]:
-        run(class_name, [1,16], topology_type, run_type, k=str(k))
+    for k in ks_:
+        run(class_name, stations, topology_type, run_type, k=str(k))
 
 def run_monte_carlo():
+    stations = [1,2,4,8,16] if not base_stations else base_stations
     topology_type = 'connected'
     class_name = 'SparkLisaStreamingJobMonteCarlo'
     run_type = 'monte_carlo'
-    run(class_name, [1,2,4,8,16], topology_type, run_type, random_values='1000')
+    run(class_name, stations, topology_type, run_type, random_values='1000')
 
 def run_monte_carlo_time_based():
+    stations = [16] if not base_stations else base_stations
+    ks_ = [1,2,5,10,20] if not ks else ks
     topology_type = 'connected'
     class_name = 'SparkLisaTimeBasedStreamingJobMonteCarlo'
     run_type = 'monte_carlo_time_based'
-    for k in [1,2,5,10,20]:
-        run(class_name, [16], topology_type, run_type, k=str(k), random_values='1000')
+    for k in ks_:
+        run(class_name, stations, topology_type, run_type, k=str(k), random_values='1000')
 
 def run_topology_types():
+    stations = [16] if not base_stations else base_stations
     class_name = 'SparkLisaStreamingJobMonteCarlo'
     run_type = 'topologies'
     for topology_type in ['sparse', 'connected', 'dense']:
-        run(class_name, [16], topology_type, run_type, random_values='1000')
-
-
+        run(class_name, stations, topology_type, run_type, random_values='1000')
 
 def main():
     parse_arguments()
@@ -189,8 +197,7 @@ def main():
         'tt': run_topology_types
     }
 
-    switch[mode]()
-
+    switch[mode](base_stations)
 
 
 
