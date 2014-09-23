@@ -9,7 +9,7 @@ def file_len(file_name):
             pass
     return i + 1
 
-def read_durations(path):
+def read_durations(path, run_type='spatial', prefix='finalLisaValues'):
     directories = [ os.path.join(path, name) for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) ]
     batches = dict()
 
@@ -17,7 +17,7 @@ def read_durations(path):
         batches_with_data = list()
         results_dirs = [
             os.path.join(directory, 'results', name) for name in os.listdir(os.path.join(directory, 'results'))
-            if os.path.isdir(os.path.join(directory, 'results', name)) and name.startswith('finalLisaValues')
+            if os.path.isdir(os.path.join(directory, 'results', name)) and name.startswith(prefix)
         ]
         for dir_ in results_dirs:
             if len([name for name in os.listdir(dir_) if (name.startswith('part-') and file_len(os.path.join(dir_, name)) > 10)]) > 0:
@@ -27,8 +27,8 @@ def read_durations(path):
     durations = dict()
     for run_dir, run_batches in batches.items():
         run_name = os.path.split(run_dir)[1]
-        num_base_stations = run_name.split('_')[1]
-        log_file_name = os.path.join(run_dir, 'sparklisa_spatial_{0}.log'.format(num_base_stations))
+        num_base_stations = run_name.split('_')[-6]
+        log_file_name = os.path.join(run_dir, 'sparklisa_{1}_{0}.log'.format(num_base_stations, run_type))
         with open(log_file_name, 'rb') as f:
             log_file = f.readlines()
 
@@ -57,9 +57,9 @@ def get_file_lines(averages, stdevs, percentiles, mins, maxs):
     index = 1
     lines = ['#idx\tmin\t25\t50\t75\tmax\tavg\tstdDev\ttitle\n']
     for run_name, percentile in percentiles.items():
-        if num_base_stations != run_name.split('_')[1]:
+        if num_base_stations != run_name.split('_')[-6]:
             count = 0
-        num_base_stations = run_name.split('_')[1]
+        num_base_stations = run_name.split('_')[-6]
         line_name = '{0}_{1}'.format(num_base_stations, count)
         line = format_line(index, line_name, run_name, percentile, averages, stdevs, mins, maxs)
         lines.append(line)
@@ -90,7 +90,6 @@ def get_all_averages_lines(averages):
     return lines
 
 
-
 def create_spatial_averages_file(path, out_path=''):
     if not out_path:
         out_path = path
@@ -112,8 +111,8 @@ def create_spatial_averages_file(path, out_path=''):
     run = ''
     comb_durs = []
     for run_name, durs in durations_ordered.items():
-        if run != run_name.split('_')[1]:
-            run = run_name.split('_')[1]
+        if run != run_name.split('_')[-6]:
+            run = run_name.split('_')[-6]
             comb_durs = []
             durations_combined[run] = comb_durs
         comb_durs.extend(durs)
@@ -133,5 +132,72 @@ def create_spatial_averages_file(path, out_path=''):
 
     return empty_logs, averages, stdevs, percentiles
 
+def create_monte_carlo_files(path, out_path=''):
+    if not out_path:
+        out_path = path
 
-create_spatial_averages_file('/home/snoooze/Dropbox/unibnf/msc_thesis/results/spatial')
+    durations = read_durations(path, 'monte_carlo', 'measuredValuesPositions')
+    for _,x in durations.items(): print(len(x))
+    empty_logs = [n for n,x in durations.items() if len(x) == 0]
+    averages = collections.OrderedDict(sorted({n: numpy.average([float(y) for y in x]) for n,x in durations.items() if len(x) > 0}.items()))
+    stdevs = collections.OrderedDict(sorted({n: numpy.std([float(y) for y in x]) for n,x in durations.items() if len(x) > 0}.items()))
+    percentiles = collections.OrderedDict(sorted({n: numpy.percentile([float(y) for y in x], [25, 50, 75]) for n,x in durations.items() if len(x) > 0}.items()))
+    maxs = collections.OrderedDict(sorted({n: max([float(y) for y in x]) for n,x in durations.items() if len(x) > 0}.items()))
+    mins = collections.OrderedDict(sorted({n: min([float(y) for y in x]) for n,x in durations.items() if len(x) > 0}.items()))
+
+    lines = get_file_lines(averages, stdevs, percentiles, mins, maxs)
+    with open(os.path.join(out_path, 'mc.dat'), 'wb') as f:
+        f.writelines(lines)
+
+    durations_ordered = collections.OrderedDict(sorted(durations.items()))
+    durations_combined = {}
+    run = ''
+    comb_durs = []
+    for run_name, durs in durations_ordered.items():
+        if run != run_name.split('_')[-6]:
+            run = run_name.split('_')[-6]
+            comb_durs = []
+            durations_combined[run] = comb_durs
+        comb_durs.extend(durs)
+
+    combined_averages = collections.OrderedDict(sorted({n: numpy.average([float(y) for y in x]) for n,x in durations_combined.items() if len(x) > 0}.items()))
+    combined_stdevs = collections.OrderedDict(sorted({n: numpy.std([float(y) for y in x]) for n,x in durations_combined.items() if len(x) > 0}.items()))
+    combined_percentiles = collections.OrderedDict(sorted({n: numpy.percentile([float(y) for y in x], [25, 50, 75, 100]) for n,x in durations_combined.items() if len(x) > 0}.items()))
+    combined_maxs = collections.OrderedDict(sorted({n: max([float(y) for y in x]) for n,x in durations_combined.items() if len(x) > 0}.items()))
+    combined_mins = collections.OrderedDict(sorted({n: min([float(y) for y in x]) for n,x in durations_combined.items() if len(x) > 0}.items()))
+
+    combined_lines = get_combined_file_lines(combined_averages, combined_stdevs, combined_percentiles, combined_mins, combined_maxs)
+    with open(os.path.join(out_path, 'mc_comb.dat'), 'wb') as f:
+        f.writelines(combined_lines)
+
+    with open(os.path.join(out_path, 'mc_all_avgs.dat'), 'wb') as f:
+        f.writelines(get_all_averages_lines(averages))
+
+
+def create_topologies_files(path, out_path=''):
+    if not out_path:
+        out_path = path
+    durations = read_durations(path, 'topologies', 'measuredValuesPositions')
+    durations_ordered = collections.OrderedDict(sorted(durations.items()))
+    durations_combined = {}
+    run = ''
+    comb_durs = []
+    for run_name, durs in durations_ordered.items():
+        if run != run_name.split('_')[-7]:
+            run = run_name.split('_')[-7]
+            comb_durs = []
+            durations_combined[run] = comb_durs
+        comb_durs.extend(durs)
+
+    combined_averages = collections.OrderedDict(sorted({n: numpy.average([float(y) for y in x]) for n,x in durations_combined.items() if len(x) > 0}.items()))
+    lines = ['#type avg\n']
+    for typ, avg in combined_averages.items():
+        lines.append('{0} {1}\n'.format(typ, avg))
+    with open(os.path.join(out_path, 'topologies_avgs.dat'), 'wb') as f:
+        f.writelines(lines)
+
+
+
+
+# create_spatial_averages_file('/home/snoooze/Dropbox/unibnf/msc_thesis/results/spatial')
+create_topologies_files('/home/snoooze/Dropbox/unibnf/msc_thesis/results/topologies')

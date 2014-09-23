@@ -197,7 +197,7 @@ def main():
         'tt': run_topology_types
     }
 
-    switch[mode](base_stations)
+    switch[mode]()
 
 
 
