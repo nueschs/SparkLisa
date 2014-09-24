@@ -173,6 +173,8 @@ def create_monte_carlo_files(path, out_path=''):
     with open(os.path.join(out_path, 'mc_all_avgs.dat'), 'wb') as f:
         f.writelines(get_all_averages_lines(averages))
 
+def create_time_based_files(path, out_path=''):
+
 
 def create_topologies_files(path, out_path=''):
     if not out_path:
@@ -199,5 +201,5 @@ def create_topologies_files(path, out_path=''):
 
 
 
-# create_spatial_averages_file('/home/snoooze/Dropbox/unibnf/msc_thesis/results/spatial')
-create_topologies_files('/home/snoooze/Dropbox/unibnf/msc_thesis/results/topologies')
+create_spatial_averages_file('/home/snoooze/msctr/results/spatial')
+# create_topologies_files('/home/snoooze/Dropbox/unibnf/msc_thesis/results/topologies')

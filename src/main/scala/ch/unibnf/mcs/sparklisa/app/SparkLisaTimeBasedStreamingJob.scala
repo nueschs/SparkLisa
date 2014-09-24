@@ -93,7 +93,10 @@ object SparkLisaTimeBasedStreamingJob {
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
-    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
+    allValues
+      .flatMapValues(a => a.toList.zipWithIndex.map(t => ("k-"+t._2.toString, t._1)))
+      .map(t => ((t._1, t._2._1), t._2._2))
+      .saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
     ssc.start()
