@@ -27,7 +27,7 @@ spark_bin_path = '/home/stefan/spark/bin/'
 spark_command = spark_bin_path+'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0}' \
                                ' --master yarn-cluster --num-executors {1} --executor-cores 8 ' \
                                '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar {2} {3} {4} {5} ' \
-                               'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/topology/topology_bare_{6}_1600.txt {7} {8}'
+                               'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/topology/{6} {7} {8}'
 log_file_path = '../resources/logs'
 
 date_format = '%d%m%Y%H%M%S'
@@ -45,10 +45,11 @@ def parse_arguments():
                              'mt for time based with statistical test, tt for topology types (default s)')
     parser.add_argument('-bs', '--basestations', metavar='bs', nargs='*', type=int, help='List of numbers af base stations.')
     parser.add_argument('-ks', '--temporal_values', metavar='ks', nargs='*', type=int, help='List of temporal values to be used.')
+    parser.add_argument('-nn', '--num_nodes', metavar='tp', type=str, help='Alternative topology file name', default='1600')
 
     args = vars(parser.parse_args())
 
-    global rate, window, duration, repetitions, mode, base_stations, ks
+    global rate, window, duration, repetitions, mode, base_stations, ks, num_nodes_arg
     rate = args['rate']
     window = args['window']
     duration = args['duration']
@@ -56,6 +57,7 @@ def parse_arguments():
     repetitions = args['repetitions']
     base_stations = args['basestations']
     ks = args['temporal_values']
+    num_nodes_arg = args['num_nodes']
 
 
 def delete_folder_contents(path):
@@ -122,10 +124,11 @@ def wait_for_finish(proc):
 
 
 def run(class_name, base_stations_, topology_type, run_type, k='', random_values=''):
-    for num_base in base_stations:
+    for num_base in base_stations_:
         for _ in range(0, repetitions):
             log_file_name = 'sparklisa_{1}_{0}.log'.format(num_base, run_type)
             log_file = os.path.join(log_file_path, log_file_name)
+            topology_file = 'topology_bar_{0}_{1}.txt'.format(topology_type, num_nodes_arg)
             spark_command_ = spark_command.format(
                 class_name,
                 num_base,
@@ -133,7 +136,7 @@ def run(class_name, base_stations_, topology_type, run_type, k='', random_values
                 rate,
                 num_base,
                 duration,
-                topology_type,
+                topology_file,
                 k,
                 random_values
             )
@@ -144,7 +147,7 @@ def run(class_name, base_stations_, topology_type, run_type, k='', random_values
             wait_for_finish(p)
             time.sleep(60)
             urllib.urlretrieve(log_url, log_file)
-            collect_and_zip_output(log_file, num_base, 1600, run_type, k)
+            collect_and_zip_output(log_file, num_base, num_nodes_arg, run_type, k)
 
 def run_spatial():
     stations = [1,2,4,8,16] if not base_stations else base_stations
