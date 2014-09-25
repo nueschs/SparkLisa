@@ -70,7 +70,7 @@ def cleanup_hdfs(num_nodes, num_base_stations):
     hdfs_client.delete(['sparkLisa/results/{1}_{0}/'.format(num_nodes, num_base_stations)], recurse=True).next()
 
 
-def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, run_type):
+def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, run_type, k=''):
     output_folder = '../resources/temp/'
     if not os.path.isdir(output_folder): os.makedirs(output_folder)
     if not os.path.isdir(output_folder + 'results/'): os.makedirs(output_folder + 'results/')
@@ -78,8 +78,12 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, run_type
     shutil.copyfile(log_file_name, output_folder + log_file_name.split('/')[-1])
     list(hdfs_client.copyToLocal(['sparkLisa/results/{0}_{1}'.format(num_base_stations, num_nodes) + '/'],
                                  output_folder + 'results/'))
-    tar_name = '{0}_{1}_{2}_{3}_{4}_{5}_{6}'.format(run_type, base_stations, num_nodes, rate, window, duration,
-                                                    datetime.now().strftime(date_format))
+    if not 'time_based' in run_type:
+        tar_name = '{0}_{1}_{2}_{3}_{4}_{5}_{6}'.format(run_type, num_base_stations, num_nodes, rate, window, duration,
+                                                       datetime.now().strftime(date_format))
+    else:
+        tar_name = '{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}'.format(run_type, num_base_stations, k, num_nodes, rate, window,
+                                                            duration, datetime.now().strftime(date_format))
     create_tar('../resources/', tar_name, '../resources/temp')
     delete_folder_contents('../resources/temp/')
     delete_folder_contents('../resources/topology')
@@ -117,7 +121,7 @@ def wait_for_finish(proc):
             status = err_line.split(':')[1].strip()
 
 
-def run(class_name, base_stations, topology_type, run_type, k='', random_values=''):
+def run(class_name, base_stations_, topology_type, run_type, k='', random_values=''):
     for num_base in base_stations:
         for _ in range(0, repetitions):
             log_file_name = 'sparklisa_{1}_{0}.log'.format(num_base, run_type)
@@ -140,7 +144,7 @@ def run(class_name, base_stations, topology_type, run_type, k='', random_values=
             wait_for_finish(p)
             time.sleep(60)
             urllib.urlretrieve(log_url, log_file)
-            collect_and_zip_output(log_file, num_base, 1600, run_type)
+            collect_and_zip_output(log_file, num_base, 1600, run_type, k)
 
 def run_spatial():
     stations = [1,2,4,8,16] if not base_stations else base_stations

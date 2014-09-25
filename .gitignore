@@ -8,3 +8,5 @@ dependency-reduced-pom.xml
 **/eval_*.*
 **/topology/
 **/logs
+*.dat
+*.png
