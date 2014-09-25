@@ -177,6 +177,15 @@ def run_monte_carlo():
     run_type = 'monte_carlo'
     run(class_name, stations, topology_type, run_type, random_values='1000')
 
+
+def run_monte_carlo_naive():
+    stations = [1,2,4,8,16] if not base_stations else base_stations
+    topology_type = 'connected'
+    class_name = 'SparkLisaStreamingJobMonteCarloNaive'
+    run_type = 'monte_carlo'
+    run(class_name, stations, topology_type, run_type, random_values='1000')
+
+
 def run_monte_carlo_time_based():
     stations = [16] if not base_stations else base_stations
     ks_ = [1,2,5,10,20] if not ks else ks
