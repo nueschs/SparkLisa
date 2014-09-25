@@ -225,31 +225,31 @@ def create_time_based_files(path, out_path='', k_test=10, num_b_test=16):
         out_path = path
 
     durations = read_time_based_durations(path)
-    times_per_num_nodes_per_k = dict()
-    for k, runs in durations.items():
-        if not k in times_per_num_nodes_per_k:
-            times_per_num_nodes_per_k[k] = dict()
-        for run, ts in runs.items():
-            if int(run.split('_')[0]) == num_b_test:
-                for t, vals in ts.items():
-                    if not t in times_per_num_nodes_per_k[k]:
-                        times_per_num_nodes_per_k[k][t] = dict()
-                    for idx, val in vals.items():
-                        if not idx in times_per_num_nodes_per_k[k][t]:
-                            times_per_num_nodes_per_k[k][t][idx] = list()
-                        times_per_num_nodes_per_k[k][t][idx].append(val)
-
-    average_times_per_k_per_t = {k: {t: {idx: numpy.average([float(z) for z in vals]) for idx, vals in y.items()} for t,y in x.items()} for k,x in times_per_num_nodes_per_k.items()}
-    lines = ['#time avg t\n']
-    count = 0
-    for t, avgs in average_times_per_k_per_t[str(k_test)].items():
-        for _,avg in collections.OrderedDict(sorted(avgs.items())).items():
-            lines.append('{0} {1} {2}\n'.format(count, avg, t))
-            count += 1
-
-    file_name = 'time_seq_{0}_{1}.dat'.format(num_b_test, k_test)
-    with open(os.path.join(out_path, file_name), 'wb') as f:
-        f.writelines(lines)
+    # times_per_num_nodes_per_k = dict()
+    # for k, runs in durations.items():
+    #     if not k in times_per_num_nodes_per_k:
+    #         times_per_num_nodes_per_k[k] = dict()
+    #     for run, ts in runs.items():
+    #         if int(run.split('_')[0]) == num_b_test:
+    #             for t, vals in ts.items():
+    #                 if not t in times_per_num_nodes_per_k[k]:
+    #                     times_per_num_nodes_per_k[k][t] = dict()
+    #                 for idx, val in vals.items():
+    #                     if not idx in times_per_num_nodes_per_k[k][t]:
+    #                         times_per_num_nodes_per_k[k][t][idx] = list()
+    #                     times_per_num_nodes_per_k[k][t][idx].append(val)
+    #
+    # average_times_per_k_per_t = {k: {t: {idx: numpy.average([float(z) for z in vals]) for idx, vals in y.items()} for t,y in x.items()} for k,x in times_per_num_nodes_per_k.items()}
+    # lines = ['#time avg t\n']
+    # count = 0
+    # for t, avgs in average_times_per_k_per_t[str(k_test)].items():
+    #     for _,avg in collections.OrderedDict(sorted(avgs.items())).items():
+    #         lines.append('{0} {1} {2}\n'.format(count, avg, t))
+    #         count += 1
+    #
+    # file_name = 'time_seq_{0}_{1}.dat'.format(num_b_test, k_test)
+    # with open(os.path.join(out_path, file_name), 'wb') as f:
+    #     f.writelines(lines)
 
     histogram_dict = dict()
     for k, runs in durations.items():
@@ -262,11 +262,11 @@ def create_time_based_files(path, out_path='', k_test=10, num_b_test=16):
             avg = numpy.average([float(x) for y in ts.values() for x in y.values()])
             histogram_dict[k][base] = avg
 
-    lines = ['#k 1 16\n']
+    lines = ['#k 1 2 4 8 16\n']
     print(histogram_dict)
     for k, bases in histogram_dict.items():
         if bases:
-            line = '{0} {1} {2} \n'.format(k, bases['1'], bases['16'])
+            line = '{0} {1} {2} {3} {4} {5} \n'.format(k, bases['1'], bases['2'], bases['4'], bases['8'], bases['16'])
             lines.append(line)
 
     with open(os.path.join(out_path, 'temporal_histogram.dat'), 'wb') as f:
@@ -345,10 +345,11 @@ def create_single_run_graph_data(paths, run_type, prefix, out_path, out_file_nam
 
 
 # create_spatial_averages_file('/home/snoooze/msctr/results/spatial')
+create_monte_carlo_files('/home/snoooze/msctr/results/monte_carlo', '/home/snoooze/scala_ws/SparkLisa/src/main/gnuplot/data')
 # create_topologies_files('/home/snoooze/Dropbox/unibnf/msc_thesis/results/topologies')
 # create_time_based_files('/home/snoooze/msctr/results/time_based', k_test=10, num_b_test=1)
-create_single_run_graph_data( [
-                                  '/home/snoooze/msctr/results/spatial/spatial_16_1600_20_3_1200_22092014124720',
-                                  '/home/snoooze/msctr/results/spatial/spatial_1_1600_20_3_1200_22092014084231',
-                               ],
-                              'spatial', 'finalLisaValues', '/home/snoooze/msctr/results/spatial', 'single_runs_spatial_1_16.dat')
+# create_single_run_graph_data( [
+#                                   '/home/snoooze/msctr/results/spatial/spatial_16_1600_20_3_1200_22092014124720',
+#                                   '/home/snoooze/msctr/results/spatial/spatial_1_1600_20_3_1200_22092014084231',
+#                                ],
+#                               'spatial', 'finalLisaValues', '/home/snoooze/msctr/results/spatial', 'single_runs_spatial_1_16.dat')

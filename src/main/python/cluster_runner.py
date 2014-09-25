@@ -46,7 +46,7 @@ def parse_arguments():
                              'mt for time based with statistical test, tt for topology types (default s)')
     parser.add_argument('-bs', '--basestations', metavar='bs', nargs='*', type=int, help='List of numbers af base stations.')
     parser.add_argument('-ks', '--temporal_values', metavar='ks', nargs='*', type=int, help='List of temporal values to be used.')
-    parser.add_argument('-nn', '--num_nodes', metavar='tp', type=str, help='Alternative topology file name', default='1600')
+    parser.add_argument('-nn', '--num_nodes', metavar='tp', nargs='*', type=str, help='Alternative topology file names', default='1600')
 
     args = vars(parser.parse_args())
 
@@ -124,12 +124,12 @@ def wait_for_finish(proc):
             status = err_line.split(':')[1].strip()
 
 
-def run(class_name, base_stations_, topology_type, run_type, k='', random_values=''):
+def run(class_name, base_stations_, topology_type, run_type, k='', random_values='', num_nodes=1600):
     for num_base in base_stations_:
         for _ in range(0, repetitions):
             log_file_name = 'sparklisa_{1}_{0}.log'.format(num_base, run_type)
             log_file = os.path.join(log_file_path, log_file_name)
-            topology_file = 'topology_bare_{0}_{1}.txt'.format(topology_type, num_nodes_arg)
+            topology_file = 'topology_bare_{0}_{1}.txt'.format(topology_type, num_nodes)
             spark_command_ = spark_command.format(
                 class_name,
                 num_base,
@@ -148,14 +148,18 @@ def run(class_name, base_stations_, topology_type, run_type, k='', random_values
             wait_for_finish(p)
             time.sleep(60)
             urllib.urlretrieve(log_url, log_file)
-            collect_and_zip_output(log_file, num_base, num_nodes_arg, run_type, k)
+            collect_and_zip_output(log_file, num_base, num_nodes, run_type, k)
 
 def run_spatial():
     stations = [1,2,4,8,16] if not base_stations else base_stations
     topology_type = 'connected'
     class_name = 'SparkLisaStreamingJob'
     run_type = 'spatial'
-    run(class_name, stations, topology_type, run_type)
+    if len(num_nodes_arg) > 1:
+        for nb in num_nodes_arg:
+            run(class_name, stations, topology_type, run_type, nb)
+    else:
+        run(class_name, stations, topology_type, run_type)
 
 def run_time_based():
     stations = [1,16] if not base_stations else base_stations
