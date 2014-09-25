@@ -225,31 +225,6 @@ def create_time_based_files(path, out_path='', k_test=10, num_b_test=16):
         out_path = path
 
     durations = read_time_based_durations(path)
-    # times_per_num_nodes_per_k = dict()
-    # for k, runs in durations.items():
-    #     if not k in times_per_num_nodes_per_k:
-    #         times_per_num_nodes_per_k[k] = dict()
-    #     for run, ts in runs.items():
-    #         if int(run.split('_')[0]) == num_b_test:
-    #             for t, vals in ts.items():
-    #                 if not t in times_per_num_nodes_per_k[k]:
-    #                     times_per_num_nodes_per_k[k][t] = dict()
-    #                 for idx, val in vals.items():
-    #                     if not idx in times_per_num_nodes_per_k[k][t]:
-    #                         times_per_num_nodes_per_k[k][t][idx] = list()
-    #                     times_per_num_nodes_per_k[k][t][idx].append(val)
-    #
-    # average_times_per_k_per_t = {k: {t: {idx: numpy.average([float(z) for z in vals]) for idx, vals in y.items()} for t,y in x.items()} for k,x in times_per_num_nodes_per_k.items()}
-    # lines = ['#time avg t\n']
-    # count = 0
-    # for t, avgs in average_times_per_k_per_t[str(k_test)].items():
-    #     for _,avg in collections.OrderedDict(sorted(avgs.items())).items():
-    #         lines.append('{0} {1} {2}\n'.format(count, avg, t))
-    #         count += 1
-    #
-    # file_name = 'time_seq_{0}_{1}.dat'.format(num_b_test, k_test)
-    # with open(os.path.join(out_path, file_name), 'wb') as f:
-    #     f.writelines(lines)
 
     histogram_dict = dict()
     for k, runs in durations.items():
