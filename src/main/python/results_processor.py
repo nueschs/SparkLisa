@@ -346,9 +346,9 @@ def create_single_run_graph_data(paths, run_type, prefix, out_path, out_file_nam
 
 # create_spatial_averages_file('/home/snoooze/msctr/results/spatial')
 # create_topologies_files('/home/snoooze/Dropbox/unibnf/msc_thesis/results/topologies')
-create_time_based_files('/home/snoooze/msctr/results/time_based', k_test=10, num_b_test=1)
-# create_single_run_graph_data( [
-#                                   '/home/snoooze/msctr/results/spatial/spatial_16_1600_20_3_1200_22092014124720',
-#                                   '/home/snoooze/msctr/results/spatial/spatial_1_1600_20_3_1200_22092014084231',
-#                                ],
-#                               'spatial', 'finalLisaValues', '/home/snoooze/msctr/results/spatial')
+# create_time_based_files('/home/snoooze/msctr/results/time_based', k_test=10, num_b_test=1)
+create_single_run_graph_data( [
+                                  '/home/snoooze/msctr/results/spatial/spatial_16_1600_20_3_1200_22092014124720',
+                                  '/home/snoooze/msctr/results/spatial/spatial_1_1600_20_3_1200_22092014084231',
+                               ],
+                              'spatial', 'finalLisaValues', '/home/snoooze/msctr/results/spatial', 'single_runs_spatial_1_16.dat')

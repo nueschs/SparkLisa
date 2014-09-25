@@ -26,6 +26,7 @@ hdfs_client = Client('diufpc56.unifr.ch', 8020, use_trash=False)
 spark_bin_path = '/home/stefan/spark/bin/'
 spark_command = spark_bin_path+'spark-submit --class ch.unibnf.mcs.sparklisa.app.{0}' \
                                ' --master yarn-cluster --num-executors {1} --executor-cores 8 ' \
+                               '--driver-memory 3584m' \
                                '../../../target/SparkLisa-0.0.1-SNAPSHOT.jar {2} {3} {4} {5} ' \
                                'hdfs://diufpc56.unifr.ch:8020/user/stefan/sparkLisa/topology/{6} {7} {8}'
 log_file_path = '../resources/logs'
