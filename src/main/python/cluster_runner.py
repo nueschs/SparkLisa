@@ -192,7 +192,7 @@ def run_topology_types():
     run_type = 'topologies'
     for topology_type in ['sparse', 'connected', 'dense']:
         if len(num_nodes_arg) == 1:
-            run(class_name, stations, topology_type, run_type, random_values='1000', num_nodes_arg)
+            run(class_name, stations, topology_type, run_type, random_values='1000', num_nodes=num_nodes_arg)
         else:
             run(class_name, stations, topology_type, run_type, random_values='1000')
 
