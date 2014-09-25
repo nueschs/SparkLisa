@@ -43,7 +43,8 @@ def parse_arguments():
                         help='Number of times each stage is run (default 1)')
     parser.add_argument('-m','--mode', metavar='m', type=str, default='s',
                         help='s for spatial, t for time based, m for spatial with statistical test, '
-                             'mt for time based with statistical test, tt for topology types (default s)')
+                             'mt for time based with statistical test, tt for topology types (default s)'
+                             'mn for naive monte carlo approach')
     parser.add_argument('-bs', '--basestations', metavar='bs', nargs='*', type=int, help='List of numbers af base stations.')
     parser.add_argument('-ks', '--temporal_values', metavar='ks', nargs='*', type=int, help='List of temporal values to be used.')
     parser.add_argument('-nn', '--num_nodes', metavar='tp', nargs='*', type=str, help='Alternative topology file names', default='1600')
@@ -218,7 +219,8 @@ def main():
         't': run_time_based,
         'm': run_monte_carlo,
         'mt': run_monte_carlo_time_based,
-        'tt': run_topology_types
+        'tt': run_topology_types,
+        'mn': run_monte_carlo_naive
     }
 
     switch[mode]()
