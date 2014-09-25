@@ -128,7 +128,7 @@ def run(class_name, base_stations_, topology_type, run_type, k='', random_values
         for _ in range(0, repetitions):
             log_file_name = 'sparklisa_{1}_{0}.log'.format(num_base, run_type)
             log_file = os.path.join(log_file_path, log_file_name)
-            topology_file = 'topology_bar_{0}_{1}.txt'.format(topology_type, num_nodes_arg)
+            topology_file = 'topology_bare_{0}_{1}.txt'.format(topology_type, num_nodes_arg)
             spark_command_ = spark_command.format(
                 class_name,
                 num_base,
