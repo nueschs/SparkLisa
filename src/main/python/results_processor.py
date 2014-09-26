@@ -179,11 +179,11 @@ def create_spatial_averages_file(path, out_path=''):
 
     return empty_logs, averages, stdevs, percentiles
 
-def create_monte_carlo_files(path, out_path=''):
+def create_monte_carlo_files(path, out_path='', run_type='monte_carlo'):
     if not out_path:
         out_path = path
 
-    durations = read_durations(path, 'monte_carlo', 'measuredValuesPositions')
+    durations = read_durations(path, run_type, 'measuredValuesPositions')
     for _,x in durations.items(): print(len(x))
     empty_logs = [n for n,x in durations.items() if len(x) == 0]
     averages = collections.OrderedDict(sorted({n: numpy.average([float(y) for y in x]) for n,x in durations.items() if len(x) > 0}.items()))
@@ -320,8 +320,8 @@ def create_single_run_graph_data(paths, run_type, prefix, out_path, out_file_nam
 
 
 # create_spatial_averages_file('/home/snoooze/msctr/results/spatial')
-create_monte_carlo_files('/home/snoooze/msctr/results/monte_carlo/naive')
-create_topologies_files('/home/snoooze/Dropbox/unibnf/msc_thesis/results/topologies/10000')
+# create_monte_carlo_files('/home/snoooze/msctr/results/monte_carlo/naive', run_type='monte_carlo_naive')
+create_topologies_files('/home/snoooze/msctr/results/topologies/10000')
 # create_time_based_files('/home/snoooze/msctr/results/time_based', k_test=10, num_b_test=1)
 # create_single_run_graph_data( [
 #                                   '/home/snoooze/msctr/results/spatial/spatial_16_1600_20_3_1200_22092014124720',

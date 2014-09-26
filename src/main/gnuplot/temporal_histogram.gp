@@ -1,6 +1,6 @@
-set terminal png nocrop enhanced font arial 8 size 1280,1024
+set terminal png nocrop enhanced font arial 8 size 1280,800
 set output 'output/temporal_histogram.png'
-set yrange [0:2.5]
+set yrange [0:1.6]
 set style data histogram
 set style histogram clustered gap 1
 set style fill solid border -1
