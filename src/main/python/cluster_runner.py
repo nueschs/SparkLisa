@@ -156,7 +156,7 @@ def run_spatial():
     topology_type = 'connected'
     class_name = 'SparkLisaStreamingJob'
     run_type = 'spatial'
-    if len(num_nodes_arg) > 1:
+    if len(num_nodes_arg) > 0:
         for nb in num_nodes_arg:
             run(class_name, stations, topology_type, run_type, nb)
     else:
