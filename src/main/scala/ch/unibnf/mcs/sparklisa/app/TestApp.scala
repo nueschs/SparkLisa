@@ -1,10 +1,12 @@
 package ch.unibnf.mcs.sparklisa.app
 
+import java.io.File
 import java.util.Properties
 
 import akka.actor._
 import ch.unibnf.mcs.sparklisa.TopologyHelper
-import ch.unibnf.mcs.sparklisa.receiver.{RandomTupleReceiver, TopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.{TimeBasedTopologySimulatorActorReceiver, RandomTupleReceiver,
+TopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.statistics.RandomTupleGenerator
 import ch.unibnf.mcs.sparklisa.topology.{BasestationType, Topology, NodeType}
 import com.esotericsoftware.kryo.Kryo
@@ -19,11 +21,13 @@ import scala.collection
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
+import java.nio.file.{StandardOpenOption, OpenOption, Paths, Files}
+import java.nio.charset.StandardCharsets
 
 object TestApp {
 
-  val Master: String = "local[4]"
-//  val Master: String = "spark://saight02:7077"
+//  val Master: String = "local[4]"
+  val Master: String = "spark://saight02:7077"
   var gt: Thread = null
 
   val config: Properties = new Properties()
@@ -36,43 +40,29 @@ object TestApp {
     initConfig()
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(10))
-    val topology = TopologyHelper.topologyFromBareFile(args(1), 4)
+//    val topology = TopologyHelper.createSimpleTopology()
+    val topology = TopologyHelper.topologyFromBareFile(args(1), 16)
     val numBaseStations = args(2).toInt
     val nodesPerBase = topology.getNode.size() / numBaseStations
     val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
+    val k = 5
 
-    val values: DStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology.getNode.toList, 0.01), "receiver1")
+    val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](Props(classOf[TimeBasedTopologySimulatorActorReceiver], topology.getNode.toList, 6.0, k), "receiver1")
     val randomNeighbourTuples = ssc.actorStream[(String, List[List[String]])](Props(classOf[RandomTupleReceiver], topology.getNode.toList, 0.01, 10), "receiver2")
-    val t4: DStream[(String, List[String])] = randomNeighbourTuples.flatMapValues(l => l)
-    import org.apache.spark.SparkContext._
 
-    val t5: DStream[(String, collection.Map[String, Double])] = values.transform(valueRDD => {
-      val valueMap: collection.Map[String, Double] = valueRDD.collectAsMap()
-      valueRDD.mapValues(_ => valueMap)
-    })
-    val t6: DStream[(String, (collection.Map[String, Double], List[String]))] = t5.join(t4)
-    val t7 = t6.mapValues(mergeProduct => mergeProduct._1.filter(t => mergeProduct._2.contains(t._1)))
-    val t8: DStream[(String, Double)] = t7.mapValues(filteredMap => filteredMap.values.sum)
+    values.foreachRDD(rdd => rdd.foreach(value => {
+      if (value._2.size == 5){
+        Files.write(Paths.get("/home/snoooze/msctr/testAppOutput/values.txt"), (value._1.toString+"; "+value._2.mkString(";")+"\n").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND)
+      }
+    }))
 
-
-    values.foreachRDD(rdd => {rdd.foreach(f => println(f))})
-//    t4.foreachRDD(rdd => {rdd.foreach(f => println(f))})
-    t5.foreachRDD(rdd => {rdd.foreach(f => println(f))})
-    t6.foreachRDD(rdd => {rdd.foreach(f => println(f))})
-    t7.foreachRDD(rdd => {rdd.foreach(f => println(f))})
-
-
-//    val values: ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(0,8), 60)), "receiver")
-//    val values2:ReceiverInputDStream[(String, Double)] = ssc.actorStream[(String, Double)](Props(new TopologySimulatorActorReceiver(topology.getNode.toList.slice(8,16), 60)), "receiver")
-
-
-
-
-//     ssc.actorStream[(String, Double)](Props(classOf[TopologySimulatorActorReceiver], topology, 60), "receiver")
-//    values.slice(Time)
-
-//    values.count().print()
-//    values2.print()
+    values.mapValues(a => a.zipWithIndex.map(t => t.swap)).flatMapValues(a => a).map(t => ((t._1, t._2._1), t._2._2))
+      .foreachRDD(rdd =>
+      if (rdd.count() == topology.getNode.size()*k){
+        rdd.foreach(value => {
+          Files.write(Paths.get("/home/snoooze/msctr/testAppOutput/mapped.txt"), (value.toString()+"\n").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND)
+        })
+      })
 
     ssc.start()
     ssc.awaitTermination()

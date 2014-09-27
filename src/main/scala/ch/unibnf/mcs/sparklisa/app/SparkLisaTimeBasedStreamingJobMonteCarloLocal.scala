@@ -21,7 +21,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.util.Random
 
-object SparkLisaTimeBasedStreamingJobMonteCarlo {
+object SparkLisaTimeBasedStreamingJobMonteCarloLocal {
 
   val SumKey: String = "SUM_KEY"
 
@@ -94,8 +94,8 @@ object SparkLisaTimeBasedStreamingJobMonteCarlo {
     val allLisaValues = createLisaValues(currentValues, runningMean, stdDev)
 
     val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
-
     val allPastLisaValues: DStream[(Int, Double)] = createLisaValues(pastValuesFlat, runningMean, stdDev)
+//    val allPastLisaValues = createPastLisaValues(pastValues, runningMean, stdDev)
     val neighboursNormalizedSums = allNeighbourValues.union(allPastLisaValues).groupByKey()
       .mapValues(l => l.sum / l.size.toDouble)
 
@@ -167,6 +167,18 @@ object SparkLisaTimeBasedStreamingJobMonteCarlo {
     })
   }
 
+  def createPastLisaValues(pastValues: DStream[(Int, Array[Double])]) = {
+    import org.apache.spark.streaming.StreamingContext._
+    val allValuesMappedPerK: DStream[(Int, Map[Int, Double])] = pastValues.mapValues(a => a.zipWithIndex.map(t => t.swap).toMap)
+    val valuesByK: DStream[(Int, Double)] = allValuesMappedPerK.flatMap(t => (t._2).toList)
+    val meanByK: DStream[(Int, Double)] = valuesByK.groupByKey().mapValues(i => i.sum / i.size.toDouble)
+    val stdevByK: DStream[(Int, Double)] = valuesByK.join(meanByK).mapValues(t => math.pow(t._1-t._2, 2.0))
+      .groupByKey().mapValues(i => math.sqrt(i.sum / i.size.toDouble))
+//    allValuesMappedPerK.transformWith(meanByK, (valRDD, meanRDD: RDD[(Int, Double)]) => {
+//      valRDD.
+//    })
+  }
+
   private def createLisaMonteCarlo(currentLisaValues: DStream[(Int, Double)], pastValues: DStream[(Int, Array[Double])],
     finalLisaValues: DStream[(Int, Double)], nodeMap: mutable.Map[Int, NodeType], topology: Topology, randomNeighbours:
     DStream[(Int, List[List[Int]])], k: Int, stdDev: DStream[Double], mean: DStream[Double]) = {
@@ -175,20 +187,6 @@ object SparkLisaTimeBasedStreamingJobMonteCarlo {
 
     val numberOfBaseStations: Int = topology.getBasestation.size()
     val numberOfNodes: Int = topology.getNode.size()
-
-    val pastLisaValues = pastValues.transformWith(mean, (valuesRDD, meanRDD: RDD[Double]) => {
-      var mean_ = 0.0
-      try {mean_ = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      valuesRDD.mapValues(a => a.map(d => d-mean_))
-    }).transformWith(stdDev, (valuesRDD, stdDevRDD: RDD[Double]) => {
-      var stDev_ = 0.0
-      try {stDev_ = stdDevRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      valuesRDD.mapValues(a => a.map(d => d/stDev_))
-    })
 
     val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
