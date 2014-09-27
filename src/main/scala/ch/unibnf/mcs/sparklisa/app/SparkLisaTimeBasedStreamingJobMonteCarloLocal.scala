@@ -1,37 +1,23 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import java.util.Properties
-
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, TimeBasedTopologySimulatorActorReceiver,
-TopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, TimeBasedTopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.dstream.{ReceiverInputDStream, DStream}
+import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import scala.collection
-import scala.collection.JavaConverters._
+
 import scala.collection.JavaConversions._
-
-
+import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.util.Random
 
-object SparkLisaTimeBasedStreamingJobMonteCarloLocal {
-
-  val SumKey: String = "SUM_KEY"
+object SparkLisaTimeBasedStreamingJobMonteCarloLocal extends LisaDStreamFunctions with LisaJobConfiguration{
 
 //  val Master: String = "spark://saight02:7077"
       val Master: String = "local[32]"
-
-  val config: Properties = new Properties()
-  var Env: String = null
-  var HdfsPath: String = null
-  var Strategy = None: Option[String]
 
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
@@ -66,44 +52,21 @@ object SparkLisaTimeBasedStreamingJobMonteCarloLocal {
 
     val currentValues: DStream[(Int, Double)] = allValues.mapValues(a => a(0))
     val pastValues: DStream[(Int, Array[Double])] = allValues.mapValues(a => a.takeRight(a.size-1))
-    val pastValuesFlat: DStream[(Int, Double)] = pastValues.flatMapValues(a => a.toList)
-    val allValuesFlat: DStream[(Int, Double)] = currentValues.union(pastValuesFlat)
-    val runningCount: DStream[Long] = allValuesFlat.count()
-    val runningMean: DStream[Double] = allValuesFlat.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
-
-    val variance = allValuesFlat.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
-      var mean = 0.0
-      try {mean = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      valueRDD.map(t => {
-        math.pow(t._2 - mean, 2.0)
-      })
-    })
-
-    val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
-      var variance = 0.0
-      try{variance = varianceRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      countRDD.map(cnt => {
-        math.sqrt(variance / cnt.toDouble)
-      })
-    })
-
+    val runningCount: DStream[Long] = currentValues.count()
+    val runningMean: DStream[Double] = currentValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
+    val stdDev = createStandardDev(currentValues, runningCount, runningMean)
     val allLisaValues = createLisaValues(currentValues, runningMean, stdDev)
 
     val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
-    val allPastLisaValues: DStream[(Int, Double)] = createLisaValues(pastValuesFlat, runningMean, stdDev)
-//    val allPastLisaValues = createPastLisaValues(pastValues, runningMean, stdDev)
-    val neighboursNormalizedSums = allNeighbourValues.union(allPastLisaValues).groupByKey()
+    val allPastLisaValues: DStream[(Int, Array[Double])] = createPastLisaValues(pastValues)
+    val neighboursNormalizedSums = allNeighbourValues.union(allPastLisaValues.flatMapValues(a => a.toList)).groupByKey()
       .mapValues(l => l.sum / l.size.toDouble)
 
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(t => t._1*t._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
-    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
-    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
+//    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
+//    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
     createLisaMonteCarlo(allLisaValues, pastValues, finalLisaValues, nodeMap, topology, randomNeighbours, k, stdDev, runningMean)
 
     ssc.start()
@@ -111,72 +74,11 @@ object SparkLisaTimeBasedStreamingJobMonteCarloLocal {
 
   }
 
-  private def createSparkConf(): SparkConf = {
-    val conf: SparkConf = new SparkConf()
-    conf.setAppName("File Input LISA Streaming Job")
-    if ("local" == Env) {
-      conf.setMaster(Master)
-        .setSparkHome("/home/snoooze/spark/spark-1.0.0")
-        .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
-    }
-
-    return conf
-  }
-
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int,
                               rate: Double): DStream[(Int, Array[Double])] = {
     val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](
       Props(classOf[TimeBasedTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
     return values
-  }
-
-  private def initConfig() = {
-    config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
-    Env = config.getProperty("build.env")
-    HdfsPath = config.getProperty("hdfs.path." + Env)
-    Strategy = Some(config.getProperty("receiver.strategy"))
-  }
-
-  private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
-    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
-    import scala.collection.JavaConversions._
-    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
-      mapped += ((n.substring(4).toInt, value._2))
-    }
-    return mapped
-  }
-
-
-  /*
-  * returns a DStream[(NodeType, Double)]
-   */
-  private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(Int, Double)] = {
-    import org.apache.spark.SparkContext._
-    nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
-      var mean_ = 0.0
-      try {mean_ = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      nodeRDD.mapValues(d => d-mean_)
-    }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
-      var stdDev_ = 0.0
-      try {stdDev_ = stdDevRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      nodeDiffRDD.mapValues(d => d/stdDev_)
-    })
-  }
-
-  def createPastLisaValues(pastValues: DStream[(Int, Array[Double])]) = {
-    import org.apache.spark.streaming.StreamingContext._
-    val allValuesMappedPerK: DStream[(Int, Map[Int, Double])] = pastValues.mapValues(a => a.zipWithIndex.map(t => t.swap).toMap)
-    val valuesByK: DStream[(Int, Double)] = allValuesMappedPerK.flatMap(t => (t._2).toList)
-    val meanByK: DStream[(Int, Double)] = valuesByK.groupByKey().mapValues(i => i.sum / i.size.toDouble)
-    val stdevByK: DStream[(Int, Double)] = valuesByK.join(meanByK).mapValues(t => math.pow(t._1-t._2, 2.0))
-      .groupByKey().mapValues(i => math.sqrt(i.sum / i.size.toDouble))
-//    allValuesMappedPerK.transformWith(meanByK, (valRDD, meanRDD: RDD[(Int, Double)]) => {
-//      valRDD.
-//    })
   }
 
   private def createLisaMonteCarlo(currentLisaValues: DStream[(Int, Double)], pastValues: DStream[(Int, Array[Double])],
@@ -219,6 +121,7 @@ object SparkLisaTimeBasedStreamingJobMonteCarloLocal {
     val measuredValuesPositions = randomLisaValues.groupByKey()
       .join(finalLisaValues)
       .mapValues{ case t => (t._1.count(_ < t._2)+1)/ (t._1.size.toDouble+1.0)}
-    measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
+//    measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
+    measuredValuesPositions.print()
   }
 }
