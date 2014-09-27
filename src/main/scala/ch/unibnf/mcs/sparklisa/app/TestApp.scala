@@ -50,20 +50,8 @@ object TestApp {
     val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](Props(classOf[TimeBasedTopologySimulatorActorReceiver], topology.getNode.toList, 6.0, k), "receiver1")
     val randomNeighbourTuples = ssc.actorStream[(String, List[List[String]])](Props(classOf[RandomTupleReceiver], topology.getNode.toList, 0.01, 10), "receiver2")
 
-    values.foreachRDD(rdd => rdd.foreach(value => {
-      if (value._2.size == 5){
-        Files.write(Paths.get("/home/snoooze/msctr/testAppOutput/values.txt"), (value._1.toString+"; "+value._2.mkString(";")+"\n").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND)
-      }
-    }))
-
-    values.mapValues(a => a.zipWithIndex.map(t => t.swap)).flatMapValues(a => a).map(t => ((t._1, t._2._1), t._2._2))
-      .foreachRDD(rdd =>
-      if (rdd.count() == topology.getNode.size()*k){
-        rdd.foreach(value => {
-          Files.write(Paths.get("/home/snoooze/msctr/testAppOutput/mapped.txt"), (value.toString()+"\n").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND)
-        })
-      })
-
+    values.saveAsTextFiles(HdfsPath + "/results/16_1600/testAppValues")
+    values.mapValues(a => a.zipWithIndex.map(t => t.swap)).flatMapValues(a => a).map(t => ((t._1, t._2._1), t._2._2)).saveAsTextFiles(HdfsPath + "/results/16_1600/testAppMapped")
     ssc.start()
     ssc.awaitTermination()
   }
