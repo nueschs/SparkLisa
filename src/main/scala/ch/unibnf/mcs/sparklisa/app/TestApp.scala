@@ -50,7 +50,7 @@ object TestApp {
     val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](Props(classOf[TimeBasedTopologySimulatorActorReceiver], topology.getNode.toList, 6.0, k), "receiver1")
     val randomNeighbourTuples = ssc.actorStream[(String, List[List[String]])](Props(classOf[RandomTupleReceiver], topology.getNode.toList, 0.01, 10), "receiver2")
 
-    values.saveAsTextFiles(HdfsPath + "/results/16_1600/testAppValues")
+    values.map(t => t._1.toString+"; "+t._2.mkString(";")) saveAsTextFiles(HdfsPath + "/results/16_1600/testAppValues")
     values.mapValues(a => a.zipWithIndex.map(t => t.swap)).flatMapValues(a => a).map(t => ((t._1, t._2._1), t._2._2)).saveAsTextFiles(HdfsPath + "/results/16_1600/testAppMapped")
     ssc.start()
     ssc.awaitTermination()
