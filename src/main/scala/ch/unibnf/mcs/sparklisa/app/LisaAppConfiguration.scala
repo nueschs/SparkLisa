@@ -2,7 +2,6 @@ package ch.unibnf.mcs.sparklisa.app
 
 import java.util.Properties
 
-import ch.unibnf.mcs.sparklisa.app.TemporalLisaMonteCarloLocal._
 import org.apache.spark.SparkConf
 
 trait LisaAppConfiguration {
@@ -12,6 +11,7 @@ trait LisaAppConfiguration {
   var Env: String = null
   var HdfsPath: String = null
   var Strategy = None: Option[String]
+  val Master: String
 
   def initConfig() = {
     config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))

@@ -42,9 +42,9 @@ def parse_arguments():
     parser.add_argument('-r','--repetitions', metavar='rp', type=int, default=3,
                         help='Number of times each stage is run (default 1)')
     parser.add_argument('-m','--mode', metavar='m', type=str, default='s',
-                        help='s for spatial, t for time based, m for spatial with statistical test, '
-                             'mt for time based with statistical test, tt for topology types (default s)'
-                             'mn for naive monte carlo approach')
+                        help='s for spatial, t for temporal, m for spatial with statistical test, '
+                             'mtl for temporal with statistical test local, mtg for temporal with statistical test global, '
+                             'tt for topology types (default s), mn for naive monte carlo approach')
     parser.add_argument('-bs', '--basestations', metavar='bs', nargs='*', type=int, help='List of numbers af base stations.')
     parser.add_argument('-ks', '--temporal_values', metavar='ks', nargs='*', type=int, help='List of temporal values to be used.')
     parser.add_argument('-nn', '--num_nodes', metavar='tp', nargs='*', type=str, help='Alternative topology file names', default='1600')
@@ -82,7 +82,7 @@ def collect_and_zip_output(log_file_name, num_base_stations, num_nodes, run_type
     shutil.copyfile(log_file_name, output_folder + log_file_name.split('/')[-1])
     list(hdfs_client.copyToLocal(['sparkLisa/results/{0}_{1}'.format(num_base_stations, num_nodes) + '/'],
                                  output_folder + 'results/'))
-    if not 'time_based' in run_type:
+    if not 'temporal' in run_type:
         tar_name = '{0}_{1}_{2}_{3}_{4}_{5}_{6}'.format(run_type, num_base_stations, num_nodes, rate, window, duration,
                                                        datetime.now().strftime(date_format))
     else:
@@ -154,7 +154,7 @@ def run(class_name, base_stations_, topology_type, run_type, k='', random_values
 def run_spatial():
     stations = [1,2,4,8,16] if not base_stations else base_stations
     topology_type = 'connected'
-    class_name = 'SparkLisaStreamingJob'
+    class_name = 'SpatialLisaApp'
     run_type = 'spatial'
     if len(num_nodes_arg) > 0:
         for nb in num_nodes_arg:
@@ -162,19 +162,19 @@ def run_spatial():
     else:
         run(class_name, stations, topology_type, run_type)
 
-def run_time_based():
+def run_temporal():
     stations = [1,16] if not base_stations else base_stations
     ks_ = [1,5,10,20,100] if not ks else ks
     topology_type = 'connected'
-    class_name = 'SparkLisaTimeBasedStreamingJob'
-    run_type = 'time_based'
+    class_name = 'TemporalLisaApp'
+    run_type = 'temporal'
     for k in ks_:
         run(class_name, stations, topology_type, run_type, k=str(k))
 
 def run_monte_carlo():
     stations = [1,2,4,8,16] if not base_stations else base_stations
     topology_type = 'connected'
-    class_name = 'SparkLisaStreamingJobMonteCarlo'
+    class_name = 'SpatialLisaMonteCarloApp'
     run_type = 'monte_carlo'
     run(class_name, stations, topology_type, run_type, random_values='1000')
 
@@ -182,23 +182,33 @@ def run_monte_carlo():
 def run_monte_carlo_naive():
     stations = [1,2,4,8,16] if not base_stations else base_stations
     topology_type = 'connected'
-    class_name = 'SparkLisaStreamingJobMonteCarloNaive'
+    class_name = 'SpatialLisaMonteCarloNaiveApp'
     run_type = 'monte_carlo_naive'
     run(class_name, stations, topology_type, run_type, random_values='1000')
 
 
-def run_monte_carlo_time_based():
+def run_temporal_monte_carlo_local():
     stations = [16] if not base_stations else base_stations
     ks_ = [1,2,5,10,20] if not ks else ks
     topology_type = 'connected'
-    class_name = 'SparkLisaTimeBasedStreamingJobMonteCarlo'
-    run_type = 'monte_carlo_time_based'
+    class_name = 'TemporalLisaMonteCarloLocalApp'
+    run_type = 'monte_carlo_temporal_local'
+    for k in ks_:
+        run(class_name, stations, topology_type, run_type, k=str(k), random_values='1000')
+
+
+def run_temporal_monte_carlo_global():
+    stations = [16] if not base_stations else base_stations
+    ks_ = [1,2,5,10,20] if not ks else ks
+    topology_type = 'connected'
+    class_name = 'TemporalLisaMonteCarloGlobalApp'
+    run_type = 'monte_carlo_temporal_global'
     for k in ks_:
         run(class_name, stations, topology_type, run_type, k=str(k), random_values='1000')
 
 def run_topology_types():
     stations = [16] if not base_stations else base_stations
-    class_name = 'SparkLisaStreamingJobMonteCarlo'
+    class_name = 'SpatialLisaMonteCarloApp'
     run_type = 'topologies'
     for topology_type in ['sparse', 'connected', 'dense']:
         if len(num_nodes_arg) == 1:
@@ -216,9 +226,10 @@ def main():
 
     switch = {
         's': run_spatial,
-        't': run_time_based,
+        't': run_temporal,
         'm': run_monte_carlo,
-        'mt': run_monte_carlo_time_based,
+        'mtl': run_temporal_monte_carlo_local,
+        'mtg': run_temporal_monte_carlo_global,
         'tt': run_topology_types,
         'mn': run_monte_carlo_naive
     }

@@ -3,7 +3,7 @@ package ch.unibnf.mcs.sparklisa.app
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, TimeBasedTopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, TemporalTopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -81,7 +81,7 @@ object TemporalLisaMonteCarloGlobalApp extends LisaDStreamFunctions with LisaApp
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int,
                               rate: Double): DStream[(Int, Array[Double])] = {
     val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](
-      Props(classOf[TimeBasedTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
+      Props(classOf[TemporalTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
     return values
   }
 

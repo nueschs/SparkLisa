@@ -1,7 +1,7 @@
 package ch.unibnf.mcs.sparklisa.app
 
 import akka.actor._
-import ch.unibnf.mcs.sparklisa.receiver.{TestReceiver, TimeBasedTopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.{TestReceiver, TemporalTopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.statistics.RandomTupleGenerator
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.dstream.DStream

@@ -3,7 +3,7 @@ package ch.unibnf.mcs.sparklisa.app
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, TimeBasedTopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.{NumericalRandomTupleReceiver, TemporalTopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -17,7 +17,7 @@ import scala.collection.immutable.IndexedSeq
 import scala.collection.mutable
 import scala.util.Random
 
-object TemporalLisaMonteCarloLocal extends LisaDStreamFunctions with LisaAppConfiguration{
+object TemporalLisaMonteCarloLocalApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
 //  val Master: String = "spark://saight02:7077"
       val Master: String = "local[16]"
@@ -81,7 +81,7 @@ object TemporalLisaMonteCarloLocal extends LisaDStreamFunctions with LisaAppConf
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int,
                               rate: Double): DStream[(Int, Array[Double])] = {
     val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](
-      Props(classOf[TimeBasedTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
+      Props(classOf[TemporalTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
     return values
   }
 

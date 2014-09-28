@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 import scala.util.Random
 import scala.collection.immutable.Queue
 
-class TimeBasedTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double, k: Int) extends Actor with ActorHelper {
+class TemporalTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double, k: Int) extends Actor with ActorHelper {
 
   class FiniteQueue[A](q: Queue[A]) {
     def enqueueFinite[B >: A](elem: B, maxSize: Int): Queue[B] = {
