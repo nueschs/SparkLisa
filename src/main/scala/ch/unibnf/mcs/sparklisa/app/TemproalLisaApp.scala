@@ -18,7 +18,7 @@ import scala.collection.JavaConversions._
 
 import scala.collection.mutable
 
-object SparkLisaTimeBasedStreamingJob extends LisaDStreamFunctions with LisaJobConfiguration{
+object TemproalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
 //  val Master: String = "spark://saight02:7077"
       val Master: String = "local[32]"

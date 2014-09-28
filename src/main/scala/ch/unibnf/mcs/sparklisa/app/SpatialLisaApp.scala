@@ -4,8 +4,8 @@ import java.util.Properties
 
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
-import ch.unibnf.mcs.sparklisa.listener.{TriggeringStreamingListener, LisaStreamingListener}
-import ch.unibnf.mcs.sparklisa.receiver.TriggerableTopologySimulatorActorReceiver
+import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
+import ch.unibnf.mcs.sparklisa.receiver.{NumericalTopologySimulatorActorReceiver, TopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -17,10 +17,10 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-object SparkLisaStreamingJobTriggered extends LisaDStreamFunctions with LisaJobConfiguration{
+object SpatialLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
 //  val Master: String = "spark://saight02:7077"
-      val Master: String = "local[2]"
+      val Master: String = "local[17]"
 
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
@@ -37,7 +37,7 @@ object SparkLisaStreamingJobTriggered extends LisaDStreamFunctions with LisaJobC
     conf.set("spark.default.parallelism", s"$numBaseStations")
 
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(batchDuration))
-    ssc.addStreamingListener(new TriggeringStreamingListener())
+    ssc.addStreamingListener(new LisaStreamingListener())
 
     ssc.checkpoint(".checkpoint")
 
@@ -58,8 +58,8 @@ object SparkLisaStreamingJobTriggered extends LisaDStreamFunctions with LisaJobC
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(d => d._1 * d._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
-    allValues.count().saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
-    finalLisaValues.count().saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalCount")
+    allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
+    finalLisaValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/finalLisaValues")
 
     ssc.start()
     ssc.awaitTermination(timeout*1000)
@@ -67,8 +67,12 @@ object SparkLisaStreamingJobTriggered extends LisaDStreamFunctions with LisaJobC
   }
 
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(Int, Double)] = {
-    val values: DStream[(Int, Double)] =  ssc.actorStream[(Int, Double)](Props(classOf[TriggerableTopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
+    val values: DStream[(Int, Double)] =  ssc.actorStream[(Int, Double)](
+      Props(classOf[NumericalTopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
     values.repartition(numBaseStations)
     return values
   }
+
+
+
 }

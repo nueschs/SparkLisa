@@ -18,7 +18,7 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-object SparkLisaStreamingJobMonteCarloNaive extends LisaDStreamFunctions with LisaJobConfiguration{
+object SpatialLisaMonteCarloNaiveApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
 
 //  val Master: String = "spark://saight02:7077"

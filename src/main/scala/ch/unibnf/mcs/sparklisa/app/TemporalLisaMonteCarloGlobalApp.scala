@@ -17,7 +17,7 @@ import scala.collection.immutable.IndexedSeq
 import scala.collection.mutable
 import scala.util.Random
 
-object SparkLisaTimeBasedStreamingJobMonteCarloLocal extends LisaDStreamFunctions with LisaJobConfiguration{
+object TemporalLisaMonteCarloGlobalApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
 //  val Master: String = "spark://saight02:7077"
       val Master: String = "local[16]"
@@ -111,18 +111,18 @@ object SparkLisaTimeBasedStreamingJobMonteCarloLocal extends LisaDStreamFunction
     val lisaValuesWithRandomNodes: DStream[(Int, (collection.Map[Int, Double], List[Int]))] =
       lisaValuesCartesian.join(randomNeighbourTuples)
 
+
     val allRandomLisaValues: DStream[(Int, ((collection.Map[Int, Double], List[Int]),
                                       collection.Map[Int, Array[Double]]))] =
       lisaValuesWithRandomNodes.join(pastLisaValuesCartesian)
 
     allRandomLisaValues.repartition(numberOfBaseStations)
 
-    val randomNeighbourSums: DStream[(Int, Double)] = allRandomLisaValues.map(t => {
+    val randomNeighbourSums = allRandomLisaValues.map(t => {
       val pastValuesSize = t._2._2.values.head.size
-      val randomPastNeighbours: IndexedSeq[Int] = for (rk <- 0 until pastValuesSize) yield
-              new Random().shuffle(nodeMap(t._1).getNeighbour.toList).head.substring(4).toInt
-      val randomPastValues: List[Double] = (for ((n, idx) <- randomPastNeighbours.zipWithIndex)
-        yield t._2._2(n)(idx)).toList
+      val filteredMap = t._2._2.filter(me => me._1 != t._1)
+      val randomPastValues: List[Double] = (for (i <- 0 until pastValuesSize) yield
+        new Random().shuffle(filteredMap.values).head(i)).toList
       val randomCurrentValues: List[Double] = t._2._1._1.filter(me => t._2._1._2.contains(me._1)).values.toList
       val allRandomValues: List[Double] = randomCurrentValues.union(randomPastValues)
       (t._1, allRandomValues.foldLeft(0.0)(_+_)/allRandomValues.foldLeft(0.0)((r,c) => r+1))

@@ -2,10 +2,10 @@ package ch.unibnf.mcs.sparklisa.app
 
 import java.util.Properties
 
-import ch.unibnf.mcs.sparklisa.app.SparkLisaTimeBasedStreamingJobMonteCarloLocal._
+import ch.unibnf.mcs.sparklisa.app.TemporalLisaMonteCarloLocal._
 import org.apache.spark.SparkConf
 
-trait LisaJobConfiguration {
+trait LisaAppConfiguration {
 
   val SumKey: String = "SUM_KEY"
   val config: Properties = new Properties()

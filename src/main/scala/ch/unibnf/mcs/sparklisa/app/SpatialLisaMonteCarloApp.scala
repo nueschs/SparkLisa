@@ -1,7 +1,5 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import java.util.Properties
-
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
@@ -10,7 +8,6 @@ import ch.unibnf.mcs.sparklisa.statistics.RandomTupleGenerator
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
@@ -18,7 +15,7 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-object SparkLisaStreamingJobMonteCarlo extends LisaDStreamFunctions with LisaJobConfiguration {
+object SpatialLisaMonteCarloApp extends LisaDStreamFunctions with LisaAppConfiguration {
 
 //  val Master: String = "spark://saight02:7077"
       val Master: String = "local[5]"

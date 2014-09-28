@@ -7,7 +7,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
-object TestApp extends LisaDStreamFunctions with LisaJobConfiguration{
+object TestApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
   val Master: String = "local[4]"
 //  val Master: String = "spark://saight02:7077"
