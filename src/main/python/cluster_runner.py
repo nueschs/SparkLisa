@@ -36,7 +36,7 @@ date_format = '%d%m%Y%H%M%S'
 
 def parse_arguments():
     parser = argparse.ArgumentParser('Cluster automation for SparkLisa')
-    parser.add_argument('rate', metavar='r', type=int, help='Number of values per minute submitted to each node')
+    parser.add_argument('rate', metavar='r', type=float, help='Number of values per minute submitted to each node')
     parser.add_argument('window', metavar='w', type=int, help='Window duration in seconds')
     parser.add_argument('duration', metavar='d', type=int, help='Duration after which the Spark Job is terminated')
     parser.add_argument('-r','--repetitions', metavar='rp', type=int, default=3,
