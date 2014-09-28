@@ -78,59 +78,10 @@ object SparkLisaTimeBasedStreamingJob extends LisaDStreamFunctions with LisaJobC
 
   }
 
-  private def createSparkConf(): SparkConf = {
-    val conf: SparkConf = new SparkConf()
-    conf.setAppName("File Input LISA Streaming Job")
-    if ("local" == Env) {
-      conf.setMaster(Master)
-        .setSparkHome("/home/snoooze/spark/spark-1.0.0")
-        .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
-    }
-
-    return conf
-  }
-
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, k: Int,
                               rate: Double): DStream[(Int, Array[Double])] = {
     val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](
       Props(classOf[TimeBasedTopologySimulatorActorReceiver],topology.getNode.toList, rate, k), "receiver")
     return values
-  }
-
-  private def initConfig() = {
-    config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
-    Env = config.getProperty("build.env")
-    HdfsPath = config.getProperty("hdfs.path." + Env)
-    Strategy = Some(config.getProperty("receiver.strategy"))
-  }
-
-  private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
-    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
-    import scala.collection.JavaConversions._
-    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
-      mapped += ((n.substring(4).toInt, value._2))
-    }
-    return mapped
-  }
-
-
-  /*
-  * returns a DStream[(NodeType, Double)]
-   */
-  private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(Int, Double)] = {
-    import org.apache.spark.SparkContext._
-    nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
-      var mean_ = 0.0
-      try {mean_ = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
-      }
-      nodeRDD.mapValues(d => d-mean_)
-    }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
-      var stdDev_ = 0.0
-      try {stdDev_ = stdDevRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
-      }
-      nodeDiffRDD.mapValues(d => d/stdDev_)
-    })
   }
 }
