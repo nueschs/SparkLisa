@@ -1,88 +1,34 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import java.io.File
-import java.util.Properties
-
 import akka.actor._
-import ch.unibnf.mcs.sparklisa.TopologyHelper
-import ch.unibnf.mcs.sparklisa.receiver.{TimeBasedTopologySimulatorActorReceiver, RandomTupleReceiver,
-TopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.{TestReceiver, TimeBasedTopologySimulatorActorReceiver}
 import ch.unibnf.mcs.sparklisa.statistics.RandomTupleGenerator
-import ch.unibnf.mcs.sparklisa.topology.{BasestationType, Topology, NodeType}
-import com.esotericsoftware.kryo.Kryo
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.RDD
-import org.apache.spark.serializer.KryoRegistrator
-import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
+import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import org.apache.spark.streaming.StreamingContext._
 
-import scala.collection
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
-import scala.collection.mutable
-import java.nio.file.{StandardOpenOption, OpenOption, Paths, Files}
-import java.nio.charset.StandardCharsets
+object TestApp extends LisaDStreamFunctions with LisaJobConfiguration{
 
-object TestApp {
-
-//  val Master: String = "local[4]"
-  val Master: String = "spark://saight02:7077"
+  val Master: String = "local[4]"
+//  val Master: String = "spark://saight02:7077"
   var gt: Thread = null
 
-  val config: Properties = new Properties()
-  var Env: String = null
-  var HdfsPath: String = null
-  var Strategy = None: Option[String]
   var statGen = RandomTupleGenerator
 
   def main(args: Array[String]){
     initConfig()
     val conf: SparkConf = createSparkConf()
     val ssc: StreamingContext = new StreamingContext(conf, Seconds(10))
-//    val topology = TopologyHelper.createSimpleTopology()
-    val topology = TopologyHelper.topologyFromBareFile(args(1), 16)
-    val numBaseStations = args(2).toInt
-    val nodesPerBase = topology.getNode.size() / numBaseStations
-    val nodeMap: mutable.Map[String, NodeType] = TopologyHelper.createNodeMap(topology).asScala
-    val k = 5
 
-    val values: DStream[(Int, Array[Double])] = ssc.actorStream[(Int, Array[Double])](Props(classOf[TimeBasedTopologySimulatorActorReceiver], topology.getNode.toList, 6.0, k), "receiver1")
-    val randomNeighbourTuples = ssc.actorStream[(String, List[List[String]])](Props(classOf[RandomTupleReceiver], topology.getNode.toList, 0.01, 10), "receiver2")
+    val values: DStream[Int] = ssc.actorStream[Int](Props(classOf[TestReceiver], 6.0), "receiver1")
+    val t0: DStream[(Int, Int)] = values.map(i => (i, i))
+    val t1: DStream[(Int, (Int, Int))] = t0.flatMap(t => {
+      for (i <- 2 to 5) yield (t._1, (i, i*t._2))
+    })
+    t1.filter(t => t._2._2/t._2._1 != t._1).print()
 
-    values.map(t => t._1.toString+"; "+t._2.mkString(";")) saveAsTextFiles(HdfsPath + "/results/16_1600/testAppValues")
-    values.mapValues(a => a.zipWithIndex.map(t => t.swap)).flatMapValues(a => a).map(t => ((t._1, t._2._1), t._2._2)).saveAsTextFiles(HdfsPath + "/results/16_1600/testAppMapped")
+
     ssc.start()
     ssc.awaitTermination()
-  }
-
-  private def getRandomNeighbours(value: (String, Double), nodeMap: mutable.Map[String, NodeType], topology: Topology):
-  mutable.MutableList[(String, List[String])]  = {
-
-    val randomNeighbours = statGen.createRandomNeighboursList(nodeMap.get(value._1).get.getNodeId, 10, topology.getNode.size())
-    var mapped: mutable.MutableList[(String, List[String])] = mutable.MutableList()
-    randomNeighbours.foreach(n => {
-      mapped += ((value._1, n))
-    })
-    return mapped
-  }
-
-  private def createSparkConf(): SparkConf = {
-    val conf: SparkConf = new SparkConf()
-    conf.setAppName("File Input LISA Streaming Job")
-    if ("local" == Env) {
-      conf.setMaster(Master)
-        .setSparkHome("/home/snoooze/spark/spark-1.0.0")
-        .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
-    }
-
-    return conf
-  }
-
-  private def initConfig() = {
-    config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
-    Env = config.getProperty("build.env")
-    HdfsPath = config.getProperty("hdfs.path." + Env)
-    Strategy = Some(config.getProperty("receiver.strategy"))
   }
 }

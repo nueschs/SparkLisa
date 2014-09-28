@@ -18,17 +18,11 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-object SparkLisaStreamingJobMonteCarlo {
-
-  val SumKey: String = "SUM_KEY"
+object SparkLisaStreamingJobMonteCarlo extends LisaDStreamFunctions with LisaJobConfiguration {
 
 //  val Master: String = "spark://saight02:7077"
       val Master: String = "local[5]"
 
-  val config: Properties = new Properties()
-  var Env: String = null
-  var HdfsPath: String = null
-  var Strategy = None: Option[String]
   val statGen = RandomTupleGenerator
   val log = Logger.getLogger(getClass)
 
@@ -66,26 +60,7 @@ object SparkLisaStreamingJobMonteCarlo {
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2))
       .map { case (sum, cnt) => sum/cnt}
 
-    val variance = allValues.transformWith(runningMean, (valueRDD, meanRDD: RDD[Double]) => {
-      var mean = 0.0
-      try {mean = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      valueRDD.map(value => {
-        math.pow(value._2 - mean, 2.0)
-      })
-    })
-
-
-    val stdDev = variance.transformWith(runningCount, (varianceRDD, countRDD: RDD[Long]) => {
-      var variance = 0.0
-      try {variance = varianceRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException =>
-      }
-      countRDD.map(cnt => {
-        math.sqrt(variance / cnt.toDouble)
-      })
-    })
+    val stdDev = createStandardDev(allValues, runningCount, runningMean)
 
     val allLisaValues = createLisaValues(allValues, runningMean, stdDev)
     val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
@@ -101,66 +76,20 @@ object SparkLisaStreamingJobMonteCarlo {
 
   }
 
-  private def createSparkConf(): SparkConf = {
-    val conf: SparkConf = new SparkConf()
-    conf.setAppName("File Input LISA Streaming Job")
-    if ("local" == Env) {
-      conf.setMaster(Master)
-        .setSparkHome("/home/snoooze/spark/spark-1.0.0")
-        .setJars(Array[String]("target/SparkLisa-0.0.1-SNAPSHOT.jar"))
-    }
-
-    return conf
-  }
-
   private def createAllValues(ssc: StreamingContext, topology: Topology, numBaseStations: Int, rate: Double): DStream[(Int, Double)] = {
     val values: DStream[(Int, Double)] = ssc.actorStream[(Int, Double)](
       Props(classOf[NumericalTopologySimulatorActorReceiver], topology.getNode.toList, rate), "receiver")
     return values
   }
 
-  private def initConfig() = {
-    config.load(getClass.getClassLoader.getResourceAsStream("config.properties"))
-    Env = config.getProperty("build.env")
-    HdfsPath = config.getProperty("hdfs.path." + Env)
-    Strategy = Some(config.getProperty("receiver.strategy"))
-  }
-
-  private def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
-    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
-    import scala.collection.JavaConversions._
-    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
-      mapped += ((n.substring(4).toInt, value._2))
-    }
-    return mapped
-  }
-
-
-  /*
-  * returns a DStream[(NodeType, Double)]
-   */
-  private def createLisaValues(nodeValues: DStream[(Int, Double)], runningMean: DStream[Double], stdDev: DStream[Double]): DStream[(Int, Double)] = {
-    nodeValues.transformWith(runningMean, (nodeRDD, meanRDD: RDD[Double]) => {
-      var mean_ = 0.0
-      try{mean_ = meanRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
-      }
-      nodeRDD.map(t => (t._1, t._2 - mean_))
-    }).transformWith(stdDev, (nodeDiffRDD, stdDevRDD: RDD[Double]) => {
-      var stdDev_ = 0.0
-      try {stdDev_ = stdDevRDD.reduce(_ + _)} catch {
-        case use: UnsupportedOperationException => {}
-      }
-      nodeDiffRDD.map(t => (t._1, t._2 / stdDev_))
-    })
-  }
-
   private def createLisaMonteCarlo(allLisaValues: DStream[(Int, Double)], finalLisaValues: DStream[(Int, Double)], nodeMap: mutable.Map[Int,
     NodeType], topology: Topology, randomNeighbours: DStream[(Int, List[List[Int]])]) = {
-    val numberOfBaseStations: Int = topology.getBasestation.size()
-    val numberOfNodes: Int = topology.getNode.size()
+
     import org.apache.spark.SparkContext._
     import org.apache.spark.streaming.StreamingContext._
+
+    val numberOfBaseStations: Int = topology.getBasestation.size()
+    val numberOfNodes: Int = topology.getNode.size()
 
     val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
