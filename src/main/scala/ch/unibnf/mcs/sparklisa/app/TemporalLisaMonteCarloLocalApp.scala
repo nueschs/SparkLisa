@@ -59,11 +59,15 @@ object TemporalLisaMonteCarloLocalApp extends LisaDStreamFunctions with LisaAppC
     val runningMean: DStream[Double] = currentValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
     val stdDev = createStandardDev(currentValues, runningCount, runningMean)
     val allLisaValues = createLisaValues(currentValues, runningMean, stdDev)
+    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys[Double](t, nodeMap))
 
-    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val allPastLisaValues: DStream[(Int, Array[Double])] = createPastLisaValues(pastValues)
-    val neighboursNormalizedSums = allNeighbourValues.union(allPastLisaValues.flatMapValues(a => a.toList)).groupByKey()
-      .mapValues(l => l.sum / l.size.toDouble)
+    val pastNeighbourValues: DStream[(Int, Array[Double])] = allPastLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+
+    val allPastNeighbouringValues: DStream[(Int, Double)] = allPastLisaValues.join(pastNeighbourValues)
+      .flatMapValues(t => t._1 ++ t._2)
+    val neighboursNormalizedSums = allNeighbourValues.union(allPastNeighbouringValues).groupByKey()
+      .map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(t => t._1*t._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
@@ -124,7 +128,7 @@ object TemporalLisaMonteCarloLocalApp extends LisaDStreamFunctions with LisaAppC
       val randomPastValues: List[Double] = (for ((n, idx) <- randomPastNeighbours.zipWithIndex)
         yield t._2._2(n)(idx)).toList
       val randomCurrentValues: List[Double] = t._2._1._1.filter(me => t._2._1._2.contains(me._1)).values.toList
-      val allRandomValues: List[Double] = randomCurrentValues.union(randomPastValues)
+      val allRandomValues: List[Double] = randomCurrentValues ++ randomPastValues
       (t._1, allRandomValues.foldLeft(0.0)(_+_)/allRandomValues.foldLeft(0.0)((r,c) => r+1))
     })
 

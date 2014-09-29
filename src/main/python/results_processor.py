@@ -319,9 +319,9 @@ def create_single_run_graph_data(paths, run_type, prefix, out_path, out_file_nam
 
 
 
-# create_spatial_averages_file('/home/snoooze/msctr/results/spatial')
+create_spatial_averages_file('/home/snoooze/msctr/results/spatial/25600', '/home/snoooze/msctr/results/spatial/25600')
 # create_monte_carlo_files('/home/snoooze/msctr/results/monte_carlo/naive', run_type='monte_carlo_naive')
-create_topologies_files('/home/snoooze/msctr/results/topologies/10000')
+# create_topologies_files('/home/snoooze/msctr/results/topologies/10000')
 # create_temporal_files('/home/snoooze/msctr/results/temporal', k_test=10, num_b_test=1)
 # create_single_run_graph_data( [
 #                                   '/home/snoooze/msctr/results/spatial/spatial_16_1600_20_3_1200_22092014124720',

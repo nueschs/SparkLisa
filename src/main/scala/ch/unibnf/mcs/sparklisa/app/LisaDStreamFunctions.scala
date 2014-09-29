@@ -8,6 +8,10 @@ import scala.collection.mutable
 
 trait LisaDStreamFunctions {
 
+  /**
+   * Calculates, for each k, the standardized values supplied by pastValues
+   *
+   */
   def createPastLisaValues(pastValues: DStream[(Int, Array[Double])]) = {
     import org.apache.spark.streaming.StreamingContext._
     import org.apache.spark.SparkContext._
@@ -66,8 +70,18 @@ trait LisaDStreamFunctions {
     })
   }
 
-  def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
-    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
+//  def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
+//    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
+//    import scala.collection.JavaConversions._
+//    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
+//      mapped += ((n.substring(4).toInt, value._2))
+//    }
+//    return mapped
+//  }
+
+  def mapToNeighbourKeys[T](value: (Int, T), nodeMap: mutable.Map[Int, NodeType]):
+      mutable.Traversable[(Int, T)] = {
+    var mapped: mutable.MutableList[(Int, T)] = mutable.MutableList()
     import scala.collection.JavaConversions._
     for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
       mapped += ((n.substring(4).toInt, value._2))

@@ -18,10 +18,10 @@ import scala.collection.JavaConversions._
 
 import scala.collection.mutable
 
-object TemproalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
+object TemporalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
 //  val Master: String = "spark://saight02:7077"
-      val Master: String = "local[32]"
+  val Master: String = "local[4]"
 
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.INFO)
@@ -50,18 +50,21 @@ object TemproalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
     val currentValues: DStream[(Int, Double)] = allValues.map(t => (t._1, t._2(0)))
     val pastValues: DStream[(Int, Array[Double])] = allValues.map(t => (t._1, t._2.takeRight(t._2.size-1)))
-    val pastValuesFlat: DStream[(Int, Double)] = pastValues.flatMapValues(a => a.toList)
-    val allValuesFlat: DStream[(Int, Double)] = currentValues.union(pastValuesFlat)
     val runningCount: DStream[Long] = currentValues.count()
-    val runningMean: DStream[Double] = currentValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
+    val runningMean: DStream[Double] = currentValues.map(t => (t._2, 1.0)).reduce((a, b) =>
+      (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
     val currentStdDev = createStandardDev(currentValues, runningCount, runningMean)
 
     val allLisaValues = createLisaValues(currentValues, runningMean, currentStdDev)
 
-    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys[Double](t, nodeMap))
 
-    val allPastLisaValues: DStream[(Int, Double)] = createLisaValues(pastValuesFlat, runningMean, currentStdDev)
-    val neighboursNormalizedSums = allNeighbourValues.union(allPastLisaValues).groupByKey()
+    val allPastLisaValues: DStream[(Int, Array[Double])] = createPastLisaValues(pastValues)
+    val pastNeighbourValues: DStream[(Int, Array[Double])] = allPastLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+
+    val allPastNeighbouringValues: DStream[(Int, Double)] = allPastLisaValues.join(pastNeighbourValues)
+      .flatMapValues(t => t._1 ++ t._2)
+    val neighboursNormalizedSums = allNeighbourValues.union(allPastNeighbouringValues).groupByKey()
       .map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
     val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
