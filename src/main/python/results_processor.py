@@ -70,7 +70,8 @@ def get_durations_for_run(run_dir, run_batches, run_type):
 
 
 def read_durations(path, run_type='spatial', prefix='finalLisaValues'):
-    directories = [ os.path.join(path, name) for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) ]
+    directories = [ os.path.join(path, name) for name in os.listdir(path)
+                    if os.path.isdir(os.path.join(path, name)) and name.startswith(run_type)]
     batches = dict()
 
     for directory in directories:
@@ -150,7 +151,21 @@ def create_spatial_averages_file(path, out_path=''):
     mins = collections.OrderedDict(sorted({n: min([float(y) for y in x]) for n,x in durations.items() if len(x) > 0}.items()))
 
     lines = get_file_lines(averages, stdevs, percentiles, mins, maxs)
-    with open(os.path.join(out_path, 'spatial.dat'), 'wb') as f:
+
+    spatial_file_name = 'spatial_{0}.dat'
+    comb_file_name = 'spatial_comb_{0}.dat'
+    all_avgs_file_name = 'spatial_all_avgs_{0}.dat'
+
+    if not os.path.split(path)[1].isdigit():
+        spatial_file_name = spatial_file_name.format(1600)
+        comb_file_name = comb_file_name.format(1600)
+        all_avgs_file_name = all_avgs_file_name.format(1600)
+    else:
+        spatial_file_name = spatial_file_name.format(os.path.split(path)[1])
+        comb_file_name = comb_file_name.format(os.path.split(path)[1])
+        all_avgs_file_name = all_avgs_file_name.format(os.path.split(path)[1])
+
+    with open(os.path.join(out_path, spatial_file_name), 'wb') as f:
         f.writelines(lines)
 
     durations_ordered = collections.OrderedDict(sorted(durations.items()))
@@ -171,10 +186,10 @@ def create_spatial_averages_file(path, out_path=''):
     combined_mins = collections.OrderedDict(sorted({n: min([float(y) for y in x]) for n,x in durations_combined.items() if len(x) > 0}.items()))
 
     combined_lines = get_combined_file_lines(combined_averages, combined_stdevs, combined_percentiles, combined_mins, combined_maxs)
-    with open(os.path.join(out_path, 'spatial_comb.dat'), 'wb') as f:
+    with open(os.path.join(out_path, comb_file_name), 'wb') as f:
         f.writelines(combined_lines)
 
-    with open(os.path.join(out_path, 'spatial_all_avgs.dat'), 'wb') as f:
+    with open(os.path.join(out_path, all_avgs_file_name), 'wb') as f:
         f.writelines(get_all_averages_lines(averages))
 
     return empty_logs, averages, stdevs, percentiles
@@ -270,6 +285,7 @@ def create_topologies_files(path, out_path=''):
         lines.append('{0} {1}\n'.format(typ, avg))
     with open(os.path.join(out_path, 'topologies_avgs.dat'), 'wb') as f:
         f.writelines(lines)
+
 
 def get_batches_with_data(directory, prefix):
     batches_with_data = list()

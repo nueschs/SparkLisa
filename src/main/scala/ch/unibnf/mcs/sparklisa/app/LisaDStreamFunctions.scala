@@ -70,14 +70,6 @@ trait LisaDStreamFunctions {
     })
   }
 
-//  def mapToNeighbourKeys(value: (Int, Double), nodeMap: mutable.Map[Int, NodeType]): mutable.Traversable[(Int, Double)] = {
-//    var mapped: mutable.MutableList[(Int, Double)] = mutable.MutableList()
-//    import scala.collection.JavaConversions._
-//    for (n <- nodeMap.getOrElse(value._1, new NodeType()).getNeighbour) {
-//      mapped += ((n.substring(4).toInt, value._2))
-//    }
-//    return mapped
-//  }
 
   def mapToNeighbourKeys[T](value: (Int, T), nodeMap: mutable.Map[Int, NodeType]):
       mutable.Traversable[(Int, T)] = {
