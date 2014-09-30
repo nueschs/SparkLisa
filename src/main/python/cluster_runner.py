@@ -176,7 +176,11 @@ def run_monte_carlo():
     topology_type = 'connected'
     class_name = 'SpatialLisaMonteCarloApp'
     run_type = 'monte_carlo'
-    run(class_name, stations, topology_type, run_type, random_values='1000')
+    if len(num_nodes_arg) > 0:
+        for nb in num_nodes_arg:
+            run(class_name, stations, topology_type, run_type, random_values='1000', num_nodes=nb)
+        else:
+            run(class_name, stations, topology_type, run_type, random_values='1000')
 
 
 def run_monte_carlo_naive():
