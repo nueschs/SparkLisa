@@ -123,10 +123,14 @@ object TemporalLisaMonteCarloLocalApp extends LisaDStreamFunctions with LisaAppC
 
     val randomNeighbourSums: DStream[(Int, Double)] = allRandomLisaValues.map(t => {
       val pastValuesSize = t._2._2.values.head.size
-      val randomPastNeighbours: IndexedSeq[Int] = for (rk <- 0 until pastValuesSize) yield
-              new Random().shuffle(nodeMap(t._1).getNeighbour.toList).head.substring(4).toInt
-      val randomPastValues: List[Double] = (for ((n, idx) <- randomPastNeighbours.zipWithIndex)
-        yield t._2._2(n)(idx)).toList
+
+      val randomPastNeighbours: List[List[Int]] = (for (rk <- 0 until pastValuesSize) yield
+        (for (_ <- 1 to new Random().nextInt(4)+1) yield
+          new Random().shuffle(nodeMap(t._1).getNeighbour.toList).head.substring(4).toInt).toList).toList
+
+      val randomPastValues: List[Double] = (for ((n, idx) <- randomPastNeighbours.zipWithIndex) yield
+        (for (i <- n) yield t._2._2(i)(idx)).toList).toList.flatten
+
       val randomCurrentValues: List[Double] = t._2._1._1.filter(me => t._2._1._2.contains(me._1)).values.toList
       val allRandomValues: List[Double] = randomCurrentValues ++ randomPastValues
       (t._1, allRandomValues.foldLeft(0.0)(_+_)/allRandomValues.foldLeft(0.0)((r,c) => r+1))
