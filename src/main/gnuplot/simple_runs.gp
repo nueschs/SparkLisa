@@ -1,4 +1,4 @@
-set terminal png nocrop enhanced font arial 8 size 1280,1024
+set terminal png nocrop enhanced font arial 8 size 1280,800
 set output 'simple_runs.png'
 unset xtics
 set yrange [0:]

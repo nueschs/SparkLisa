@@ -1,4 +1,4 @@
-set terminal png nocrop enhanced font arial 8 size 1280,1024
+set terminal png nocrop enhanced font arial 8 size 1280,800
 set output filename.'.png'
 set offset 0.5
 set lmargin 15

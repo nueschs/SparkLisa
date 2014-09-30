@@ -1,4 +1,4 @@
-set terminal png nocrop enhanced font arial 8 size 1280,1024
+set terminal png nocrop enhanced font arial 8 size 1280,800
 set output 'output/mc_quartiles.png'
 set boxwidth 0.4 absolute
 set xrange [ 0: ] noreverse nowriteback

@@ -1,4 +1,4 @@
-set terminal png nocrop enhanced font arial 8 size 1280,1024
+set terminal png nocrop enhanced font arial 8 size 1280,800
 set output 'output/mc_scheduling_delays.png'
 set xrange[0:17]
 set offset 0.5
