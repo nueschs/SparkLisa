@@ -39,7 +39,7 @@ def parse_arguments():
     parser.add_argument('rate', metavar='r', type=float, help='Number of values per minute submitted to each node')
     parser.add_argument('window', metavar='w', type=int, help='Window duration in seconds')
     parser.add_argument('duration', metavar='d', type=int, help='Duration after which the Spark Job is terminated')
-    parser.add_argument('-r','--repetitions', metavar='rp', type=int, default=3,
+    parser.add_argument('-r','--repetitions', metavar='rp', type=int, default=1,
                         help='Number of times each stage is run (default 1)')
     parser.add_argument('-m','--mode', metavar='m', type=str, default='s',
                         help='s for spatial, t for temporal, m for spatial with statistical test, '

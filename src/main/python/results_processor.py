@@ -1,6 +1,9 @@
 import os
 import numpy
 import collections
+import warnings
+
+warnings.simplefilter("error")
 
 def file_len(file_name):
     with open(file_name) as f:
@@ -11,8 +14,8 @@ def file_len(file_name):
 
 def find_temporal_batches(path):
     batches_with_data = dict()
-    num_nodes = int(os.path.split(path)[1].split('_')[5])
-    k = int(os.path.split(path)[1].split('_')[4])
+    num_nodes = int(os.path.split(path)[1].split('_')[3])
+    k = int(os.path.split(path)[1].split('_')[2])
     results_dirs = [
         os.path.join(path, 'results', name) for name in os.listdir(os.path.join(path, 'results'))
         if os.path.isdir(os.path.join(path, 'results', name)) and name.startswith('allV')
@@ -41,7 +44,7 @@ def read_temporal_durations(path):
         num_base_stations = os.path.split(run_dir)[1].split('_')[-7]
         run_name = '{0}_0'.format(num_base_stations) if not num_base_stations in cnt else '{0}_{1}'.format(num_base_stations, cnt[num_base_stations])
         cnt[num_base_stations] = 1 if not num_base_stations in cnt else cnt[num_base_stations]+1
-        k = os.path.split(run_dir)[1].split('_')[3]
+        k = os.path.split(run_dir)[1].split('_')[2]
         log_file_name = os.path.join(run_dir, 'sparklisa_{1}_{0}.log'.format(num_base_stations, 'temporal'))
         with open(log_file_name, 'rb') as f:
             log_file = f.readlines()
@@ -61,15 +64,15 @@ def read_temporal_durations(path):
 
     return durations
 
-def get_durations_for_run(run_dir, run_batches, run_type):
-    num_base_stations = os.path.split(run_dir)[1].split('_')[-6]
+def get_durations_for_run(run_dir, run_batches, run_type, offset):
+    num_base_stations = os.path.split(run_dir)[1].split('_')[offset]
     log_file_name = os.path.join(run_dir, 'sparklisa_{1}_{0}.log'.format(num_base_stations, run_type))
     with open(log_file_name, 'rb') as f:
         log_file = f.readlines()
     return [line.split()[-2] for line in log_file if 'JobScheduler: Total delay' in line and line.split()[-5] in run_batches]
 
 
-def read_durations(path, run_type='spatial', prefix='finalLisaValues'):
+def read_durations(path, run_type='spatial', prefix='finalLisaValues', bs_offset=-6):
     directories = [ os.path.join(path, name) for name in os.listdir(path)
                     if os.path.isdir(os.path.join(path, name)) and name.startswith(run_type)]
     batches = dict()
@@ -80,7 +83,7 @@ def read_durations(path, run_type='spatial', prefix='finalLisaValues'):
     durations = dict()
     for run_dir, run_batches in batches.items():
         run_name = os.path.split(run_dir)[1]
-        durations[run_name]= get_durations_for_run(run_dir, run_batches, run_type)
+        durations[run_name]= get_durations_for_run(run_dir, run_batches, run_type, bs_offset)
 
     return durations
 
@@ -235,13 +238,14 @@ def create_monte_carlo_files(path, out_path='', run_type='monte_carlo'):
     with open(os.path.join(out_path, 'mc_all_avgs.dat'), 'wb') as f:
         f.writelines(get_all_averages_lines(averages))
 
-def create_temporal_files(path, out_path='', k_test=10, num_b_test=16):
+def create_temporal_files(path, out_path=''):
     if not out_path:
         out_path = path
 
     durations = read_temporal_durations(path)
 
     histogram_dict = dict()
+    print(durations)
     for k, runs in durations.items():
         if not k in histogram_dict:
             histogram_dict[k] = dict()
@@ -252,11 +256,11 @@ def create_temporal_files(path, out_path='', k_test=10, num_b_test=16):
             avg = numpy.average([float(x) for y in ts.values() for x in y.values()])
             histogram_dict[k][base] = avg
 
-    lines = ['#k 1 2 4 8 16\n']
+    lines = ['#k 1 2 4 8 16 avg\n']
     print(histogram_dict)
     for k, bases in histogram_dict.items():
         if bases:
-            line = '{0} {1} {2} {3} {4} {5} \n'.format(k, bases['1'], bases['2'], bases['4'], bases['8'], bases['16'])
+            line = '{0} {1} {2} {3} {4} {5} {6} \n'.format(k, bases['1'], bases['2'], bases['4'], bases['8'], bases['16'], numpy.average(bases.values()))
             lines.append(line)
 
     with open(os.path.join(out_path, 'temporal_histogram.dat'), 'wb') as f:
@@ -326,6 +330,14 @@ def create_single_run_graph_data(paths, run_type, prefix, out_path, out_file_nam
     with open(os.path.join(out_path, out_file_name), 'wb') as f:
         f.writelines(lines)
 
+def create_mct_files(path, outpath):
+    if not outpath:
+        outpath = path
+
+    for z in [{float(f):y.split('_')[5] for f in x} for y, x in read_durations(path, 'monte_carlo_temporal_local', 'measuredValuesPositions', -7).items()]:
+        print(str(z).strip('{}').replace(':',''))
+
+    # print(read_durations(path, 'monte_carlo_temporal_global', 'measuredValuesPositions', -7))
 
 
 
@@ -335,12 +347,17 @@ def create_single_run_graph_data(paths, run_type, prefix, out_path, out_file_nam
 
 
 
-create_spatial_averages_file('/home/snoooze/msctr/results/spatial/25600', '/home/snoooze/msctr/results/spatial/25600')
+
+
+# create_spatial_averages_file('/home/snoooze/msctr/results/spatial/25600', '/home/snoooze/msctr/results/spatial/25600')
+create_mct_files('/home/snoooze/msctr/results/mctl', '/home/snoooze/msctr/results/mctl')
 # create_monte_carlo_files('/home/snoooze/msctr/results/monte_carlo/naive', run_type='monte_carlo_naive')
 # create_topologies_files('/home/snoooze/msctr/results/topologies/10000')
-# create_temporal_files('/home/snoooze/msctr/results/temporal', k_test=10, num_b_test=1)
+# create_temporal_files('/home/snoooze/msctr/results/temporal')
 # create_single_run_graph_data( [
 #                                   '/home/snoooze/msctr/results/spatial/spatial_16_1600_20_3_1200_22092014124720',
 #                                   '/home/snoooze/msctr/results/spatial/spatial_1_1600_20_3_1200_22092014084231',
 #                                ],
+#
+#
 #                               'spatial', 'finalLisaValues', '/home/snoooze/msctr/results/spatial', 'single_runs_spatial_1_16.dat')
