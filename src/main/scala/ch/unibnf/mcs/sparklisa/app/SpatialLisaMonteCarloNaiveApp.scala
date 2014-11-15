@@ -93,10 +93,11 @@ object SpatialLisaMonteCarloNaiveApp extends LisaDStreamFunctions with LisaAppCo
     val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
 
-    val randomNeighbourSums: DStream[(Int, Double)] = randomNeighbourTuples.transformWith(allLisaValues, (t4Rdd, valueRdd: RDD[(Int, Double)]) => {
-      val t7: collection.Map[Int, Double] = valueRdd.collectAsMap()
-      t4Rdd.mapValues{case l => {
-        val randomValues: List[Double] = t7.filter(t => l.contains(t._1)).values.toList
+    val randomNeighbourSums: DStream[(Int, Double)] = randomNeighbourTuples.transformWith(allLisaValues,
+      (randomNeighbourRDD, valueRdd: RDD[(Int, Double)]) => {
+      val valueMap: collection.Map[Int, Double] = valueRdd.collectAsMap()
+      randomNeighbourRDD.mapValues{case l => {
+        val randomValues: List[Double] = valueMap.filter(t => l.contains(t._1)).values.toList
         randomValues.foldLeft(0.0)(_+_) / randomValues.foldLeft(0.0)((r,c) => r+1)
       }}
     })
