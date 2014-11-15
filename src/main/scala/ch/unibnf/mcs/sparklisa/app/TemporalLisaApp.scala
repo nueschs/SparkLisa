@@ -55,19 +55,19 @@ object TemporalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
       (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
     val currentStdDev = createStandardDev(currentValues, runningCount, runningMean)
 
-    val allLisaValues = createLisaValues(currentValues, runningMean, currentStdDev)
+    val allStandardisedValues = createStandardisedValues(currentValues, runningMean, currentStdDev)
 
-    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys[Double](t, nodeMap))
+    val allNeighbourValues: DStream[(Int, Double)] = allStandardisedValues.flatMap(t => mapToNeighbourKeys[Double](t, nodeMap))
 
-    val allPastLisaValues: DStream[(Int, Array[Double])] = createPastLisaValues(pastValues)
-    val pastNeighbourValues: DStream[(Int, Array[Double])] = allPastLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+    val allPastStandardisedValues: DStream[(Int, Array[Double])] = createPastStandardisedValues(pastValues)
+    val pastNeighbourValues: DStream[(Int, Array[Double])] = allPastStandardisedValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
 
-    val allPastNeighbouringValues: DStream[(Int, Double)] = allPastLisaValues.join(pastNeighbourValues)
+    val allPastNeighbouringValues: DStream[(Int, Double)] = allPastStandardisedValues.join(pastNeighbourValues)
       .flatMapValues(t => t._1 ++ t._2)
     val neighboursNormalizedSums = allNeighbourValues.union(allPastNeighbouringValues).groupByKey()
       .map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
-    val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
+    val finalLisaValues = allStandardisedValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     allValues

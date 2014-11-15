@@ -18,6 +18,10 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
+/**
+ * In addition to the spatial LISA, performs a Monte Carlo Simulation to test the significance of the LISA values
+ * (first approach with poor performance)
+ */
 object SpatialLisaMonteCarloNaiveApp extends LisaDStreamFunctions with LisaAppConfiguration{
 
 
@@ -50,6 +54,11 @@ object SpatialLisaMonteCarloNaiveApp extends LisaDStreamFunctions with LisaAppCo
     val tempMap: mutable.Map[Integer, NodeType] = TopologyHelper.createNumericalNodeMap(topology).asScala
     val nodeMap: mutable.Map[Int, NodeType] = for ((k,v) <- tempMap; (nk,nv) = (k.intValue, v)) yield (nk,nv)
     val allValues: DStream[(Int, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
+
+    /*
+     * The Receiver used here creates for each node a number of distinct sets of random neighbour keys
+     * (i.e. select between one and four keys from the complete topology)
+    */
     val randomNeighbours: ReceiverInputDStream[(Int, List[List[Int]])] =
       ssc.actorStream[(Int, List[List[Int]])](Props(
         classOf[NumericalRandomTupleReceiver], topology.getNode.toList, rate, numRandomValues), "receiver"
@@ -62,14 +71,14 @@ object SpatialLisaMonteCarloNaiveApp extends LisaDStreamFunctions with LisaAppCo
 
     val stdDev = createStandardDev(allValues, runningCount, runningMean)
 
-    val allLisaValues = createLisaValues(allValues, runningMean, stdDev)
-    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+    val allStandardisedValues = createStandardisedValues(allValues, runningMean, stdDev)
+    val allNeighbourValues: DStream[(Int, Double)] = allStandardisedValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().mapValues(l => l.sum / l.size.toDouble)
-    val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(t => t._1*t._2)
+    val finalLisaValues = allStandardisedValues.join(neighboursNormalizedSums).mapValues(t => t._1*t._2)
     val numberOfNodes = topology.getNode.size()
     allValues.saveAsTextFiles(HdfsPath+ s"/results/${numBaseStations}_$numberOfNodes/allValues")
     finalLisaValues.saveAsTextFiles(HdfsPath+ s"/results/${numBaseStations}_$numberOfNodes/finalLisaValues")
-    createLisaMonteCarlo(allLisaValues, finalLisaValues, nodeMap, topology, randomNeighbours)
+    createLisaMonteCarlo(allStandardisedValues, finalLisaValues, nodeMap, topology, randomNeighbours)
 
     ssc.start()
     ssc.awaitTermination(timeout*1000)
@@ -83,31 +92,46 @@ object SpatialLisaMonteCarloNaiveApp extends LisaDStreamFunctions with LisaAppCo
   }
 
 
-  private def createLisaMonteCarlo(allLisaValues: DStream[(Int, Double)], finalLisaValues: DStream[(Int, Double)], nodeMap: mutable.Map[Int,
+  private def createLisaMonteCarlo(allStandardisedValues: DStream[(Int, Double)], finalLisaValues: DStream[(Int, Double)], nodeMap: mutable.Map[Int,
     NodeType], topology: Topology, randomNeighbours: DStream[(Int, List[List[Int]])]) = {
     val numberOfBaseStations: Int = topology.getBasestation.size()
     val numberOfNodes: Int = topology.getNode.size()
     import org.apache.spark.SparkContext._
     import org.apache.spark.streaming.StreamingContext._
 
+    /*
+    * split up initial random neighbour DStream. Accordingly, the number values contained in batch
+    * after the transformation is numRandomValues*numberOfNodes (before: numberOfNodes)
+    */
     val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
 
-    val randomNeighbourSums: DStream[(Int, Double)] = randomNeighbourTuples.transformWith(allLisaValues,
+
+    // Calculates average for each of the simulated sets of neighbours
+    val randomNeighbourAverages: DStream[(Int, Double)] = randomNeighbourTuples.transformWith(allStandardisedValues,
       (randomNeighbourRDD, valueRdd: RDD[(Int, Double)]) => {
+      // collect complete set of values -> not parallelisable
       val valueMap: collection.Map[Int, Double] = valueRdd.collectAsMap()
       randomNeighbourRDD.mapValues{case l => {
+        // retrieve values for the simulated node keys from the complete set
         val randomValues: List[Double] = valueMap.filter(t => l.contains(t._1)).values.toList
+        /*
+         * then calculate their average
+         * (see http://oldfashionedsoftware.com/2009/07/30/lots-and-lots-of-foldleft-examples/)
+        */
         randomValues.foldLeft(0.0)(_+_) / randomValues.foldLeft(0.0)((r,c) => r+1)
       }}
     })
 
-    val randomLisaValues: DStream[(Int, Double)] = randomNeighbourSums
-      .join(allLisaValues)
+    // calculate simulated LISA values with random neighbours
+    val randomLisaValues: DStream[(Int, Double)] = randomNeighbourAverages
+      .join(allStandardisedValues)
       .mapValues{ case t => t._1*t._2}
 
+    // the significance level for a value is deduced from its position in the ordered list of simulated values
     val measuredValuesPositions = randomLisaValues.groupByKey()
       .join(finalLisaValues)
+      // number of simulated values smaller than value under test / number of values
       .mapValues{ case t => (t._1.count(_ < t._2)+1)/ (t._1.size.toDouble+1.0)}
     measuredValuesPositions.saveAsTextFiles(HdfsPath+ s"/results/${numberOfBaseStations}_$numberOfNodes/measuredValuesPositions")
   }

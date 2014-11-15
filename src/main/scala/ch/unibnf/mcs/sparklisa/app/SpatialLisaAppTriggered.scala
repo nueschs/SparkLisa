@@ -17,6 +17,11 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
+/**
+ * Calculates spatial LISA statistics for sent node values, and stores input and results to HDFS.
+ * A triggered Receiver is used (i.e. new values are only produces once the previous batch is completely processed)
+ */
+@Deprecated
 object SpatialLisaAppTriggered extends LisaDStreamFunctions with LisaAppConfiguration{
 
 //  val Master: String = "spark://saight02:7077"
@@ -44,6 +49,8 @@ object SpatialLisaAppTriggered extends LisaDStreamFunctions with LisaAppConfigur
     val topology: Topology = TopologyHelper.topologyFromBareFile(topologyPath, numBaseStations)
 
     val tempMap: mutable.Map[Integer, NodeType] = TopologyHelper.createNumericalNodeMap(topology).asScala
+
+    // Conversion from java.lang.Integer to scala.Int
     val nodeMap: mutable.Map[Int, NodeType] = for ((k,v) <- tempMap; (nk,nv) = (k.intValue, v)) yield (nk,nv)
     val allValues: DStream[(Int, Double)] = createAllValues(ssc, topology, numBaseStations, rate)
 
@@ -51,11 +58,13 @@ object SpatialLisaAppTriggered extends LisaDStreamFunctions with LisaAppConfigur
     val runningMean = allValues.map(t => (t._2, 1.0)).reduce((a, b) => (a._1 + b._1, a._2 + b._2)).map(t => t._1 / t._2)
     val stdDev = createStandardDev(allValues, runningCount, runningMean)
 
-    //
-    val allLisaValues = createLisaValues(allValues, runningMean, stdDev)
-    val allNeighbourValues: DStream[(Int, Double)] = allLisaValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+    // get simulated input values DStream
+    val allStandardisedValues = createStandardisedValues(allValues, runningMean, stdDev)
+    val allNeighbourValues: DStream[(Int, Double)] = allStandardisedValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
+
+    // groupByKey yields, for each node key, all neighbours' values
     val neighboursNormalizedSums = allNeighbourValues.groupByKey().mapValues(l => l.sum / l.size.toDouble)
-    val finalLisaValues = allLisaValues.join(neighboursNormalizedSums).mapValues(d => d._1 * d._2)
+    val finalLisaValues = allStandardisedValues.join(neighboursNormalizedSums).mapValues(d => d._1 * d._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     allValues.count().saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")

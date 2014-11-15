@@ -5,7 +5,6 @@ import ch.unibnf.mcs.sparklisa.topology.NodeType;
 import ch.unibnf.mcs.sparklisa.topology.ObjectFactory;
 import ch.unibnf.mcs.sparklisa.topology.Topology;
 import com.google.common.collect.Maps;
-import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -13,45 +12,28 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.CompressionCodecFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.lang.Math;
 
 public class TopologyHelper {
 
     private static final java.lang.String HDFS_PREFIX = "hdfs:";
 
-    public static void main(String[] args) throws IOException {
-        StringBuilder str = new StringBuilder();
-        str.append("nodeMap = {\n");
-        Topology top = topologyFromBareFile("/home/snoooze/scala_ws/SparkLisa/src/main/resources/topology/topology_bare_16_2.5.txt", 4);
-
-        for (NodeType node : top.getNode()){
-            str.append("'"+node.getNodeId()+"': [");
-            for (String neighbour : node.getNeighbour()) {
-                str.append("'"+neighbour+"', ");
-            }
-            str.append("],\n");
-        }
-
-        str.append("}");
-        System.out.print(str.toString());
-    }
-
-
-    public static Map<String, NodeType> createNodeMap(Topology t){
-        Map<String, NodeType> res = Maps.newHashMap();
-        for (NodeType node : t.getNode()){
-            res.put(node.getNodeId(), node);
-        }
-        return res;
-    }
-
+    /**
+     * Creates a Map containing (NodeKey, NodeType).
+     * Used to get a nodes neighbours (via NodeType) using its key.
+     *
+     * @param t
+     * @return
+     */
     public static Map<Integer, NodeType> createNumericalNodeMap(Topology t){
         Map<Integer, NodeType> res = Maps.newHashMap();
         for (NodeType node : t.getNode()){
@@ -61,6 +43,16 @@ public class TopologyHelper {
         return res;
     }
 
+    /**
+     * Reads topology information from a proximity matrix file
+     * (i.e. one line per node, containing 1s for connected nodes and 0s for non-related),
+     * and translates it into an object representation.
+     *
+     * @param path
+     * @param numberOfBaseStations
+     * @return
+     * @throws IOException
+     */
     public static Topology topologyFromBareFile(String path, Integer numberOfBaseStations) throws IOException {
         Topology topology = new Topology();
         List<String> lines = null;
@@ -108,6 +100,11 @@ public class TopologyHelper {
         return topology;
     }
 
+    /**
+     * Creates an object representation of a simple topology with 16 nodes. Used for testing purposes.
+     *
+     * @return
+     */
     public static Topology createSimpleTopology(){
         ObjectFactory of = new ObjectFactory();
         Topology t = of.createTopology();
@@ -229,6 +226,9 @@ public class TopologyHelper {
         return t;
     }
 
+    /**
+     * Utility method to read from HDFS
+     */
     private static List<String> readHdfsFile(Path location, Configuration conf) throws IOException {
         FileSystem fileSystem = FileSystem.get(location.toUri(), conf);
         CompressionCodecFactory factory = new CompressionCodecFactory(conf);
@@ -264,14 +264,6 @@ public class TopologyHelper {
             } finally {
                 br.close();
             }
-
-//            StringWriter writer = new StringWriter();
-//            IOUtils.copy(stream, writer, "UTF-8");
-//            String raw = writer.toString();
-//            String[] resulting = raw.split("\n");
-//            for(String str: resulting) {
-//                results.add(str);
-//            }
         }
         return results;
     }

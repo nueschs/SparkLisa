@@ -3,6 +3,9 @@ package ch.unibnf.mcs.sparklisa.app
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.StreamingContext._
 
+/**
+ * Simple Word Count App, as from Spark Streaming Tutorial
+ */
 object DemoApp {
 
   def main(args: Array[String]) = {
