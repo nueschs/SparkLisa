@@ -1,7 +1,7 @@
 SparkLisa
 =========
 
-Spark Streaming Application calculating LISA statistics from simulated WDN sensor data
+Spark Streaming Application calculating LISA statistics from simulated WDN sensor data on a cluster
 
 Build
 -----
