@@ -10,9 +10,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.util.Random
 import scala.collection.immutable.Queue
-
+/**
+ * Creates a random value (gaussian distributed Double values) for each node at each batch interval.
+ * Along with this values, k previous values are also sent to the DStream (as array).
+ *
+ * @param nodes
+ * @param rate
+ * @param k
+ */
 class TemporalTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double, k: Int) extends Actor with ActorHelper {
 
+  /*
+  * FiniteQueue is used to create a sliding list of past values
+  */
   class FiniteQueue[A](q: Queue[A]) {
     def enqueueFinite[B >: A](elem: B, maxSize: Int): Queue[B] = {
       var ret = q.enqueue(elem)

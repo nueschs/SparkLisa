@@ -11,6 +11,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.util.Random
 
+/**
+ * Creates sets of random nodes keys for each node, which are used for the Monte Carlo Simulation.
+ * Each set contains between one and four random keys.
+ *
+ * @param nodes
+ * @param rate
+ * @param numRandomValues
+ */
 class NumericalRandomTupleReceiver(nodes: List[NodeType], rate: Double, numRandomValues: Int) extends Actor with ActorHelper {
 
   val random = new Random()

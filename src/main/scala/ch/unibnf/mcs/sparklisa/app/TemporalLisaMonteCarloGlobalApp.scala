@@ -10,10 +10,8 @@ import org.apache.spark.SparkConf
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
-import scala.collection
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-import scala.collection.immutable.IndexedSeq
 import scala.collection.mutable
 import scala.util.Random
 
@@ -53,6 +51,10 @@ object TemporalLisaMonteCarloGlobalApp extends LisaDStreamFunctions with LisaApp
         classOf[NumericalRandomTupleReceiver], topology.getNode.toList, rate, numRandomValues), "receiver"
       )
 
+    /*
+    * The array of values emitted from the receiver contains the current as well as k past values.
+    * For the calculation of the temporal LISA, current values need to separated from the past values.
+    */
     val currentValues: DStream[(Int, Double)] = allValues.mapValues(a => a(0))
     val pastValues: DStream[(Int, Array[Double])] = allValues.mapValues(a => a.takeRight(a.size-1))
     val runningCount: DStream[Long] = currentValues.count()
@@ -64,12 +66,17 @@ object TemporalLisaMonteCarloGlobalApp extends LisaDStreamFunctions with LisaApp
     val allPastStandardisedValues: DStream[(Int, Array[Double])] = createPastStandardisedValues(pastValues)
     val pastNeighbourValues: DStream[(Int, Array[Double])] = allPastStandardisedValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
 
+    // include past values of a node as "neighbour"
     val allPastNeighbouringValues: DStream[(Int, Double)] = allPastStandardisedValues.join(pastNeighbourValues)
       .flatMapValues(t => t._1 ++ t._2)
-    val neighboursNormalizedSums = allNeighbourValues.union(allPastNeighbouringValues).groupByKey()
+    /*
+    * With current and past neighbour values, as well as past values from the node itself, the average of
+    * these values (right part in the LISA formula) can be calculated.
+    */
+    val neighboursStandardisedAverages = allNeighbourValues.union(allPastNeighbouringValues).groupByKey()
       .map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
-    val finalLisaValues = allStandardisedValues.join(neighboursNormalizedSums).mapValues(t => t._1*t._2)
+    val finalLisaValues = allStandardisedValues.join(neighboursStandardisedAverages).mapValues(t => t._1*t._2)
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     allValues.saveAsTextFiles(HdfsPath + s"/results/${numberOfBaseStations}_$numberOfNodes/allValues")
@@ -97,25 +104,35 @@ object TemporalLisaMonteCarloGlobalApp extends LisaDStreamFunctions with LisaApp
 
     val numberOfBaseStations: Int = topology.getBasestation.size()
 
+    /*
+    * split up initial random neighbour DStream. Accordingly, the number values contained in batch
+    * after the transformation is numRandomValues*numberOfNodes (before: numberOfNodes)
+    */
     val randomNeighbourTuples: DStream[(Int, List[Int])] = randomNeighbours.flatMapValues(l => l)
     randomNeighbourTuples.repartition(numberOfBaseStations)
 
+    /*
+    * Map the complete set of measurements in this batch to each node key. While computationally intensive,
+    * this greatly increases the parallelisability of subsequent calculations.
+    */
     val standardisedValuesCartesian: DStream[(Int, collection.Map[Int, Double])] =
       currentStandardisedValues.transform(valueRDD => {
         val valueMap: collection.Map[Int, Double] = valueRDD.collectAsMap()
         valueRDD.mapValues {case _ => valueMap }
       })
 
+    // The same is done for all past values
     val pastStandardisedValuesCartesian: DStream[(Int, collection.Map[Int, Array[Double]])] =
       pastStandardisedValues.transform(valueRDD => {
         val valueMap: collection.Map[Int, Array[Double]] = valueRDD.collectAsMap()
         valueRDD.mapValues {case _ => valueMap}
       })
 
+    // now we can join the complete set of values to all random neighbour sets
     val standardisedValuesWithRandomNodes: DStream[(Int, (collection.Map[Int, Double], List[Int]))] =
       standardisedValuesCartesian.join(randomNeighbourTuples)
 
-
+    // and again with the past values
     val allRandomStandardisedValues: DStream[(Int, ((collection.Map[Int, Double], List[Int]),
                                       collection.Map[Int, Array[Double]]))] =
       standardisedValuesWithRandomNodes.join(pastStandardisedValuesCartesian)
@@ -123,23 +140,36 @@ object TemporalLisaMonteCarloGlobalApp extends LisaDStreamFunctions with LisaApp
     allRandomStandardisedValues.repartition(numberOfBaseStations)
 
     val randomNeighbourAverages = allRandomStandardisedValues.map(t => {
+
+      // get size of past values array (k)
       val pastValuesSize = t._2._2.values.head.size
+
+      // filter out nodes' own values
       val filteredMap = t._2._2.filter(me => me._1 != t._1)
 
 
       val randomPastValues: List[Double] = (for (i <- 0 until pastValuesSize) yield
+
+        // between one and four random past values are sampled from the complete list
         (for (_ <- 1 to new Random().nextInt(4)+1) yield
           new Random().shuffle(filteredMap.values).head(i)).toList).toList.flatten
 
+      // retrieve values according to random key sets
       val randomCurrentValues: List[Double] = t._2._1._1.filter(me => t._2._1._2.contains(me._1)).values.toList
+      /*
+       * merge reandom current and past values, then calculate their average
+       * (see http://oldfashionedsoftware.com/2009/07/30/lots-and-lots-of-foldleft-examples/)
+      */
       val allRandomValues: List[Double] = randomCurrentValues ++ randomPastValues
       (t._1, allRandomValues.foldLeft(0.0)(_+_)/allRandomValues.foldLeft(0.0)((r,c) => r+1))
     })
 
+    // calculate simulated LISA values with random neighbours
     val randomLisaValues: DStream[(Int, Double)] = randomNeighbourAverages
       .join(currentStandardisedValues)
       .mapValues{ case t => t._1*t._2}
 
+    // the significance level for a value is deduced from its position in the ordered list of simulated values
     val measuredValuesPositions = randomLisaValues.groupByKey()
       .join(finalLisaValues)
       .mapValues{ case t => (t._1.count(_ < t._2)+1)/ (t._1.size.toDouble+1.0)}

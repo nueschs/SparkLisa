@@ -11,6 +11,12 @@ import org.slf4j.{Logger, LoggerFactory}
 
 import scala.compat.Platform
 
+/**
+ * Used for logging errors and successful batch statistics
+ *
+ * In addition, triggers the receiver to send a new set of values once a batch is completed
+ */
+@Deprecated
 class TriggeringStreamingListener extends StreamingListener{
   val Log: Logger = LoggerFactory.getLogger(getClass)
   val Port = 23456

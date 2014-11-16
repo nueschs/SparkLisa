@@ -1,21 +1,17 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import java.util.Properties
-
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.{TemporalTopologySimulatorActorReceiver, TopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.TemporalTopologySimulatorActorReceiver
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import scala.collection.JavaConverters._
+
 import scala.collection.JavaConversions._
-
-
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 object TemporalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
@@ -48,6 +44,10 @@ object TemporalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
     val allValues: DStream[(Int, Array[Double])] = createAllValues(ssc, topology, numBaseStations, k, rate)
     allValues.repartition(numBaseStations)
 
+    /*
+    * The array of values emitted from the receiver contains the current as well as k past values.
+    * For the calculation of the temporal LISA, current values need to separated from the past values.
+    */
     val currentValues: DStream[(Int, Double)] = allValues.map(t => (t._1, t._2(0)))
     val pastValues: DStream[(Int, Array[Double])] = allValues.map(t => (t._1, t._2.takeRight(t._2.size-1)))
     val runningCount: DStream[Long] = currentValues.count()
@@ -62,12 +62,17 @@ object TemporalLisaApp extends LisaDStreamFunctions with LisaAppConfiguration{
     val allPastStandardisedValues: DStream[(Int, Array[Double])] = createPastStandardisedValues(pastValues)
     val pastNeighbourValues: DStream[(Int, Array[Double])] = allPastStandardisedValues.flatMap(t => mapToNeighbourKeys(t, nodeMap))
 
+    // include past values of a node as "neighbour"
     val allPastNeighbouringValues: DStream[(Int, Double)] = allPastStandardisedValues.join(pastNeighbourValues)
       .flatMapValues(t => t._1 ++ t._2)
-    val neighboursNormalizedSums = allNeighbourValues.union(allPastNeighbouringValues).groupByKey()
+    /*
+    * With current and past neighbour values, as well as past values from the node itself, the average of
+    * these values (right part in the LISA formula) can be calculated.
+    */
+    val neighboursStandardisedAverages = allNeighbourValues.union(allPastNeighbouringValues).groupByKey()
       .map(t => (t._1, t._2.sum / t._2.size.toDouble))
 
-    val finalLisaValues = allStandardisedValues.join(neighboursNormalizedSums).map(t => (t._1, t._2._1 * t._2._2))
+    val finalLisaValues = allStandardisedValues.join(neighboursStandardisedAverages).map(t => (t._1, t._2._1 * t._2._2))
     val numberOfBaseStations = topology.getBasestation.size().toString
     val numberOfNodes = topology.getNode.size().toString
     allValues

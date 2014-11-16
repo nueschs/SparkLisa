@@ -11,6 +11,10 @@ object RandomTupleGenerator {
   }
 
   def createRandomNeighboursList(nodeId: String, length: Int, numNodes: Int): List[List[String]] = {
+    /*
+    * for very small topologies, there are usually not enough nodes to select enough (e.g. 1000) random sets,
+    * so we use all permutations
+    */
     if (numNodes < 16) {
       return asNodeIds(createRandomPermutationsFromAll(nodeId, length, numNodes))
     } else {
@@ -31,14 +35,18 @@ object RandomTupleGenerator {
     })
   }
 
+
   private def createRandomPermutations(nodeId: String, length: Int, numNodes: Int): List[List[Int]] = {
+    // Using a Set ensures that the generated sets of random node keys are distinct
     val permutations: mutable.Set[mutable.Set[Int]] = mutable.Set()
     while (permutations.size < length){
       val tup: mutable.Set[Int] = mutable.Set()
+      // set length between one and four
       val len = random.nextInt(4)+1
 
       while (tup.size < len) {
         var rand = -1
+        // make sure values in set are distinct
         while (rand < 0 || rand+1 == nodeId.substring(4).toInt) {
           rand = random.nextInt(numNodes)
         }

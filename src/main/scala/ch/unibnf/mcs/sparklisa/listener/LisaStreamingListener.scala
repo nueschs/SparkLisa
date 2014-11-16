@@ -5,6 +5,9 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import scala.compat.Platform
 
+/**
+ * Used for logging errors and successful batch statistics
+ */
 class LisaStreamingListener extends StreamingListener{
   val Log: Logger = LoggerFactory.getLogger(getClass)
 

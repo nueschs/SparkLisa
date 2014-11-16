@@ -1,15 +1,12 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import java.util.Properties
-
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener
-import ch.unibnf.mcs.sparklisa.receiver.{NumericalTopologySimulatorActorReceiver, TopologySimulatorActorReceiver}
+import ch.unibnf.mcs.sparklisa.receiver.NumericalTopologySimulatorActorReceiver
 import ch.unibnf.mcs.sparklisa.topology.{NodeType, Topology}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 

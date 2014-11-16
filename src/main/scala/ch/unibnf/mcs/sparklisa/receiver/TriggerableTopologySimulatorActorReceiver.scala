@@ -12,6 +12,7 @@ import scala.collection.mutable
 
 import scala.util.Random
 
+@Deprecated
 class TriggerableTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double) extends Actor with ActorHelper {
 
   val random = new Random()

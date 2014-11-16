@@ -13,6 +13,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
+@Deprecated
 class TriggerableTemporalTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double, k: Int) extends Actor with ActorHelper {
 
   class FiniteQueue[A](q: Queue[A]) {

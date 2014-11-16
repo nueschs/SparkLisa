@@ -10,7 +10,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.util.Random
 
-
+/**
+ * Creates a random value (gaussian distributed Double values) for each node at each batch interval
+ * @param nodes
+ * @param rate
+ */
 class NumericalTopologySimulatorActorReceiver(nodes: List[NodeType], rate: Double) extends Actor with ActorHelper {
 
   val random = new Random()

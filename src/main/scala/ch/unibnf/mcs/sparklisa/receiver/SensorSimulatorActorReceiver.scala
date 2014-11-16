@@ -6,6 +6,7 @@ import ch.unibnf.mcs.sparklisa.topology.NodeType
 import scala.io.Source
 import org.apache.spark.streaming.receiver.ActorHelper
 
+@Deprecated
 class SensorSimulatorActorReceiver(node: NodeType) extends Actor with ActorHelper {
 
   private final val sensorNode: NodeType = node

@@ -18,8 +18,8 @@ trait LisaDStreamFunctions {
    * @return DStream containing at each node key an array of standardised past values
    */
   def createPastStandardisedValues(pastValues: DStream[(Int, Array[Double])]) = {
-    import org.apache.spark.streaming.StreamingContext._
     import org.apache.spark.SparkContext._
+    import org.apache.spark.streaming.StreamingContext._
     // map each value to its position position in the array, which represents k
     val allValuesMappedPerK: DStream[(Int, Map[Int, Double])] = pastValues.mapValues(a => a.zipWithIndex.map(t => t.swap).toMap)
     // the node key is dismissed for mean and standard deviation
@@ -39,7 +39,7 @@ trait LisaDStreamFunctions {
   }
 
   /**
-   * Standardise values (name is misleading)
+   * Standardise values in the following form
    *
    * value -> (value-mean)/standard deviation
    *

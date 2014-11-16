@@ -107,7 +107,7 @@ object SpatialLisaMonteCarloApp extends LisaDStreamFunctions with LisaAppConfigu
     /*
     * Map the complete set of measurements in this batch to each node key. While computationally intensive,
     * this greatly increases the parallelisability of subsequent calculations.
-     */
+    */
     val standardisedValuesCartesian: DStream[(Int, collection.Map[Int, Double])] =
       allStandardisedValues.transform(valueRDD => {
       val valueMap: collection.Map[Int, Double] = valueRDD.collectAsMap()

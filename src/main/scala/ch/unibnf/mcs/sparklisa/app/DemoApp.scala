@@ -1,7 +1,7 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.StreamingContext._
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 /**
  * Simple Word Count App, as from Spark Streaming Tutorial

@@ -1,7 +1,5 @@
 package ch.unibnf.mcs.sparklisa.app
 
-import java.util.Properties
-
 import akka.actor.Props
 import ch.unibnf.mcs.sparklisa.TopologyHelper
 import ch.unibnf.mcs.sparklisa.listener.LisaStreamingListener

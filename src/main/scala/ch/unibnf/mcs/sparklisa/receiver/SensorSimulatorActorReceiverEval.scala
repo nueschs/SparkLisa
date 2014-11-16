@@ -7,6 +7,7 @@ import org.apache.spark.streaming.receiver.ActorHelper
 import scala.io.Source
 import scala.util.Random
 
+@Deprecated
 class SensorSimulatorActorReceiverEval(node: NodeType) extends Actor with ActorHelper {
 
   private final val sensorNode: NodeType = node
